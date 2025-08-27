@@ -1,0 +1,598 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overview: module code &mdash; DLHM VidSGG 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0a84b5b7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=30646c52"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            DLHM VidSGG
+              <img src="../_static/tum-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#requirements">Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#system-requirements">System Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#python-dependencies">Python Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#gui-dependencies-optional">GUI Dependencies (Optional)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installation-steps">Installation Steps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#clone-the-repository">1. Clone the Repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#create-virtual-environment-recommended">2. Create Virtual Environment (Recommended)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#install-dependencies">3. Install Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#install-dgl-deep-graph-library">4. Install DGL (Deep Graph Library)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#setup-fasterrcnn-backbone">5. Setup FasterRCNN Backbone</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#dataset-setup">Dataset Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#action-genome-dataset">Action Genome Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#easg-dataset">EASG Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#visual-genome-dataset">Visual Genome Dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#verification">Verification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#test-your-installation">Test Your Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#run-tests">Run Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#common-issues">Common Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#hardware-requirements">Hardware Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#quick-start">Quick Start</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#basic-training-command">Basic Training Command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#basic-evaluation-command">Basic Evaluation Command</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#command-line-interface">Command Line Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#training-script-train-py">Training Script (train.py)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#test-script-test-py">Test Script (test.py)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#demo-application">Demo Application</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#gui-application">GUI Application</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#scene-graph-generation-modes">Scene Graph Generation Modes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#predcls-predicate-classification">PredCLS (Predicate Classification)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#sgcls-scene-graph-classification">SGCLS (Scene Graph Classification)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#sgdet-scene-graph-detection">SGDET (Scene Graph Detection)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#model-selection">Model Selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#available-models">Available Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../usage.html#sttran-spatial-temporal-transformer">STTran (Spatial-Temporal Transformer)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../usage.html#tempura">Tempura</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../usage.html#scenellm">SceneLLM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../usage.html#stket">STKET</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#configuration">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#model-configuration">Model Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#dataset-configuration">Dataset Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#output-structure">Output Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#performance-tips">Performance Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#training-optimization">Training Optimization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#evaluation-optimization">Evaluation Optimization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#common-issues">Common Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html#supported-datasets">Supported Datasets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets.html#action-genome">Action Genome</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets.html#easg-dataset">EASG Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets.html#visual-genome-dataset">Visual Genome Dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html#dataset-processing">Dataset Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets.html#data-preprocessing">Data Preprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets.html#data-loading">Data Loading</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html#dataset-statistics">Dataset Statistics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets.html#action-genome-statistics">Action Genome Statistics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html#quality-assurance">Quality Assurance</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets.html#data-validation">Data Validation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html#performance-considerations">Performance Considerations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets.html#loading-optimization">Loading Optimization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets.html#storage-requirements">Storage Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html#custom-datasets">Custom Datasets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets.html#adding-new-datasets">Adding New Datasets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets.html#dataset-conversion">Dataset Conversion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#model-overview">Model Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#sttran-model">STTran Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#tempura-model">Tempura Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#scenellm-model">SceneLLM Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#stket-model">STKET Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#model-comparison">Model Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models.html#performance-comparison">Performance Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models.html#computational-requirements">Computational Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#model-selection-guidelines">Model Selection Guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models.html#choose-based-on-requirements">Choose Based on Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#training-considerations">Training Considerations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models.html#hyperparameter-tuning">Hyperparameter Tuning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models.html#training-strategies">Training Strategies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#model-customization">Model Customization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models.html#custom-model-development">Custom Model Development</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models.html#transfer-learning">Transfer Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#deployment">Deployment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models.html#model-export">Model Export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models.html#optimization">Optimization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models.html#common-issues">Common Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../training.html">Training Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#training-overview">Training Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#basic-training">Basic Training</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#simple-training-command">Simple Training Command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#complete-training-command">Complete Training Command</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#training-parameters">Training Parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#core-parameters">Core Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#advanced-parameters">Advanced Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#model-specific-training">Model-Specific Training</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#sttran-training">STTran Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#tempura-training">Tempura Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#scenellm-training">SceneLLM Training</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#training-strategies">Training Strategies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#progressive-training">Progressive Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#multi-dataset-training">Multi-Dataset Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#curriculum-learning">Curriculum Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#monitoring-training">Monitoring Training</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#training-logs">Training Logs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#visualization">Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#early-stopping">Early Stopping</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#optimization-techniques">Optimization Techniques</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#mixed-precision-training">Mixed Precision Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#gradient-accumulation">Gradient Accumulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#data-parallel-training">Data Parallel Training</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#hyperparameter-tuning">Hyperparameter Tuning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#grid-search">Grid Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#random-search">Random Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#bayesian-optimization">Bayesian Optimization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#checkpointing">Checkpointing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#automatic-checkpointing">Automatic Checkpointing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#manual-checkpointing">Manual Checkpointing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#resume-training">Resume Training</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#common-training-issues">Common Training Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#performance-optimization">Performance Optimization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#best-practices">Best Practices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#training-workflow">Training Workflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#reproducibility">Reproducibility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../training.html#documentation">Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../training.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../evaluation.html">Evaluation Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#evaluation-overview">Evaluation Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#basic-evaluation">Basic Evaluation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#simple-evaluation-command">Simple Evaluation Command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#complete-evaluation-command">Complete Evaluation Command</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#evaluation-metrics">Evaluation Metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#recall-metrics">Recall Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#zero-shot-metrics">Zero-Shot Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#per-category-analysis">Per-Category Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#evaluation-procedures">Evaluation Procedures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#standard-evaluation">Standard Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#cross-dataset-evaluation">Cross-Dataset Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#temporal-evaluation">Temporal Evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#mode-specific-evaluation">Mode-Specific Evaluation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#predcls-evaluation">PredCLS Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#sgcls-evaluation">SGCLS Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#sgdet-evaluation">SGDET Evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#advanced-evaluation">Advanced Evaluation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#uncertainty-evaluation">Uncertainty Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#robustness-evaluation">Robustness Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#efficiency-evaluation">Efficiency Evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#evaluation-analysis">Evaluation Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#statistical-significance">Statistical Significance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#error-analysis">Error Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#benchmark-comparison">Benchmark Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#standard-benchmarks">Standard Benchmarks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#leaderboard-submission">Leaderboard Submission</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#custom-evaluation">Custom Evaluation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#domain-specific-metrics">Domain-Specific Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#temporal-metrics">Temporal Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#quality-assessment">Quality Assessment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#evaluation-best-practices">Evaluation Best Practices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#reproducibility">Reproducibility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#multiple-runs">Multiple Runs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#statistical-reporting">Statistical Reporting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#common-issues">Common Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#performance-debugging">Performance Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#evaluation-reports">Evaluation Reports</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#automated-reports">Automated Reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation.html#report-contents">Report Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../evaluation.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/dataloader.html">Dataloader Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/dataloader.html#module-dataloader.action_genome">Action Genome Dataloader</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/dataloader.html#dataloader.action_genome.AG"><code class="docutils literal notranslate"><span class="pre">AG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/dataloader.html#dataloader.action_genome.cuda_collate_fn"><code class="docutils literal notranslate"><span class="pre">cuda_collate_fn()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/dataloader.html#module-dataloader.easg">EASG Dataloader</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/dataloader.html#dataloader.easg.EASG"><code class="docutils literal notranslate"><span class="pre">EASG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/dataloader.html#dataloader.easg.cuda_collate_fn"><code class="docutils literal notranslate"><span class="pre">cuda_collate_fn()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/dataloader.html#module-dataloader.visual_genome">Visual Genome Dataloader</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/lib.html">Library Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib.html#core-components">Core Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#module-lib.config">Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#module-lib.object_detector">Object Detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#module-lib.funcs">Utility Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#module-lib.word_vectors">Word Vectors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#module-lib.evaluation_recall">Evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib.html#nlp-module">NLP Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/lib.html#module-lib.fpn.box_utils">FPN Module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#lib.fpn.box_utils.bbox_loss"><code class="docutils literal notranslate"><span class="pre">bbox_loss()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#lib.fpn.box_utils.bbox_preds"><code class="docutils literal notranslate"><span class="pre">bbox_preds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#lib.fpn.box_utils.center_size"><code class="docutils literal notranslate"><span class="pre">center_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#lib.fpn.box_utils.point_form"><code class="docutils literal notranslate"><span class="pre">point_form()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#lib.fpn.box_utils.bbox_intersections"><code class="docutils literal notranslate"><span class="pre">bbox_intersections()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#lib.fpn.box_utils.bbox_overlaps"><code class="docutils literal notranslate"><span class="pre">bbox_overlaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/lib.html#lib.fpn.box_utils.nms_overlaps"><code class="docutils literal notranslate"><span class="pre">nms_overlaps()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/models.html">Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/models.html#module-lib.sttran">STTran Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.sttran.ObjectClassifier"><code class="docutils literal notranslate"><span class="pre">ObjectClassifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.sttran.STTran"><code class="docutils literal notranslate"><span class="pre">STTran</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.sttran.STKET"><code class="docutils literal notranslate"><span class="pre">STKET</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.sttran_EASG.ObjectClassifier"><code class="docutils literal notranslate"><span class="pre">ObjectClassifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.sttran_EASG.ActionClassifier"><code class="docutils literal notranslate"><span class="pre">ActionClassifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.sttran_EASG.STTran"><code class="docutils literal notranslate"><span class="pre">STTran</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/models.html#module-lib.scenellm.scenellm">SceneLLM Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.scenellm.scenellm.SceneLLM"><code class="docutils literal notranslate"><span class="pre">SceneLLM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer"><code class="docutils literal notranslate"><span class="pre">VQVAEQuantizer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.scenellm.scenellm.SIA"><code class="docutils literal notranslate"><span class="pre">SIA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.scenellm.scenellm.OTCodebookUpdater"><code class="docutils literal notranslate"><span class="pre">OTCodebookUpdater</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.scenellm.scenellm.SceneLLMLoRA"><code class="docutils literal notranslate"><span class="pre">SceneLLMLoRA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.scenellm.scenellm.SGGDecoder"><code class="docutils literal notranslate"><span class="pre">SGGDecoder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.scenellm.scenellm.build_hierarchical_graph"><code class="docutils literal notranslate"><span class="pre">build_hierarchical_graph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.scenellm.network.SceneLLM"><code class="docutils literal notranslate"><span class="pre">SceneLLM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.scenellm.network.SGGDecoder"><code class="docutils literal notranslate"><span class="pre">SGGDecoder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.scenellm.llm.SceneLLMLoRA"><code class="docutils literal notranslate"><span class="pre">SceneLLMLoRA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.scenellm.vqvae.VQVAEQuantizer"><code class="docutils literal notranslate"><span class="pre">VQVAEQuantizer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/models.html#module-lib.tempura.tempura">Tempura Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.tempura.tempura.PositionalEncoding"><code class="docutils literal notranslate"><span class="pre">PositionalEncoding</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.tempura.tempura.ObjectClassifier"><code class="docutils literal notranslate"><span class="pre">ObjectClassifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.tempura.tempura.TEMPURA"><code class="docutils literal notranslate"><span class="pre">TEMPURA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.tempura.transformer_tempura.TransformerEncoderLayer"><code class="docutils literal notranslate"><span class="pre">TransformerEncoderLayer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.tempura.transformer_tempura.TransformerDecoderLayer"><code class="docutils literal notranslate"><span class="pre">TransformerDecoderLayer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.tempura.transformer_tempura.TransformerEncoder"><code class="docutils literal notranslate"><span class="pre">TransformerEncoder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.tempura.transformer_tempura.TransformerDecoder"><code class="docutils literal notranslate"><span class="pre">TransformerDecoder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.tempura.transformer_tempura.transformer"><code class="docutils literal notranslate"><span class="pre">transformer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.tempura.gmm_heads.GMM_head"><code class="docutils literal notranslate"><span class="pre">GMM_head</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/models.html#module-lib.stket.stket">STKET Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.stket.stket.ObjectClassifier"><code class="docutils literal notranslate"><span class="pre">ObjectClassifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.stket.stket.STKET"><code class="docutils literal notranslate"><span class="pre">STKET</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.stket.transformer_stket.TransformerEncoderLayer"><code class="docutils literal notranslate"><span class="pre">TransformerEncoderLayer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.stket.transformer_stket.TransformerDecoderLayer"><code class="docutils literal notranslate"><span class="pre">TransformerDecoderLayer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.stket.transformer_stket.TransformerEncoder"><code class="docutils literal notranslate"><span class="pre">TransformerEncoder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.stket.transformer_stket.TransformerDecoder"><code class="docutils literal notranslate"><span class="pre">TransformerDecoder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.stket.transformer_stket.spatial_encoder"><code class="docutils literal notranslate"><span class="pre">spatial_encoder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.stket.transformer_stket.temporal_decoder"><code class="docutils literal notranslate"><span class="pre">temporal_decoder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.stket.transformer_stket.ensemble_decoder"><code class="docutils literal notranslate"><span class="pre">ensemble_decoder</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/models.html#module-lib.transformer">Transformer Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.transformer.TransformerEncoderLayer"><code class="docutils literal notranslate"><span class="pre">TransformerEncoderLayer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.transformer.TransformerDecoderLayer"><code class="docutils literal notranslate"><span class="pre">TransformerDecoderLayer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.transformer.TransformerEncoder"><code class="docutils literal notranslate"><span class="pre">TransformerEncoder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.transformer.TransformerDecoder"><code class="docutils literal notranslate"><span class="pre">TransformerDecoder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/models.html#lib.transformer.transformer"><code class="docutils literal notranslate"><span class="pre">transformer</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#core-components">Core Components</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Additional Information:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#getting-started">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#development-setup">Development Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#code-style">Code Style</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#types-of-contributions">Types of Contributions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#bug-reports">Bug Reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#feature-requests">Feature Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#new-models">New Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#dataset-support">Dataset Support</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#development-workflow">Development Workflow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#branch-naming">Branch Naming</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#pull-request-process">Pull Request Process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#testing">Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#test-categories">Test Categories</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#documentation">Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#documentation-structure">Documentation Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#writing-documentation">Writing Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#building-documentation">Building Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#code-review-guidelines">Code Review Guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#reviewing-code">Reviewing Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#responding-to-reviews">Responding to Reviews</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#community-guidelines">Community Guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#code-of-conduct">Code of Conduct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#communication-channels">Communication Channels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#getting-help">Getting Help</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#release-process">Release Process</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#versioning">Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#release-checklist">Release Checklist</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#recognition">Recognition</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#unreleased">[Unreleased]</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#added">Added</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#changed">Changed</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#id1">[0.1.0] - 2024-12-01</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#id2">Added</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#fixed">Fixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#security">Security</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#id3">[0.0.1] - 2024-01-01</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#id4">Added</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#mit-license">MIT License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#third-party-licenses">Third-Party Licenses</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#sttran">STTran</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#fasterrcnn">FasterRCNN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#action-genome-dataset">Action Genome Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#dependencies">Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#attribution">Attribution</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#sttran-citation">STTran Citation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#action-genome-citation">Action Genome Citation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#contact">Contact</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#disclaimer">Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">DLHM VidSGG</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Overview: module code</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>All modules for which code is available</h1>
+<ul><li><a href="dataloader/action_genome.html">dataloader.action_genome</a></li>
+<li><a href="dataloader/easg.html">dataloader.easg</a></li>
+<li><a href="lib/config.html">lib.config</a></li>
+<li><a href="lib/evaluation_recall.html">lib.evaluation_recall</a></li>
+<li><a href="lib/fpn/box_utils.html">lib.fpn.box_utils</a></li>
+<li><a href="lib/funcs.html">lib.funcs</a></li>
+<li><a href="lib/object_detector.html">lib.object_detector</a></li>
+<li><a href="lib/object_detector_EASG.html">lib.object_detector_EASG</a></li>
+<li><a href="lib/scenellm/llm.html">lib.scenellm.llm</a></li>
+<li><a href="lib/scenellm/network.html">lib.scenellm.network</a></li>
+<li><a href="lib/scenellm/ot.html">lib.scenellm.ot</a></li>
+<li><a href="lib/scenellm/sia.html">lib.scenellm.sia</a></li>
+<li><a href="lib/scenellm/vqvae.html">lib.scenellm.vqvae</a></li>
+<li><a href="lib/stket/stket.html">lib.stket.stket</a></li>
+<li><a href="lib/stket/transformer_stket.html">lib.stket.transformer_stket</a></li>
+<li><a href="lib/sttran.html">lib.sttran</a></li>
+<li><a href="lib/sttran_EASG.html">lib.sttran_EASG</a></li>
+<li><a href="lib/tempura/gmm_heads.html">lib.tempura.gmm_heads</a></li>
+<li><a href="lib/tempura/tempura.html">lib.tempura.tempura</a></li>
+<li><a href="lib/tempura/transformer_tempura.html">lib.tempura.transformer_tempura</a></li>
+<li><a href="lib/transformer.html">lib.transformer</a></li>
+<li><a href="lib/word_vectors.html">lib.word_vectors</a></li>
+</ul>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, DLHM Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
