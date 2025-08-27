@@ -1,0 +1,36 @@
+ninja_required_version = 1.3
+cxx = cl
+nvcc = C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.1\bin\nvcc
+
+cflags = /nologo /O2 /W3 /GL /DNDEBUG /MD /MD /wd4819 /wd4251 /wd4244 /wd4267 /wd4275 /wd4018 /wd4190 /wd4624 /wd4067 /wd4068 /EHsc -DWITH_CUDA -IC:\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc -IC:\Users\Phili\Anaconda3\envs\easg\lib\site-packages\torch\include -IC:\Users\Phili\Anaconda3\envs\easg\lib\site-packages\torch\include\torch\csrc\api\include -IC:\Users\Phili\Anaconda3\envs\easg\lib\site-packages\torch\include\TH -IC:\Users\Phili\Anaconda3\envs\easg\lib\site-packages\torch\include\THC "-IC:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.1\include" -IC:\Users\Phili\Anaconda3\envs\easg\include -IC:\Users\Phili\Anaconda3\envs\easg\Include "-IC:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include" "-IC:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\VS\include" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt" "-IC:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\um" "-IC:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\shared" "-IC:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\winrt" "-IC:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\cppwinrt"
+post_cflags = -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -D_GLIBCXX_USE_CXX11_ABI=0 /std:c++17
+cuda_cflags = -std=c++17 --use-local-env -Xcompiler /MD -Xcompiler /wd4819 -Xcompiler /wd4251 -Xcompiler /wd4244 -Xcompiler /wd4267 -Xcompiler /wd4275 -Xcompiler /wd4018 -Xcompiler /wd4190 -Xcompiler /wd4624 -Xcompiler /wd4067 -Xcompiler /wd4068 -Xcompiler /EHsc -Xcudafe --diag_suppress=base_class_has_different_dll_interface -Xcudafe --diag_suppress=field_without_dll_interface -Xcudafe --diag_suppress=dll_interface_conflict_none_assumed -Xcudafe --diag_suppress=dll_interface_conflict_dllexport_assumed -DWITH_CUDA -IC:\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc -IC:\Users\Phili\Anaconda3\envs\easg\lib\site-packages\torch\include -IC:\Users\Phili\Anaconda3\envs\easg\lib\site-packages\torch\include\torch\csrc\api\include -IC:\Users\Phili\Anaconda3\envs\easg\lib\site-packages\torch\include\TH -IC:\Users\Phili\Anaconda3\envs\easg\lib\site-packages\torch\include\THC "-IC:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.1\include" -IC:\Users\Phili\Anaconda3\envs\easg\include -IC:\Users\Phili\Anaconda3\envs\easg\Include "-IC:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include" "-IC:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\VS\include" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt" "-IC:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\um" "-IC:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\shared" "-IC:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\winrt" "-IC:\Program Files (x86)\Windows Kits\10\\include\10.0.22621.0\\cppwinrt"
+cuda_post_cflags = -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -DCUDA_HAS_FP16=1 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=_C -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_86,code=compute_86 -gencode=arch=compute_86,code=sm_86
+cuda_dlink_post_cflags = 
+ldflags = 
+
+rule compile
+  command = cl /showIncludes $cflags -c $in /Fo$out $post_cflags
+  deps = msvc
+
+rule cuda_compile
+  depfile = $out.d
+  deps = gcc
+  command = $nvcc --generate-dependencies-with-compile --dependency-output $out.d $cuda_cflags -c $in -o $out $cuda_post_cflags
+
+
+
+
+
+build C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\build\temp.win-amd64-cpython-310\Release\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\cpu\ROIAlign_cpu.obj: compile C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\cpu\ROIAlign_cpu.cpp
+build C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\build\temp.win-amd64-cpython-310\Release\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\cpu\nms_cpu.obj: compile C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\cpu\nms_cpu.cpp
+build C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\build\temp.win-amd64-cpython-310\Release\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\cuda\ROIAlign_cuda.obj: cuda_compile C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\cuda\ROIAlign_cuda.cu
+build C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\build\temp.win-amd64-cpython-310\Release\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\cuda\ROIPool_cuda.obj: cuda_compile C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\cuda\ROIPool_cuda.cu
+build C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\build\temp.win-amd64-cpython-310\Release\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\cuda\nms.obj: cuda_compile C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\cuda\nms.cu
+build C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\build\temp.win-amd64-cpython-310\Release\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\vision.obj: compile C$:\Software\Python\EASG\easg-generation\fasterRCNN\lib\model\csrc\vision.cpp
+
+
+
+
+
+

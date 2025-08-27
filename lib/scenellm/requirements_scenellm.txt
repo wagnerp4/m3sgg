@@ -1,0 +1,19 @@
+# SceneLLM specific dependencies
+torch>=1.12.0
+dgl>=1.0.0
+transformers>=4.20.0
+peft>=0.4.0
+scipy>=1.9.0
+numpy>=1.21.0
+pot>=0.9.0  # Python Optimal Transport
+scikit-learn>=1.1.0  # For hierarchical clustering
+
+# Base requirements
+cython
+cffi
+opencv-python
+msgpack
+easydict
+matplotlib
+pyyaml
+tensorboardX

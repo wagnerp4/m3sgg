@@ -1,0 +1,4 @@
+# ninja log v5
+8	9800	7704909363090941	C:/Software/Python/EASG/easg-generation/fasterRCNN/lib/build/temp.win-amd64-cpython-310/Release/Software/Python/EASG/easg-generation/fasterRCNN/lib/model/csrc/cpu/ROIAlign_cpu.obj	8856ad2d228b3836
+12	9977	7704909364837532	C:/Software/Python/EASG/easg-generation/fasterRCNN/lib/build/temp.win-amd64-cpython-310/Release/Software/Python/EASG/easg-generation/fasterRCNN/lib/model/csrc/cpu/nms_cpu.obj	84ec69b3f9a7f427
+46	10015	7704909365217545	C:/Software/Python/EASG/easg-generation/fasterRCNN/lib/build/temp.win-amd64-cpython-310/Release/Software/Python/EASG/easg-generation/fasterRCNN/lib/model/csrc/vision.obj	e8e569dcb6d0ce5b
