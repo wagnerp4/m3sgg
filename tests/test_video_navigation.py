@@ -3,8 +3,8 @@
 Test script for video navigation functionality
 """
 
-import sys
 import os
+import sys
 import time
 
 # Add the current directory to the path so we can import from the project

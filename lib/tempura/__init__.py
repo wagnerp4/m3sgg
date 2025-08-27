@@ -2,15 +2,15 @@
 TEMPURA (TEMPoral Understanding and Reasoning Architecture) package.
 """
 
+from .gmm_heads import GMM_head
 from .tempura import TEMPURA, ObjectClassifier, PositionalEncoding
 from .transformer_tempura import (
-    TransformerEncoderLayer,
+    TransformerDecoder,
     TransformerDecoderLayer,
     TransformerEncoder,
-    TransformerDecoder,
+    TransformerEncoderLayer,
     transformer,
 )
-from .gmm_heads import GMM_head
 
 __all__ = [
     "TEMPURA",

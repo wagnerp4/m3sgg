@@ -5,11 +5,13 @@ Credit to the authors of the original code: https://doi.org/10.1016/j.patcog.202
 
 import torch
 import torch.nn as nn
+
 from lib.sttran import STTran
-from .vqvae import VQVAEQuantizer
-from .sia import SIA
-from .ot import OTCodebookUpdater, OT_AVAILABLE
+
 from .llm import SceneLLMLoRA
+from .ot import OT_AVAILABLE, OTCodebookUpdater
+from .sia import SIA
+from .vqvae import VQVAEQuantizer
 
 # TODO: Improve GCN architecture
 # TODO: Use Cross Entropy instead of MSE
@@ -106,14 +108,16 @@ class SceneLLM(nn.Module):
 
         vq_results = self.quantiser(roi_feat)  # VQ-VAE
         code_vecs = vq_results["z_q"]  # [R, D]
-        
+
         # Check for NaN in quantized vectors
         if torch.isnan(code_vecs).any():
-            print("WARNING: NaN detected in VQ-VAE output, using input features directly")
+            print(
+                "WARNING: NaN detected in VQ-VAE output, using input features directly"
+            )
             code_vecs = roi_feat  # Fallback to original features
-            
+
         frame_tok = self.sia(code_vecs, boxes)  # [D] SIA
-        
+
         # Check for NaN in SIA output
         if torch.isnan(frame_tok).any():
             print("WARNING: NaN detected in SIA output, using mean of input")
@@ -132,7 +136,7 @@ class SceneLLM(nn.Module):
             projected_frame_tok = self.llm_input_projection(
                 frame_tok
             )  # [B, T, D] -> [B, T, llm_hidden_size]
-            
+
             # Check for NaN in input to LLM
             if torch.isnan(projected_frame_tok).any():
                 print("WARNING: NaN detected in LLM input, using fallback")
@@ -142,7 +146,7 @@ class SceneLLM(nn.Module):
                 )  # [D] -> [2048]
             else:
                 hidden = self.llm(projected_frame_tok)  # [B, T, hidden_size]
-                
+
                 # Check for NaN in LLM output
                 if torch.isnan(hidden).any():
                     print("WARNING: NaN detected in LLM output, using fallback")

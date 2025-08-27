@@ -5,11 +5,11 @@ Generates hyperparameter combinations for TEMPURA model training.
 Supports both grid search and random search methods.
 """
 
+import argparse
 import json
 import random
-import argparse
 from itertools import product
-from typing import Dict, List, Any, Union
+from typing import Any, Dict, List, Union
 
 
 class TEMPURAHyperparameterGenerator:

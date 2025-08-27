@@ -3,9 +3,9 @@
 Test script to verify video cycling logic for predcls/sgcls modes
 """
 
-import sys
 import os
 import random
+import sys
 import time
 
 # Add the current directory to Python path

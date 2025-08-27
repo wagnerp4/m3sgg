@@ -20,11 +20,11 @@ TODO: Use Cross Entropy instead of MSE
 """
 
 # Import all components from separate modules
-from .vqvae import VQVAEQuantizer
-from .sia import SIA, build_hierarchical_graph
-from .ot import OTCodebookUpdater, OT_AVAILABLE
-from .llm import SceneLLMLoRA, TRANSFORMERS_AVAILABLE
+from .llm import TRANSFORMERS_AVAILABLE, SceneLLMLoRA
 from .network import SceneLLM, SGGDecoder
+from .ot import OT_AVAILABLE, OTCodebookUpdater
+from .sia import SIA, build_hierarchical_graph
+from .vqvae import VQVAEQuantizer
 
 # Re-export all classes for backward compatibility
 __all__ = [

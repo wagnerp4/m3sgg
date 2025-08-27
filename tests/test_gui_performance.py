@@ -3,19 +3,20 @@
 Test script to verify GUI performance improvements
 """
 
-import sys
 import os
-import time
+import sys
 import threading
+import time
+
+from PyQt5.QtCore import QThread, QTimer, pyqtSignal
 from PyQt5.QtWidgets import (
     QApplication,
+    QLabel,
     QMainWindow,
+    QPushButton,
     QVBoxLayout,
     QWidget,
-    QLabel,
-    QPushButton,
 )
-from PyQt5.QtCore import QTimer, pyqtSignal, QThread
 
 
 class PerformanceTest(QMainWindow):

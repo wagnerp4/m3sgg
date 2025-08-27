@@ -4,14 +4,15 @@ TEMPURA Results Analyzer
 Analyzes and compares results from different TEMPURA hyperparameter combinations.
 """
 
-import json
-import os
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from typing import Dict, List, Any, Optional
 import argparse
 import glob
+import json
+import os
+from typing import Any, Dict, List, Optional
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 
 
 class TEMPURAResultsAnalyzer:

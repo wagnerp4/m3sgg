@@ -7,6 +7,7 @@ to understand why only door/doorway are being detected.
 
 import os
 import sys
+
 import cv2
 import numpy as np
 import torch

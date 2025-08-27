@@ -3,10 +3,10 @@ Spatial Information Aggregator (SIA) implementation for SceneLLM.
 Credit to the authors of the original code: https://doi.org/10.1016/j.patcog.2025.111992.
 """
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
 
 # TODO: Compare different clustering methods
 try:
@@ -15,10 +15,12 @@ try:
     DGL_AVAILABLE = True
 except (ImportError, FileNotFoundError, OSError) as e:
     DGL_AVAILABLE = False
-    print(f"Warning: DGL not available ({type(e).__name__}: {str(e)[:100]}...). SIA will use simplified graph structure.")
+    print(
+        f"Warning: DGL not available ({type(e).__name__}: {str(e)[:100]}...). SIA will use simplified graph structure."
+    )
 
 try:
-    from scipy.cluster.hierarchy import linkage, fcluster
+    from scipy.cluster.hierarchy import fcluster, linkage
     from scipy.spatial.distance import pdist
 
     SCIPY_AVAILABLE = True

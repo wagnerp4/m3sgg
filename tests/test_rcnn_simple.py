@@ -1,14 +1,15 @@
-import torch
+import os
+import sys
+
 import cv2
 import numpy as np
-import sys
-import os
+import torch
 
 # Add the project root to the path
 sys.path.append(".")
 
-from lib.object_detector import detector
 from dataloader.action_genome import AG
+from lib.object_detector import detector
 
 
 def test_rcnn_with_frame(frame_path=None):

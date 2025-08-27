@@ -10,25 +10,25 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from torch import optim
-from torch.nn.utils.rnn import pad_sequence
+
+# from torch.nn.utils.rnn import pad_sequence
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 
 from dataloader.action_genome import AG, cuda_collate_fn
-from dataloader.EASG import EASG, cuda_collate_fn
+from dataloader.easg import EASG
 from lib.AdamW import AdamW
 from lib.config import Config
 from lib.evaluation_recall import BasicSceneGraphEvaluator
 from lib.infoNCE import EucNormLoss, SupConLoss
-from lib.matcher import *
 from lib.matcher import HungarianMatcher
 from lib.memory import memory_computation
 from lib.object_detector import detector
 from lib.object_detector_EASG import detector as detector_EASG
+from lib.scenellm.scenellm import SceneLLM
 from lib.sttran import STKET, STTran
 from lib.sttran_EASG import STTran as STTran_EASG
 from lib.tempura.tempura import TEMPURA
-from lib.scenellm.scenellm import SceneLLM
 from lib.track import get_sequence
 from lib.uncertainty import uncertainty_computation, uncertainty_values
 from utils.util import (
@@ -1456,7 +1456,9 @@ if __name__ == "__main__":
         )
     else:
         logger.info(
-            "Best model achieved at epoch %d with R@20 score: %.4f (checkpoint saving disabled)", best_epoch, best_score
+            "Best model achieved at epoch %d with R@20 score: %.4f (checkpoint saving disabled)",
+            best_epoch,
+            best_score,
         )
 
     # Save final predictions as CSV (only for the best epoch)

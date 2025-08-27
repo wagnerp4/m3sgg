@@ -2,18 +2,18 @@
 NLP Module for text summarization and processing.
 """
 
+from .summarization_wrapper import (
+    BaseSummarizationWrapper,
+    PegasusCustomConfig,
+    PegasusSeparateLoader,
+    PegasusSummarizationWrapper,
+    T5SummarizationWrapper,
+)
 from .summarize import (
     linearize_triples,
     summarize_sentences,
-    summarize_with_pegasus_separate,
     summarize_with_pegasus_custom,
-)
-from .summarization_wrapper import (
-    BaseSummarizationWrapper,
-    T5SummarizationWrapper,
-    PegasusSummarizationWrapper,
-    PegasusSeparateLoader,
-    PegasusCustomConfig,
+    summarize_with_pegasus_separate,
 )
 
 __all__ = [

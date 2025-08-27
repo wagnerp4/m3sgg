@@ -1,12 +1,13 @@
-import torch
 from abc import ABC, abstractmethod
+from typing import Any, Dict, List, Optional
+
+import torch
 from transformers import (
-    T5ForConditionalGeneration,
-    T5Tokenizer,
     PegasusForConditionalGeneration,
     PegasusTokenizer,
+    T5ForConditionalGeneration,
+    T5Tokenizer,
 )
-from typing import List, Optional, Dict, Any
 
 
 class BaseSummarizationWrapper(ABC):

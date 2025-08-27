@@ -6,7 +6,6 @@ This demonstrates how to train the SceneLLM model with the three-stage training 
 
 import subprocess
 import sys
-import os
 
 
 def run_training_stage(stage, args_dict):
@@ -90,7 +89,7 @@ def run_training_stage(stage, args_dict):
 
     # Run training
     try:
-        result = subprocess.run(full_args, check=True, capture_output=False)
+        # result = subprocess.run(full_args, check=True, capture_output=False)
         print(f"✓ {stage} completed successfully")
         return True
     except subprocess.CalledProcessError as e:

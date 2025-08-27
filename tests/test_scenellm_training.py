@@ -3,8 +3,9 @@
 Quick test to verify SceneLLM training initialization works without errors.
 """
 
-import torch
 import sys
+
+import torch
 
 sys.path.append("lib")
 sys.path.append("fasterRCNN/lib")

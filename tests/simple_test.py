@@ -3,8 +3,8 @@
 Simple test to check if dataset can be loaded
 """
 
-import sys
 import os
+import sys
 
 
 def test_dataset_loading():

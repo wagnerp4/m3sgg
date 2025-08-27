@@ -1,13 +1,10 @@
 import os
 import pickle
-import random
 
 import imageio
 import numpy as np
 import torch
-from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, Normalize, Resize, ToTensor
 
 from fasterRCNN.lib.model.utils.blob import im_list_to_blob, prep_im_for_blob
 
@@ -160,7 +157,7 @@ class AG(Dataset):
                 for k in object_bbox[j]:
                     if k["visible"]:
                         assert (
-                            k["bbox"] != None
+                            k["bbox"] is not None
                         ), "warning! The object is visible without bbox"
                         k["class"] = self.object_classes.index(k["class"])
                         k["bbox"] = np.array(

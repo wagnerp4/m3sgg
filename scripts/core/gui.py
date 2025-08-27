@@ -1,64 +1,66 @@
-import sys
-import os
-import json
-import time
 import copy
+import glob
+import json
+import os
+import platform
 import random
+import sys
+import tempfile
+import time
+from datetime import datetime
+
 import cv2
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn as nn
-from PyQt5.QtWidgets import (
-    QApplication,
-    QMainWindow,
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QLabel,
-    QComboBox,
-    QPushButton,
-    QSlider,
-    QTextEdit,
-    QGroupBox,
-    QCheckBox,
-    QSpinBox,
-    QFileDialog,
-    QMessageBox,
-    QProgressBar,
-    QSplitter,
-    QFrame,
-    QScrollArea,
-)
-from PyQt5.QtCore import QTimer, QThread, pyqtSignal, Qt, QSize
-from PyQt5.QtGui import QPixmap, QImage, QFont, QPalette, QColor, QIcon
-import platform
-import tempfile
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+from matplotlib import colors as mcolors
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from matplotlib import colors as mcolors
-import glob
-from datetime import datetime
+from PyQt5.QtCore import QSize, Qt, QThread, QTimer, pyqtSignal
+from PyQt5.QtGui import QColor, QFont, QIcon, QImage, QPalette, QPixmap
+from PyQt5.QtWidgets import (
+    QApplication,
+    QCheckBox,
+    QComboBox,
+    QFileDialog,
+    QFrame,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QMainWindow,
+    QMessageBox,
+    QProgressBar,
+    QPushButton,
+    QScrollArea,
+    QSlider,
+    QSpinBox,
+    QSplitter,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
 
 # Import the necessary modules from the codebase
 from dataloader.action_genome import AG, cuda_collate_fn
-from dataloader.EASG import EASG, cuda_collate_fn as easg_cuda_collate_fn
+from dataloader.EASG import EASG
+from dataloader.EASG import cuda_collate_fn as easg_cuda_collate_fn
 from lib.config import Config
+from lib.evaluation_recall import BasicSceneGraphEvaluator
+from lib.matcher import HungarianMatcher
+from lib.nlp_module.summarization_wrapper import (
+    PegasusCustomConfig,
+    PegasusSeparateLoader,
+    PegasusSummarizationWrapper,
+    T5SummarizationWrapper,
+)
 from lib.object_detector import detector
 from lib.object_detector_EASG import detector as detector_EASG
-from lib.sttran import STTran, STKET
+from lib.sttran import STKET, STTran
 from lib.sttran_EASG import STTran as STTran_EASG
 from lib.tempura.tempura import TEMPURA
-from lib.matcher import HungarianMatcher
 from lib.track import get_sequence
-from lib.evaluation_recall import BasicSceneGraphEvaluator
-from lib.nlp_module.summarization_wrapper import (
-    T5SummarizationWrapper,
-    PegasusSummarizationWrapper,
-    PegasusSeparateLoader,
-    PegasusCustomConfig,
-)
 
 
 def find_latest_checkpoint(dataset_type, model_type, mode):

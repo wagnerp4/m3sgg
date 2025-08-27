@@ -4,16 +4,16 @@ Test script for the summarization wrapper classes.
 Demonstrates usage of different summarization models and wrapper classes.
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from lib.nlp_module.summarization_wrapper import (
-    T5SummarizationWrapper,
-    PegasusSummarizationWrapper,
-    PegasusSeparateLoader,
     PegasusCustomConfig,
+    PegasusSeparateLoader,
+    PegasusSummarizationWrapper,
+    T5SummarizationWrapper,
 )
 
 

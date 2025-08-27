@@ -6,13 +6,14 @@ This script tests the complete SceneLLM inference flow with randomly initialized
 It simulates the entire pipeline from ROI features to scene graph predictions.
 """
 
+import copy
+import os
+import sys
+from time import time
+
+import numpy as np
 import torch
 import torch.nn.functional as F
-import numpy as np
-import sys
-import os
-import copy
-from time import time
 
 # Add lib paths
 sys.path.append("lib")

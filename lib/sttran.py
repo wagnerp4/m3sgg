@@ -4,12 +4,12 @@ import torch.nn as nn
 from fasterRCNN.lib.model.roi_layers import ROIAlign, nms
 from lib.draw_rectangles.draw_rectangles import draw_union_boxes
 from lib.fpn.box_utils import center_size
-from lib.transformer import transformer
 from lib.stket.transformer_stket import (
     ensemble_decoder,
     spatial_encoder,
     temporal_decoder,
 )
+from lib.transformer import transformer
 from lib.word_vectors import obj_edge_vectors
 
 

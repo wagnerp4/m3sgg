@@ -6,13 +6,14 @@ This script provides comprehensive statistics for the action_genome9000 dataset
 including video samples, frames, objects, relationships, and other metrics.
 """
 
+import json
 import os
 import pickle
-import json
-import numpy as np
-from collections import defaultdict, Counter
+from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
+
+import numpy as np
 
 
 def load_object_classes(annotations_path):

@@ -1,10 +1,10 @@
 import array
 import os
+import pickle
 import ssl
 import sys
 import urllib.request
 import zipfile
-import pickle
 
 import numpy as np
 import six

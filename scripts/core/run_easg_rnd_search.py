@@ -1,12 +1,11 @@
 import logging
-import os
 import pickle
 import random
 from argparse import ArgumentParser
 from pathlib import Path
 
 import torch
-import torch.nn.functional as F
+from run_easg import EASGData, evaluation
 from torch.nn import (
     BCEWithLogitsLoss,
     CrossEntropyLoss,
@@ -17,8 +16,6 @@ from torch.nn import (
     Sigmoid,
     Tanh,
 )
-
-from run_easg import EASGData, evaluation
 
 
 def parse_args():
@@ -210,13 +207,13 @@ def main():
             logging.FileHandler(filename=args.path_to_output / "log", mode="w"),
         ],
     )
-    logger = logging.getLogger()
+    # logger = logging.getLogger()
     with open(args.path_to_annotations / "verbs.txt") as f:
-        verbs = [l.strip() for l in f.readlines()]
+        verbs = [line.strip() for line in f.readlines()]
     with open(args.path_to_annotations / "objects.txt") as f:
-        objs = [l.strip() for l in f.readlines()]
+        objs = [line.strip() for line in f.readlines()]
     with open(args.path_to_annotations / "relationships.txt") as f:
-        rels = [l.strip() for l in f.readlines()]
+        rels = [line.strip() for line in f.readlines()]
     dataset_train = EASGData(
         args.path_to_annotations, args.path_to_data, "train", verbs, objs, rels
     )

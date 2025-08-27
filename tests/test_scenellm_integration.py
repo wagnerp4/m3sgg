@@ -4,9 +4,10 @@ Test script to verify SceneLLM integration with the training pipeline.
 This script tests basic functionality without running full training.
 """
 
-import torch
-import sys
 import os
+import sys
+
+import torch
 
 # Add lib to path
 sys.path.append("lib")
@@ -17,11 +18,11 @@ def test_scenellm_import():
     """Test if SceneLLM can be imported correctly."""
     try:
         from lib.scenellm.scenellm import (
-            SceneLLM,
-            VQVAEQuantizer,
             SIA,
-            SGGDecoder,
             OTCodebookUpdater,
+            SceneLLM,
+            SGGDecoder,
+            VQVAEQuantizer,
         )
 
         print("✓ SceneLLM modules imported successfully")
@@ -62,8 +63,8 @@ def test_config_integration():
 def test_model_creation():
     """Test if SceneLLM model can be created with dummy dataset."""
     try:
-        from lib.scenellm.scenellm import SceneLLM
         from lib.config import Config
+        from lib.scenellm.scenellm import SceneLLM
 
         # Mock dataset object
         class MockDataset:

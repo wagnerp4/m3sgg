@@ -3,9 +3,10 @@
 Test script to verify video selection with ground truth bounding boxes
 """
 
-import sys
 import os
 import random
+import sys
+
 from dataloader.action_genome import AG
 
 

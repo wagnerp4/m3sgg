@@ -6,15 +6,16 @@ This script provides comprehensive statistics for the action_genome9000 dataset
 including video samples, frames, objects, relationships, and other metrics.
 """
 
+import argparse
+import json
 import os
 import pickle
-import json
+from collections import Counter, defaultdict
+from datetime import datetime
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from collections import defaultdict, Counter
-from datetime import datetime
-import argparse
-from pathlib import Path
 
 
 class ActionGenomeAnalyzer:

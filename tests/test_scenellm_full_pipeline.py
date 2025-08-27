@@ -6,12 +6,13 @@ This script tests the complete SceneLLM pipeline including STTran integration
 by creating a minimal working example that demonstrates the V2L -> LLM -> SGG flow.
 """
 
+import os
+import sys
+from time import time
+
+import numpy as np
 import torch
 import torch.nn.functional as F
-import numpy as np
-import sys
-import os
-from time import time
 
 # Add lib paths
 sys.path.append("lib")
@@ -131,7 +132,7 @@ def test_scenellm_v2l_pipeline():
     print("=== Testing SceneLLM V2L Mapping Pipeline ===")
 
     try:
-        from lib.scenellm.scenellm import VQVAEQuantizer, SIA, PlaceholderLLM
+        from lib.scenellm.scenellm import SIA, PlaceholderLLM, VQVAEQuantizer
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         config = create_mock_config()

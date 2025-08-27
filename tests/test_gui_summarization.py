@@ -4,16 +4,16 @@ Test script for GUI summarization integration.
 Tests the summarization wrapper classes and their integration with the GUI.
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from lib.nlp_module.summarization_wrapper import (
-    T5SummarizationWrapper,
-    PegasusSummarizationWrapper,
-    PegasusSeparateLoader,
     PegasusCustomConfig,
+    PegasusSeparateLoader,
+    PegasusSummarizationWrapper,
+    T5SummarizationWrapper,
 )
 
 

@@ -12,7 +12,9 @@ try:
     OT_AVAILABLE = True
 except ImportError as e:
     OT_AVAILABLE = False
-    print(f"Warning: POT not available ({e}). Install with 'pip install pot'. OT codebook update will use simple merging.")
+    print(
+        f"Warning: POT not available ({e}). Install with 'pip install pot'. OT codebook update will use simple merging."
+    )
 
 
 class OTCodebookUpdater:

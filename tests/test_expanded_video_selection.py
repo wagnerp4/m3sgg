@@ -3,16 +3,18 @@
 Test script for expanded video selection feature
 """
 
-import sys
 import os
 import random
+import sys
+
 import torch
 
 # Add the current directory to the path so we can import from the project
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from dataloader.action_genome import AG
 from gui import VideoProcessor
+
+from dataloader.action_genome import AG
 
 
 def test_expanded_video_selection():

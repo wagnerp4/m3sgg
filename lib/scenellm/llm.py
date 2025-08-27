@@ -45,10 +45,10 @@ class SceneLLMLoRA(nn.Module):
                 llm_int8_has_fp16_weight=False,
                 llm_int8_enable_fp32_cpu_offload=False,
             )
-            
+
             # Option 2: Disable quantization completely (uncomment if you have enough VRAM)
             # quantization_config = None
-            
+
             base = AutoModel.from_pretrained(
                 model_name,
                 torch_dtype=torch.bfloat16,
@@ -92,16 +92,16 @@ class SceneLLMLoRA(nn.Module):
             try:
                 outputs = self.model(inputs_embeds=token_embeds)
                 result = outputs.last_hidden_state  # [B, T, D]
-                
+
                 # Check for NaN in output and clamp extreme values
                 if torch.isnan(result).any():
                     print("WARNING: NaN detected in LLM output, using zero output")
                     return torch.zeros_like(result)
-                    
+
                 # Clamp extreme values to prevent overflow
                 result = torch.clamp(result, min=-10.0, max=10.0)
                 return result
-                
+
             except Exception as e:
                 print(f"WARNING: Error in LLM forward pass: {e}, using zero output")
                 # Return zeros as fallback

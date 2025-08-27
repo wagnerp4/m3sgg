@@ -3,10 +3,12 @@
 Test script to simulate GUI video selection process
 """
 
-import sys
 import os
 import random
+import sys
+
 import torch
+
 from dataloader.action_genome import AG
 
 

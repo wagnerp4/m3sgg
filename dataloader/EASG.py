@@ -1,15 +1,10 @@
 import json
 import os
-import pickle
-import random
 
-# from scipy.misc import imread
 import cv2
 import numpy as np
 import torch
-from PIL import Image
 from torch.utils.data import Dataset
-from torchvision.transforms import Compose, Normalize, Resize, ToTensor
 
 from fasterRCNN.lib.model.utils.blob import im_list_to_blob, prep_im_for_blob
 
@@ -21,8 +16,8 @@ class EASG(Dataset):
 
         self.obj_classes = ["__background__"]
         with open(f"{root_path}/EASG/generation/annts_in_new_format/objects.txt") as f:
-            for l in f:
-                self.obj_classes.append(l.strip("\n"))
+            for line in f:
+                self.obj_classes.append(line.strip("\n"))
 
         # Add missing attributes to match Action Genome interface
         self.object_classes = self.obj_classes  # Alias for compatibility

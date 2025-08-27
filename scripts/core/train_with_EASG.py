@@ -1,18 +1,14 @@
+import copy
+import logging
+import os
+from math import ceil
+
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 from torch import optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-
-np.set_printoptions(precision=3)
-
-import copy
-import logging
-import os
-import time
-from math import ceil
-
-import pandas as pd
 from tqdm import tqdm
 
 from dataloader.EASG import EASG, cuda_collate_fn
@@ -20,6 +16,8 @@ from lib.AdamW import AdamW
 from lib.config import Config
 from lib.object_detector_EASG import detector
 from lib.sttran_EASG import STTran
+
+np.set_printoptions(precision=3)
 
 
 def intersect_2d(out, gt):
@@ -346,7 +344,7 @@ def main():
 
                     triplets_gt = torch.LongTensor(triplets_gt)
 
-                    num_obj = len(obj_indices)
+                    # num_obj = len(obj_indices)
                     scores_rels = []
                     scores_objs = []
                     for obj_idx in obj_indices:

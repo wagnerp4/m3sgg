@@ -1,18 +1,18 @@
-import torch
-import cv2
-import numpy as np
 import os
 import sys
-import copy
 from time import time
+
+import cv2
+import numpy as np
+import torch
 
 sys.path.append(".")
 
+from dataloader.action_genome import AG
+from lib.matcher import HungarianMatcher
 from lib.object_detector import detector
 from lib.sttran import STTran
 from lib.track import get_sequence
-from lib.matcher import HungarianMatcher
-from dataloader.action_genome import AG
 
 
 def test_rcnn_backbone():
@@ -317,7 +317,7 @@ def test_sttran_sgdet(entry, dataset, device):
     # Analyze final bounding boxes after STTran processing
     if "final_boxes" in predictions:
         final_boxes = predictions["final_boxes"]
-        print(f"\n--- Final Bounding Boxes after STTran ---")
+        print("\n--- Final Bounding Boxes after STTran ---")
         print(f"Number of final boxes: {final_boxes.shape[0]}")
         print(f"Final boxes shape: {final_boxes.shape}")
 
@@ -332,7 +332,7 @@ def test_sttran_sgdet(entry, dataset, device):
     # Analyze relationship predictions
     if "pair_idx" in predictions:
         pair_idx = predictions["pair_idx"]
-        print(f"\n--- Relationship Pairs ---")
+        print("\n--- Relationship Pairs ---")
         print(f"Number of pairs: {pair_idx.shape[0]}")
         print(f"Pair indices shape: {pair_idx.shape}")
         if pair_idx.shape[0] > 0:
@@ -341,7 +341,7 @@ def test_sttran_sgdet(entry, dataset, device):
     # Analyze attention distributions
     if "attention_distribution" in predictions:
         attention_dist = predictions["attention_distribution"]
-        print(f"\n--- Attention Relationships ---")
+        print("\n--- Attention Relationships ---")
         print(f"Attention distribution shape: {attention_dist.shape}")
         if attention_dist.numel() > 0:
             attention_scores = torch.softmax(attention_dist, dim=-1)
@@ -364,7 +364,7 @@ def test_sttran_sgdet(entry, dataset, device):
     # Analyze spatial distributions
     if "spatial_distribution" in predictions:
         spatial_dist = predictions["spatial_distribution"]
-        print(f"\n--- Spatial Relationships ---")
+        print("\n--- Spatial Relationships ---")
         print(f"Spatial distribution shape: {spatial_dist.shape}")
         if spatial_dist.numel() > 0:
             spatial_scores = torch.softmax(spatial_dist, dim=-1)
@@ -387,7 +387,7 @@ def test_sttran_sgdet(entry, dataset, device):
     # Analyze contact distributions
     if "contact_distribution" in predictions:
         contact_dist = predictions["contact_distribution"]
-        print(f"\n--- Contact Relationships ---")
+        print("\n--- Contact Relationships ---")
         print(f"Contact distribution shape: {contact_dist.shape}")
         if contact_dist.numel() > 0:
             contact_scores = torch.softmax(contact_dist, dim=-1)
@@ -410,7 +410,7 @@ def test_sttran_sgdet(entry, dataset, device):
     # Show human indices if available
     if "human_idx" in predictions:
         human_idx = predictions["human_idx"]
-        print(f"\n--- Human Detection ---")
+        print("\n--- Human Detection ---")
         print(f"Human indices: {human_idx}")
         if "final_boxes" in predictions and human_idx.numel() > 0:
             for i, h_idx in enumerate(human_idx):
@@ -538,7 +538,7 @@ def test_sttran_sgdet(entry, dataset, device):
                     print("Continuing...")
 
     # Show relationship class information
-    print(f"\n--- Dataset Relationship Classes ---")
+    print("\n--- Dataset Relationship Classes ---")
     print(f"Total relationships: {len(dataset.relationship_classes)}")
     print(f"Attention relationships: {len(dataset.attention_relationships)}")
     print(f"Spatial relationships: {len(dataset.spatial_relationships)}")

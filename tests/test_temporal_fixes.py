@@ -3,8 +3,9 @@
 Test script for temporal sequence tensor handling fixes
 """
 
-import sys
 import os
+import sys
+
 import numpy as np
 import torch
 
