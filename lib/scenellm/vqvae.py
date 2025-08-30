@@ -9,9 +9,31 @@ import torch.nn.functional as F
 
 
 class VQVAEQuantizer(nn.Module):
+    """Vector Quantized Variational AutoEncoder (VQ-VAE) quantizer.
+    
+    Implements discrete latent space quantization for scene representations
+    with codebook learning and commitment loss for stable training.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
+    
     def __init__(
         self, input_dim=2048, dim=1024, codebook_size=8192, commitment_cost=0.25
     ):
+        """Initialize the VQ-VAE quantizer.
+        
+        :param input_dim: Input feature dimension, defaults to 2048
+        :type input_dim: int, optional
+        :param dim: Latent dimension, defaults to 1024
+        :type dim: int, optional
+        :param codebook_size: Size of the discrete codebook, defaults to 8192
+        :type codebook_size: int, optional
+        :param commitment_cost: Weight for commitment loss, defaults to 0.25
+        :type commitment_cost: float, optional
+        :return: None
+        :rtype: None
+        """
         super().__init__()
         self.input_dim = input_dim
         self.dim = dim
@@ -26,7 +48,14 @@ class VQVAEQuantizer(nn.Module):
         # For tracking usage
         self.register_buffer("usage_count", torch.zeros(codebook_size))
 
-    def forward(self, roi_feats):  # [N, input_dim]
+    def forward(self, roi_feats):
+        """Forward pass through VQ-VAE quantizer.
+        
+        :param roi_feats: ROI features tensor of shape [N, input_dim]
+        :type roi_feats: torch.Tensor
+        :return: Tuple containing reconstructed features, reconstruction loss, embedding loss, and commitment loss
+        :rtype: tuple
+        """
         z_e = self.encoder(self.input_projection(roi_feats))  # [N, dim]
         z_e_flat = z_e.view(-1, self.dim)  # [N, D]
         d = (

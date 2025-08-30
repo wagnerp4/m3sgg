@@ -18,7 +18,26 @@ from .vqvae import VQVAEQuantizer
 
 
 class SceneLLM(nn.Module):
+    """SceneLLM model for scene graph generation with language model integration.
+    
+    Combines VQ-VAE quantization, Spatial Information Aggregator (SIA),
+    optimal transport codebook updates, and LoRA-adapted language models
+    for advanced scene graph generation and description.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
+    
     def __init__(self, cfg, dataset):
+        """Initialize the SceneLLM model.
+        
+        :param cfg: Configuration object containing model parameters
+        :type cfg: Config
+        :param dataset: Dataset information for model setup
+        :type dataset: object
+        :return: None
+        :rtype: None
+        """
         super().__init__()
         self.cfg = cfg
         D = cfg.embed_dim
@@ -303,7 +322,29 @@ class SceneLLM(nn.Module):
 
 # Deprecated: Replace with SGG module
 class SGGDecoder(nn.Module):
+    """Scene Graph Generation decoder with transformer architecture.
+    
+    Decodes hidden representations into attention, spatial, and contact
+    relation predictions using transformer encoder and linear heads.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
+    
     def __init__(self, hidden_dim, attn_c, spat_c, cont_c):
+        """Initialize the SGG decoder.
+        
+        :param hidden_dim: Hidden dimension size
+        :type hidden_dim: int
+        :param attn_c: Number of attention relation classes
+        :type attn_c: int
+        :param spat_c: Number of spatial relation classes
+        :type spat_c: int
+        :param cont_c: Number of contact relation classes
+        :type cont_c: int
+        :return: None
+        :rtype: None
+        """
         super().__init__()
         self.transformer = nn.TransformerEncoder(
             nn.TransformerEncoderLayer(hidden_dim, 8), 3
@@ -312,7 +353,14 @@ class SGGDecoder(nn.Module):
         self.spat_head = nn.Linear(hidden_dim, spat_c)
         self.cont_head = nn.Linear(hidden_dim, cont_c)
 
-    def forward(self, seq):  # [B,T,D]
+    def forward(self, seq):
+        """Forward pass through the SGG decoder.
+        
+        :param seq: Input sequence tensor of shape [B, T, D]
+        :type seq: torch.Tensor
+        :return: Dictionary containing attention, spatial, and contact predictions
+        :rtype: dict
+        """
         h = self.transformer(seq)  # temporal reasoning
         g = h.mean(1)  # video-level node
         return {

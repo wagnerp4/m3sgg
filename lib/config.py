@@ -3,9 +3,28 @@ from argparse import ArgumentParser
 
 BATCHNORM_MOMENTUM = 0.01
 
-
 class Config(object):
+    """Configuration class for scene graph generation model training and evaluation.
+    
+    This class manages all configuration parameters for different model architectures
+    including STTRAN, STKET, Tempura, EASG, and SceneLLM. It handles command-line
+    argument parsing and sets appropriate defaults for training, evaluation, and
+    inference modes.
+    
+    :param object: Base object class
+    :type object: class
+    """
+    
     def __init__(self):
+        """Initialize the configuration object with default parameters and command-line argument parsing.
+        
+        Sets up all default model parameters, dataset paths, training hyperparameters,
+        and model-specific configurations for different architectures including STTRAN,
+        STKET, Tempura, EASG, and SceneLLM.
+        
+        :return: None
+        :rtype: None
+        """
         self.mode = None
         self.save_path = None
         self.model_path = None
@@ -74,7 +93,6 @@ class Config(object):
         self.eos_coef = 1
         self.obj_con_loss = None
         self.lambda_con = 1
-
         self.tracking = True
 
         # SceneLLM specific defaults
@@ -82,17 +100,17 @@ class Config(object):
         self.codebook_size = 8192
         self.commitment_cost = 0.25
         self.llm_name = "google/gemma-2-2b"
-        self.lora_r = 16
-        self.lora_alpha = 32
-        self.lora_dropout = 0.05
+        self.lora_r = 16 # test [16, 32, 64, 128, 256]
+        self.lora_alpha = 32 # test [32, 64, 128, 256, 512]
+        self.lora_dropout = 0.05 # test [0.05, 0.1, 0.2, 0.3, 0.4]
         self.ot_step = 512
-        self.vqvae_epochs = 5
+        self.vqvae_epochs = 5 # test [5, 10, 15, 20, 25]
         self.stage1_iterations = 30000
-        self.stage2_iterations = 50000
-        self.alpha_obj = 1.0
-        self.alpha_rel = 1.0
+        self.stage2_iterations = 50000 # test [50000, 100000, 150000, 200000, 250000]
+        self.alpha_obj = 1.0 # test [1.0, 1.5, 2.0, 2.5, 3.0]
+        self.alpha_rel = 1.0 # test [1.0, 1.5, 2.0, 2.5, 3.0]
 
-        # Matcher logic
+        # Matcher logic TODO: remove this
         if self.model_type == "dsg-detr":
             self.use_matcher = True
         if self.model_type == "sttran":
@@ -108,6 +126,15 @@ class Config(object):
             self.use_matcher = False
 
     def setup_parser(self):
+        """Set up command-line argument parser for training configuration.
+        
+        Creates and configures an ArgumentParser with all available command-line
+        options for model training, including dataset selection, model type,
+        hyperparameters, and architecture-specific settings.
+        
+        :return: Configured ArgumentParser instance
+        :rtype: ArgumentParser
+        """
         parser = ArgumentParser(description="training code")
         parser.add_argument(
             "-mode",

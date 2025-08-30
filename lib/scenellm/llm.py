@@ -18,23 +18,37 @@ except ImportError:
 
 
 class SceneLLMLoRA(nn.Module):
+    """SceneLLM with LoRA (Low-Rank Adaptation) for efficient fine-tuning.
+    
+    Implements LoRA adaptation on language models for scene graph generation
+    with fallback support when transformers library is unavailable.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
+    
     def __init__(
         self,
-        model_name,  # meta-llama/Llama-2-7b-hf google/gemma-2-2b google/gemma-3-270m
-        fallback_dim=None,  # Required when transformers is not available
+        model_name,
+        fallback_dim=None,
         r=16,
         alpha=32,
-        dropout=0.05,  # why so low?
-    ):  # gemma-3-270m
-        """
-        Implementation of SceneLLM paper with fallback support.
-        # TODO: gemma, oss, llama2-4,
-        Args:
-            model_name (str, optional): _description_. Defaults to "meta-llama/Llama-2-7b-hf".
-            fallback_dim (int, optional): Dimension for fallback linear layer when transformers unavailable.
-            r (int, optional): _description_. Defaults to 16.
-            alpha (int, optional): _description_. Defaults to 32.
-            dropout (_type_, optional): _description_. Defaults to 0.05#whysolow?.
+        dropout=0.05,
+    ):
+        """Initialize SceneLLM with LoRA adaptation.
+        
+        :param model_name: Name of the base language model (e.g., 'google/gemma-2-2b')
+        :type model_name: str
+        :param fallback_dim: Dimension for fallback when transformers unavailable, defaults to None
+        :type fallback_dim: int, optional
+        :param r: LoRA rank parameter, defaults to 16
+        :type r: int, optional
+        :param alpha: LoRA alpha parameter, defaults to 32
+        :type alpha: int, optional
+        :param dropout: LoRA dropout rate, defaults to 0.05
+        :type dropout: float, optional
+        :return: None
+        :rtype: None
         """
         super().__init__()
         if TRANSFORMERS_AVAILABLE and model_name is not None:

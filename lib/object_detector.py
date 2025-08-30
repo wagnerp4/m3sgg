@@ -15,7 +15,28 @@ from lib.funcs import assign_relations
 
 
 class detector(nn.Module):
+    """Object detector module for scene graph generation.
+    
+    Implements object detection functionality using Faster R-CNN backbone
+    for scene graph generation tasks including predcls, sgcls, and sgdet modes.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
     def __init__(self, train, object_classes, use_SUPPLY, mode="predcls"):
+        """Initialize the object detector.
+        
+        :param train: Whether in training mode
+        :type train: bool
+        :param object_classes: List of object class names
+        :type object_classes: list
+        :param use_SUPPLY: Whether to use SUPPLY relations
+        :type use_SUPPLY: bool
+        :param mode: Detection mode ('predcls', 'sgcls', 'sgdet'), defaults to "predcls"
+        :type mode: str, optional
+        :return: None
+        :rtype: None
+        """
         super(detector, self).__init__()
 
         # self.is_train = train

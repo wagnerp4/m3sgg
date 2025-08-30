@@ -556,14 +556,9 @@ def test_sttran_sgdet(entry, dataset, device):
 
 
 def main():
-    """Main function to run both R-CNN backbone and STTran tests"""
     print("Starting comprehensive R-CNN backbone and STTran testing...")
-
-    # Test R-CNN backbone first
     entry = test_rcnn_backbone()
-
     if entry is not None:
-        # Initialize dataset for STTran testing
         dataset = AG(
             mode="test",
             datasize="large",
@@ -571,24 +566,14 @@ def main():
             filter_nonperson_box_frame=True,
             filter_small_box=False,
         )
-
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-        # Test STTran with sgdet mode
         predictions = test_sttran_sgdet(entry, dataset, device)
-
         if predictions is not None:
-            print("\n" + "=" * 60)
-            print("✓ All tests completed successfully!")
-            print("=" * 60)
+            print("All tests completed successfully!")
         else:
-            print("\n" + "=" * 60)
-            print("✗ STTran testing failed")
-            print("=" * 60)
+            print("STTran testing failed")
     else:
-        print("\n" + "=" * 60)
-        print("✗ R-CNN backbone testing failed")
-        print("=" * 60)
+        print("R-CNN backbone testing failed")
 
 
 if __name__ == "__main__":

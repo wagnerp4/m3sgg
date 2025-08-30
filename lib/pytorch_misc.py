@@ -14,6 +14,18 @@ from torch.autograd import Variable
 
 
 def optimistic_restore(network, state_dict):
+    """Optimistically restore network weights from state dictionary.
+    
+    Attempts to load weights from state_dict into network, handling size mismatches
+    gracefully by skipping incompatible parameters.
+    
+    :param network: Neural network to restore weights to
+    :type network: torch.nn.Module
+    :param state_dict: State dictionary containing weights
+    :type state_dict: dict
+    :return: Whether any mismatches were found
+    :rtype: bool
+    """
     mismatch = False
     own_state = network.state_dict()
     for name, param in state_dict.items():
@@ -162,14 +174,18 @@ def load_net(fname, net):
 
 
 def batch_index_iterator(len_l, batch_size, skip_end=True):
-    """
-    Provides indices that iterate over a list
-    :param len_l: int representing size of thing that we will
-        iterate over
-    :param batch_size: size of each batch
-    :param skip_end: if true, don't iterate over the last batch
-    :return: A generator that returns (start, end) tuples
-        as it goes through all batches
+    """Provides indices that iterate over a list in batches.
+    
+    Creates a generator that yields (start, end) tuples for batch processing.
+    
+    :param len_l: Size of the list to iterate over
+    :type len_l: int
+    :param batch_size: Size of each batch
+    :type batch_size: int
+    :param skip_end: Whether to skip the last incomplete batch, defaults to True
+    :type skip_end: bool, optional
+    :return: Generator yielding (start, end) tuples for each batch
+    :rtype: Generator[tuple, None, None]
     """
     iterate_until = len_l
     if skip_end:
@@ -180,13 +196,18 @@ def batch_index_iterator(len_l, batch_size, skip_end=True):
 
 
 def batch_map(f, a, batch_size):
-    """
-    Maps f over the array a in chunks of batch_size.
-    :param f: function to be applied. Must take in a block of
-            (batch_size, dim_a) and map it to (batch_size, something).
-    :param a: Array to be applied over of shape (num_rows, dim_a).
-    :param batch_size: size of each array
-    :return: Array of size (num_rows, something).
+    """Maps a function over an array in chunks of specified batch size.
+    
+    Applies function f to array a in batches to manage memory usage.
+    
+    :param f: Function to apply, must take (batch_size, dim_a) and return (batch_size, something)
+    :type f: callable
+    :param a: Array to process of shape (num_rows, dim_a)
+    :type a: torch.Tensor
+    :param batch_size: Size of each processing batch
+    :type batch_size: int
+    :return: Processed array of shape (num_rows, something)
+    :rtype: torch.Tensor
     """
     rez = []
     for s, e in batch_index_iterator(a.size(0), batch_size, skip_end=False):
@@ -357,11 +378,14 @@ def enumerate_imsize(im_sizes):
 
 
 def argsort_desc(scores):
-    """
-    Returns the indices that sort scores descending in a smart way
-    :param scores: Numpy array of arbitrary size
-    :return: an array of size [numel(scores), dim(scores)] where each row is the index you'd
-             need to get the score.
+    """Returns indices that sort scores in descending order.
+    
+    Computes indices for descending sort across arbitrary dimensional arrays.
+    
+    :param scores: Array of arbitrary size to sort
+    :type scores: numpy.ndarray
+    :return: Array of indices for descending sort, shape [numel(scores), dim(scores)]
+    :rtype: numpy.ndarray
     """
     return np.column_stack(np.unravel_index(np.argsort(-scores.ravel()), scores.shape))
 

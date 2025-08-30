@@ -9,6 +9,14 @@ from lib.ults.pytorch_misc import argsort_desc, intersect_2d
 
 
 class BasicSceneGraphEvaluator:
+    """Evaluator for scene graph generation tasks.
+    
+    Computes recall metrics for scene graph generation across different tasks
+    (predcls, sgcls, sgdet) and handles constraint evaluation modes.
+    
+    :param object: Base object class
+    :type object: class
+    """
     def __init__(
         self,
         mode,
@@ -22,6 +30,31 @@ class BasicSceneGraphEvaluator:
         semithreshold=None,
         logger=None,
     ):
+        """Initialize the scene graph evaluator.
+        
+        :param mode: Evaluation mode ('predcls', 'sgcls', or 'sgdet')
+        :type mode: str
+        :param AG_object_classes: List of object class names
+        :type AG_object_classes: list
+        :param AG_all_predicates: List of all predicate names
+        :type AG_all_predicates: list
+        :param AG_attention_predicates: List of attention predicate names
+        :type AG_attention_predicates: list
+        :param AG_spatial_predicates: List of spatial predicate names
+        :type AG_spatial_predicates: list
+        :param AG_contacting_predicates: List of contacting predicate names
+        :type AG_contacting_predicates: list
+        :param iou_threshold: IoU threshold for evaluation, defaults to 0.5
+        :type iou_threshold: float, optional
+        :param constraint: Whether to use constraint evaluation, defaults to False
+        :type constraint: bool, optional
+        :param semithreshold: Semi-constraint threshold, defaults to None
+        :type semithreshold: float, optional
+        :param logger: Logger instance, defaults to None
+        :type logger: logging.Logger, optional
+        :return: None
+        :rtype: None
+        """
         self.result_dict = {}
         self.mode = mode
         self.result_dict[self.mode + "_recall"] = {10: [], 20: [], 50: [], 100: []}
@@ -449,19 +482,33 @@ def evaluate_recall(
     iou_thresh=0.5,
     phrdet=False,
 ):
-    """
-    Evaluates the recall
-    :param gt_rels: [#gt_rel, 3] array of GT relations
-    :param gt_boxes: [#gt_box, 4] array of GT boxes
-    :param gt_classes: [#gt_box] array of GT classes
-    :param pred_rels: [#pred_rel, 3] array of pred rels. Assumed these are in sorted order
-                      and refer to IDs in pred classes / pred boxes
-                      (id0, id1, rel)
-    :param pred_boxes:  [#pred_box, 4] array of pred boxes
-    :param pred_classes: [#pred_box] array of predicted classes for these boxes
-    :return: pred_to_gt: Matching from predicate to GT
-             pred_5ples: the predicted (id0, id1, cls0, cls1, rel)
-             rel_scores: [cls_0score, cls1_score, relscore]
+    """Evaluates recall metrics for scene graph generation.
+    
+    Computes recall by matching predicted relations to ground truth relations
+    based on object detection IoU and relation class matching.
+    
+    :param gt_rels: Ground truth relations array of shape [#gt_rel, 3]
+    :type gt_rels: numpy.ndarray
+    :param gt_boxes: Ground truth bounding boxes of shape [#gt_box, 4]
+    :type gt_boxes: numpy.ndarray
+    :param gt_classes: Ground truth object classes of shape [#gt_box]
+    :type gt_classes: numpy.ndarray
+    :param pred_rels: Predicted relations array of shape [#pred_rel, 3] (id0, id1, rel)
+    :type pred_rels: numpy.ndarray
+    :param pred_boxes: Predicted bounding boxes of shape [#pred_box, 4]
+    :type pred_boxes: numpy.ndarray
+    :param pred_classes: Predicted object classes of shape [#pred_box]
+    :type pred_classes: numpy.ndarray
+    :param rel_scores: Relation scores, defaults to None
+    :type rel_scores: numpy.ndarray, optional
+    :param cls_scores: Classification scores, defaults to None
+    :type cls_scores: numpy.ndarray, optional
+    :param iou_thresh: IoU threshold for matching, defaults to 0.5
+    :type iou_thresh: float, optional
+    :param phrdet: Whether to use phrase detection mode, defaults to False
+    :type phrdet: bool, optional
+    :return: Tuple containing predicate-to-GT matching, predicted 5-tuples, and relation scores
+    :rtype: tuple
     """
     if pred_rels.size == 0:
         return [[]], np.zeros((0, 5)), np.zeros(0)

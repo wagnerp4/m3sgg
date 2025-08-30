@@ -22,7 +22,6 @@ fasterRCNN/models/faster_rcnn_ag.pth
 - DSG-DETR
 - STKET
 - Tempura
-- SceneLLM
 - OED
 - SceneLLM (new)
 
@@ -102,13 +101,40 @@ output/
         └── predictions.csv
 ```
 
-# Demo Application:
+# Demo Applications:
+
+## Streamlit Web App (Recommended)
+Start the modern web-based interface:
+```powershell
+streamlit run app.py
+```
+The application will open at `http://localhost:8501` and features:
+- **Video Upload**: Support for MP4, AVI, MOV, and MKV formats
+- **Real-time Processing**: Live scene graph generation with progress tracking
+- **Interactive Visualizations**: Dynamic charts showing objects and relationships over time
+- **Model Selection**: Choose from available trained checkpoints
+- **Export Options**: Download results in multiple formats
+
+### Getting Started with Streamlit App
+1. Ensure you have a trained model checkpoint in the `output/` directory
+2. Run `streamlit run app.py` 
+   - The app uses pre-configured settings (port 8501, 200MB upload limit)
+   - Modify `.streamlit/config.toml` if you need different settings (see `.streamlit/config.toml.template` for all options)
+3. Select your model from the sidebar dropdown
+4. Upload a video file (MP4, AVI, MOV, MKV)
+5. Click "Generate Scene Graph" to start processing
+6. View real-time results and interactive visualizations
+
+## PyQt5 GUI (Legacy)
 ```
 python scripts/core/gui.py
 ```
 
-## GUI dependencies
+## Dependencies
+The following dependencies are automatically handled via `pyproject.toml`:
 ```
+streamlit>=1.29.0
+plotly>=5.17.0
 PyQt5>=5.15.0
 opencv-python>=4.5.0
 matplotlib>=3.5.0

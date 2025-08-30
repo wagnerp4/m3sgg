@@ -5,7 +5,29 @@ import torch.nn as nn
 
 
 class TransformerEncoderLayer(nn.Module):
+    """Transformer encoder layer with multi-head attention and feed-forward network.
+    
+    Implements a single layer of the transformer encoder with self-attention mechanism,
+    layer normalization, and position-wise feed-forward network.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
+    
     def __init__(self, embed_dim=1936, nhead=4, dim_feedforward=2048, dropout=0.1):
+        """Initialize the transformer encoder layer.
+        
+        :param embed_dim: Embedding dimension, defaults to 1936
+        :type embed_dim: int, optional
+        :param nhead: Number of attention heads, defaults to 4
+        :type nhead: int, optional
+        :param dim_feedforward: Dimension of feed-forward network, defaults to 2048
+        :type dim_feedforward: int, optional
+        :param dropout: Dropout probability, defaults to 0.1
+        :type dropout: float, optional
+        :return: None
+        :rtype: None
+        """
         super().__init__()
         self.self_attn = nn.MultiheadAttention(embed_dim, nhead, dropout=dropout)
 
@@ -19,6 +41,15 @@ class TransformerEncoderLayer(nn.Module):
         self.dropout2 = nn.Dropout(dropout)
 
     def forward(self, src, input_key_padding_mask):
+        """Forward pass through the transformer encoder layer.
+        
+        :param src: Source sequence tensor
+        :type src: torch.Tensor
+        :param input_key_padding_mask: Mask for padding tokens
+        :type input_key_padding_mask: torch.Tensor
+        :return: Transformed sequence and attention weights
+        :rtype: tuple
+        """
         # local attention
         src2, local_attention_weights = self.self_attn(
             src, src, src, key_padding_mask=input_key_padding_mask
@@ -34,7 +65,29 @@ class TransformerEncoderLayer(nn.Module):
 
 
 class TransformerDecoderLayer(nn.Module):
+    """Transformer decoder layer with masked self-attention and cross-attention.
+    
+    Implements a single layer of the transformer decoder with masked self-attention,
+    encoder-decoder attention, and position-wise feed-forward network.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
+    
     def __init__(self, embed_dim=1936, nhead=4, dim_feedforward=2048, dropout=0.1):
+        """Initialize the transformer decoder layer.
+        
+        :param embed_dim: Embedding dimension, defaults to 1936
+        :type embed_dim: int, optional
+        :param nhead: Number of attention heads, defaults to 4
+        :type nhead: int, optional
+        :param dim_feedforward: Dimension of feed-forward network, defaults to 2048
+        :type dim_feedforward: int, optional
+        :param dropout: Dropout probability, defaults to 0.1
+        :type dropout: float, optional
+        :return: None
+        :rtype: None
+        """
         super().__init__()
 
         self.multihead2 = nn.MultiheadAttention(embed_dim, nhead, dropout=dropout)

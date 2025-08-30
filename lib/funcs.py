@@ -5,14 +5,19 @@ from lib.fpn.box_utils import bbox_overlaps
 
 
 def assign_relations(prediction, gt_annotations, assign_IOU_threshold):
-    """
-    :param prediction(list): results from FasterRCNN, each element is a dictionary including the predicted boxes,
-                            labels, scores, base_feature(image), features(rois), im_info (w,h,scale)
-    :param gt_annotations(list):  ground-truth, each element is a list including person info(always element 0) and objects
-    :param assign_IOU_threshold: hyperparameter for SGDET, 0.5
-    :return: DETECTOR_FOUND_IDX
-             GT_RELATIONS
-             SUPPLY_RELATIONS
+    """Assign relations between predicted detections and ground truth annotations.
+    
+    Matches predicted bounding boxes with ground truth annotations based on IoU threshold
+    and prepares relation data for scene graph generation training.
+    
+    :param prediction: Results from FasterRCNN containing predicted boxes, labels, scores, and features
+    :type prediction: dict
+    :param gt_annotations: Ground-truth annotations with person info and objects
+    :type gt_annotations: list
+    :param assign_IOU_threshold: IoU threshold for assignment (typically 0.5 for SGDET)
+    :type assign_IOU_threshold: float
+    :return: Tuple containing detector found indices, ground truth relations, and supply relations
+    :rtype: tuple
     """
     FINAL_BBOXES = prediction["FINAL_BBOXES"]
     FINAL_LABELS = prediction["FINAL_LABELS"]

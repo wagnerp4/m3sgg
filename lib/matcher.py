@@ -4,11 +4,14 @@ from scipy.optimize import linear_sum_assignment
 
 
 class HungarianMatcher(nn.Module):
-    """
-    This class computes an assignment between the targets and the predictions of the network
-    For efficiency reasons, the targets don't include the no_object. Because of this, in general,
-    there are more predictions than targets. In this case, we do a 1-to-1 matching of the best predictions,
-    while the others are un-matched (and thus treated as no-object).
+    """Hungarian algorithm-based matcher for object detection.
+    
+    Computes an assignment between targets and network predictions using the Hungarian algorithm.
+    For efficiency, targets don't include no-object class. When there are more predictions than
+    targets, performs 1-to-1 matching of best predictions while treating others as no-object.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
     """
 
     def __init__(
@@ -18,12 +21,18 @@ class HungarianMatcher(nn.Module):
         cost_giou: float = 1,
         cost_iou: float = 1,
     ):
-        """Creates the matcher
-
-        Params:
-            cost_class: This is the relative weight of the classification error in the matching cost
-            cost_bbox: This is the relative weight of the L1 error of the bounding box coordinates in the matching cost
-            cost_giou: This is the relative weight of the giou loss of the bounding box in the matching cost
+        """Initialize the Hungarian matcher.
+        
+        :param cost_class: Relative weight of classification error in matching cost, defaults to 1
+        :type cost_class: float, optional
+        :param cost_bbox: Relative weight of L1 error of bounding box coordinates, defaults to 1
+        :type cost_bbox: float, optional
+        :param cost_giou: Relative weight of GIoU loss of bounding box, defaults to 1
+        :type cost_giou: float, optional
+        :param cost_iou: Relative weight of IoU loss of bounding box, defaults to 1
+        :type cost_iou: float, optional
+        :return: None
+        :rtype: None
         """
         super().__init__()
         self.cost_class = cost_class
@@ -36,6 +45,15 @@ class HungarianMatcher(nn.Module):
 
     @torch.no_grad()
     def forward(self, outputs, targets):
+        """Perform the matching between predictions and targets.
+        
+        :param outputs: Dictionary containing model predictions
+        :type outputs: dict
+        :param targets: List of targets (ground truth)
+        :type targets: list
+        :return: List of tuples (index_i, index_j) where index_i is indices of selected predictions and index_j is indices of corresponding selected targets
+        :rtype: list
+        """
         """Performs the matching
 
         Params:

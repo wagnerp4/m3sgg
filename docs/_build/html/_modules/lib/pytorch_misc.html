@@ -1,0 +1,745 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lib.pytorch_misc &mdash; DLHM VidSGG 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0a84b5b7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=30646c52"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            DLHM VidSGG
+              <img src="../../_static/tum-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../training.html">Training Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../evaluation.html">Evaluation Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Additional Information:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">DLHM VidSGG</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">lib.pytorch_misc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for lib.pytorch_misc</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Miscellaneous functions that might be useful for pytorch</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">tee</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">dill</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pkl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.autograd</span><span class="w"> </span><span class="kn">import</span> <span class="n">Variable</span>
+
+
+<div class="viewcode-block" id="optimistic_restore">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.optimistic_restore">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">optimistic_restore</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimistically restore network weights from state dictionary.</span>
+<span class="sd">    </span>
+<span class="sd">    Attempts to load weights from state_dict into network, handling size mismatches</span>
+<span class="sd">    gracefully by skipping incompatible parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    :param network: Neural network to restore weights to</span>
+<span class="sd">    :type network: torch.nn.Module</span>
+<span class="sd">    :param state_dict: State dictionary containing weights</span>
+<span class="sd">    :type state_dict: dict</span>
+<span class="sd">    :return: Whether any mismatches were found</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mismatch</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">own_state</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">own_state</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Unexpected key </span><span class="si">{}</span><span class="s2"> in state_dict with size </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">mismatch</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">param</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n">own_state</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">():</span>
+            <span class="n">own_state</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Network has </span><span class="si">{}</span><span class="s2"> with size </span><span class="si">{}</span><span class="s2">, ckpt has </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">name</span><span class="p">,</span> <span class="n">own_state</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">param</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">mismatch</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">missing</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">own_state</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;We couldn&#39;t find </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)))</span>
+        <span class="n">mismatch</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">mismatch</span></div>
+
+
+
+<div class="viewcode-block" id="pairwise">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.pairwise">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pairwise</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
+    <span class="s2">&quot;s -&gt; (s0,s1), (s1,s2), (s2, s3), ...&quot;</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">tee</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="nb">next</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_ranking">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.get_ranking">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ranking</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">num_guesses</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a matrix of predictions and labels for the correct ones, get the number of guesses</span>
+<span class="sd">    required to get the prediction right per example.</span>
+<span class="sd">    :param predictions: [batch_size, range_size] predictions</span>
+<span class="sd">    :param labels: [batch_size] array of labels</span>
+<span class="sd">    :param num_guesses: Number of guesses to return</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">labels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">predictions</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">labels</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">predictions</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
+
+    <span class="n">values</span><span class="p">,</span> <span class="n">full_guesses</span> <span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">predictions</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">ranking</span> <span class="o">=</span> <span class="n">full_guesses</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">full_guesses</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">gt_ranks</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">ranking</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">labels</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+    <span class="n">guesses</span> <span class="o">=</span> <span class="n">full_guesses</span><span class="p">[:,</span> <span class="p">:</span><span class="n">num_guesses</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">gt_ranks</span><span class="p">,</span> <span class="n">guesses</span></div>
+
+
+
+<div class="viewcode-block" id="cache">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.cache">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cache</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Caches a computation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">cache_wrapper</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">pkl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;file </span><span class="si">{}</span><span class="s2"> not found, so rebuilding&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fn</span><span class="p">))</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">pkl</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">return</span> <span class="n">cache_wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="Flattener">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.Flattener">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Flattener</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="Flattener.__init__">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.Flattener.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Flattens last 3 dimensions to make it only batch size, -ĺeftright</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Flattener</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Flattener.forward">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.Flattener.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="to_variable">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.to_variable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_variable</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator that pushes all the outputs to a variable</span>
+<span class="sd">    :param f:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">variable_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">rez</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rez</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">Variable</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rez</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">Variable</span><span class="p">(</span><span class="n">rez</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">variable_wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="arange">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.arange">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">arange</span><span class="p">(</span><span class="n">base_tensor</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">new_size</span> <span class="o">=</span> <span class="n">base_tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">n</span>
+    <span class="n">new_vec</span> <span class="o">=</span> <span class="n">base_tensor</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">new_size</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">new_size</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">new_vec</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_vec</span></div>
+
+
+
+<div class="viewcode-block" id="to_onehot">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.to_onehot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_onehot</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a [size, num_classes] torch FloatTensor where</span>
+<span class="sd">    one_hot[i, vec[i]] = fill</span>
+
+<span class="sd">    :param vec: 1d torch tensor</span>
+<span class="sd">    :param num_classes: int</span>
+<span class="sd">    :param fill: value that we want + and - things to be.</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">onehot_result</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">vec</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">num_classes</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="o">-</span><span class="n">fill</span><span class="p">)</span>
+    <span class="n">arange_inds</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">vec</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">vec</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">arange_inds</span><span class="p">)</span>
+
+    <span class="n">onehot_result</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="n">vec</span> <span class="o">+</span> <span class="n">num_classes</span> <span class="o">*</span> <span class="n">arange_inds</span><span class="p">]</span> <span class="o">=</span> <span class="n">fill</span>
+    <span class="k">return</span> <span class="n">onehot_result</span></div>
+
+
+
+<div class="viewcode-block" id="save_net">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.save_net">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_net</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">net</span><span class="p">):</span>
+    <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="load_net">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.load_net">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_net</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">net</span><span class="p">):</span>
+    <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="n">param</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">h5f</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">!=</span> <span class="n">param</span><span class="o">.</span><span class="n">size</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;On k=</span><span class="si">{}</span><span class="s2"> desired size is </span><span class="si">{}</span><span class="s2"> but supplied </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">param</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">param</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="batch_index_iterator">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.batch_index_iterator">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">batch_index_iterator</span><span class="p">(</span><span class="n">len_l</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">skip_end</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provides indices that iterate over a list in batches.</span>
+<span class="sd">    </span>
+<span class="sd">    Creates a generator that yields (start, end) tuples for batch processing.</span>
+<span class="sd">    </span>
+<span class="sd">    :param len_l: Size of the list to iterate over</span>
+<span class="sd">    :type len_l: int</span>
+<span class="sd">    :param batch_size: Size of each batch</span>
+<span class="sd">    :type batch_size: int</span>
+<span class="sd">    :param skip_end: Whether to skip the last incomplete batch, defaults to True</span>
+<span class="sd">    :type skip_end: bool, optional</span>
+<span class="sd">    :return: Generator yielding (start, end) tuples for each batch</span>
+<span class="sd">    :rtype: Generator[tuple, None, None]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">iterate_until</span> <span class="o">=</span> <span class="n">len_l</span>
+    <span class="k">if</span> <span class="n">skip_end</span><span class="p">:</span>
+        <span class="n">iterate_until</span> <span class="o">=</span> <span class="p">(</span><span class="n">len_l</span> <span class="o">//</span> <span class="n">batch_size</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span>
+
+    <span class="k">for</span> <span class="n">b_start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">iterate_until</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="p">(</span><span class="n">b_start</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">b_start</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">len_l</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="batch_map">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.batch_map">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">batch_map</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maps a function over an array in chunks of specified batch size.</span>
+<span class="sd">    </span>
+<span class="sd">    Applies function f to array a in batches to manage memory usage.</span>
+<span class="sd">    </span>
+<span class="sd">    :param f: Function to apply, must take (batch_size, dim_a) and return (batch_size, something)</span>
+<span class="sd">    :type f: callable</span>
+<span class="sd">    :param a: Array to process of shape (num_rows, dim_a)</span>
+<span class="sd">    :type a: torch.Tensor</span>
+<span class="sd">    :param batch_size: Size of each processing batch</span>
+<span class="sd">    :type batch_size: int</span>
+<span class="sd">    :return: Processed array of shape (num_rows, something)</span>
+<span class="sd">    :rtype: torch.Tensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rez</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">batch_index_iterator</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">skip_end</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calling on </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">s</span><span class="p">:</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">()))</span>
+        <span class="n">rez</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">s</span><span class="p">:</span><span class="n">e</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">rez</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="const_row">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.const_row">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">const_row</span><span class="p">(</span><span class="n">fill</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">volatile</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">input_tok</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">([</span><span class="n">fill</span><span class="p">]</span> <span class="o">*</span> <span class="n">l</span><span class="p">),</span> <span class="n">volatile</span><span class="o">=</span><span class="n">volatile</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">input_tok</span> <span class="o">=</span> <span class="n">input_tok</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">input_tok</span></div>
+
+
+
+<div class="viewcode-block" id="print_para">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.print_para">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_para</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prints parameters of a model</span>
+<span class="sd">    :param opt:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">st</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">strings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">total_params</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">p_name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;bias&quot;</span> <span class="ow">in</span> <span class="n">p_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;bn&quot;</span> <span class="ow">in</span> <span class="n">p_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">st</span><span class="p">[</span><span class="n">p_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">size</span><span class="p">()],</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">size</span><span class="p">()),</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">total_params</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">p_name</span><span class="p">,</span> <span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="n">p_req_grad</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">{:&lt;50s}</span><span class="s2">: </span><span class="si">{:&lt;16s}</span><span class="s2">(</span><span class="si">{:8d}</span><span class="s2">) (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">p_name</span><span class="p">,</span>
+                <span class="s2">&quot;[</span><span class="si">{}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">size</span><span class="p">)),</span>
+                <span class="n">prod</span><span class="p">,</span>
+                <span class="s2">&quot;grad&quot;</span> <span class="k">if</span> <span class="n">p_req_grad</span> <span class="k">else</span> <span class="s2">&quot;    &quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="si">{:.1f}</span><span class="s2">M total parameters </span><span class="se">\n</span><span class="s2"> ----- </span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">total_params</span> <span class="o">/</span> <span class="mf">1000000.0</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="accuracy">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.accuracy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">accuracy</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the precision@k for the specified values of k&quot;&quot;&quot;</span>
+    <span class="n">maxk</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">topk</span><span class="p">)</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">maxk</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+    <span class="n">correct</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">topk</span><span class="p">:</span>
+        <span class="n">correct_k</span> <span class="o">=</span> <span class="n">correct</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">correct_k</span><span class="o">.</span><span class="n">mul_</span><span class="p">(</span><span class="mf">100.0</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="nonintersecting_2d_inds">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.nonintersecting_2d_inds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nonintersecting_2d_inds</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns np.array([(a,b) for a in range(x) for b in range(x) if a != b]) efficiently</span>
+<span class="sd">    :param x: Size</span>
+<span class="sd">    :return: a x*(x-ĺeftright) array that is [(0,ĺeftright), (0,2.0)... (0, x-ĺeftright), (ĺeftright,0), (ĺeftright,2.0), ..., (x-ĺeftright, x-2.0)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rs</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
+    <span class="n">relations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rs</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">relations</span></div>
+
+
+
+<div class="viewcode-block" id="intersect_2d">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.intersect_2d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">intersect_2d</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given two arrays [m1, n], [m2,n], returns a [m1, m2] array where each entry is True if those</span>
+<span class="sd">    rows match.</span>
+<span class="sd">    :param x1: [m1, n] numpy array</span>
+<span class="sd">    :param x2: [m2, n] numpy array</span>
+<span class="sd">    :return: [m1, m2] bool array of the intersections</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">x2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input arrays must have same #columns&quot;</span><span class="p">)</span>
+
+    <span class="c1"># This performs a matrix multiplication-esque thing between the two arrays</span>
+    <span class="c1"># Instead of summing, we want the equality, so we reduce in that way</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">==</span> <span class="n">x2</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="np_to_variable">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.np_to_variable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">np_to_variable</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">is_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">):</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">dtype</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">is_cuda</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">v</span></div>
+
+
+
+<div class="viewcode-block" id="gather_nd">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.gather_nd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gather_nd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param x: n dimensional tensor [x0, x1, x2, ... x{n-ĺeftright}, dim]</span>
+<span class="sd">    :param index: [num, n-ĺeftright] where each row contains the indices we&#39;ll use</span>
+<span class="sd">    :return: [num, dim]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nd</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">nd</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">index</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">nd</span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">sel_inds</span> <span class="o">=</span> <span class="n">index</span><span class="p">[:,</span> <span class="n">nd</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">mult_factor</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">nd</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nd</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>  <span class="c1"># [n-2.0, n-3, ..., ĺeftright, 0]</span>
+        <span class="n">sel_inds</span> <span class="o">+=</span> <span class="n">index</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">mult_factor</span>
+        <span class="n">mult_factor</span> <span class="o">*=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+    <span class="n">grouped</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="p">)[</span><span class="n">sel_inds</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">grouped</span></div>
+
+
+
+<div class="viewcode-block" id="enumerate_by_image">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.enumerate_by_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">enumerate_by_image</span><span class="p">(</span><span class="n">im_inds</span><span class="p">):</span>
+    <span class="n">im_inds_np</span> <span class="o">=</span> <span class="n">im_inds</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">initial_ind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">im_inds_np</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">im_inds_np</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">!=</span> <span class="n">initial_ind</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">initial_ind</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">i</span>
+            <span class="n">initial_ind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="k">yield</span> <span class="n">initial_ind</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">im_inds_np</span><span class="p">)</span></div>
+
+    <span class="c1"># num_im = im_inds[-ĺeftright] + ĺeftright</span>
+    <span class="c1"># # print(&quot;Num im is {}&quot;.format(num_im))</span>
+    <span class="c1"># for i in range(num_im):</span>
+    <span class="c1">#     # print(&quot;On i={}&quot;.format(i))</span>
+    <span class="c1">#     inds_i = (im_inds == i).nonzero()</span>
+    <span class="c1">#     if inds_i.dim() == 0:</span>
+    <span class="c1">#         continue</span>
+    <span class="c1">#     inds_i = inds_i.squeeze(ĺeftright)</span>
+    <span class="c1">#     s = inds_i[0]</span>
+    <span class="c1">#     e = inds_i[-ĺeftright] + ĺeftright</span>
+    <span class="c1">#     # print(&quot;On i={} we have s={} e={}&quot;.format(i, s, e))</span>
+    <span class="c1">#     yield i, s, e</span>
+
+
+<div class="viewcode-block" id="diagonal_inds">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.diagonal_inds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">diagonal_inds</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the indices required to go along first 2.0 dims of tensor in diag fashion</span>
+<span class="sd">    :param tensor: thing</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">tensor</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">arange_inds</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">arange_inds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">arange_inds</span></div>
+
+
+
+<div class="viewcode-block" id="enumerate_imsize">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.enumerate_imsize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">enumerate_imsize</span><span class="p">(</span><span class="n">im_sizes</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">num_anchors</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">im_sizes</span><span class="p">):</span>
+        <span class="n">na</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_anchors</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">s</span> <span class="o">+</span> <span class="n">na</span>
+        <span class="k">yield</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">na</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="n">e</span></div>
+
+
+
+<div class="viewcode-block" id="argsort_desc">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.argsort_desc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">argsort_desc</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns indices that sort scores in descending order.</span>
+<span class="sd">    </span>
+<span class="sd">    Computes indices for descending sort across arbitrary dimensional arrays.</span>
+<span class="sd">    </span>
+<span class="sd">    :param scores: Array of arbitrary size to sort</span>
+<span class="sd">    :type scores: numpy.ndarray</span>
+<span class="sd">    :return: Array of indices for descending sort, shape [numel(scores), dim(scores)]</span>
+<span class="sd">    :rtype: numpy.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="o">-</span><span class="n">scores</span><span class="o">.</span><span class="n">ravel</span><span class="p">()),</span> <span class="n">scores</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="unravel_index">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.unravel_index">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unravel_index</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">dims</span><span class="p">):</span>
+    <span class="n">unraveled</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">index_cp</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">unraveled</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index_cp</span> <span class="o">%</span> <span class="n">d</span><span class="p">)</span>
+        <span class="n">index_cp</span> <span class="o">/=</span> <span class="n">d</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">unraveled</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="de_chunkize">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.de_chunkize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">de_chunkize</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">chunks</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">tensor</span><span class="p">[</span><span class="n">s</span> <span class="p">:</span> <span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">c</span><span class="p">)]</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span> <span class="o">+</span> <span class="n">c</span></div>
+
+
+
+<div class="viewcode-block" id="random_choose">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.random_choose">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">random_choose</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+    <span class="s2">&quot;randomly choose indices&quot;</span>
+    <span class="n">num_choose</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">num</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_choose</span> <span class="o">==</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">tensor</span>
+
+    <span class="c1"># Gotta do this in numpy because of https://github.com/pytorch/pytorch/issues/1868</span>
+    <span class="n">rand_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">num</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">rand_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">rand_idx</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">get_device</span><span class="p">())</span>
+    <span class="n">chosen</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="n">rand_idx</span><span class="p">]</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+
+    <span class="c1"># rand_values = tensor.new(tensor.size(0)).float().normal_()</span>
+    <span class="c1"># _, idx = torch.sort(rand_values)</span>
+    <span class="c1">#</span>
+    <span class="c1"># chosen = tensor[idx[:num]].contiguous()</span>
+    <span class="k">return</span> <span class="n">chosen</span></div>
+
+
+
+<div class="viewcode-block" id="transpose_packed_sequence_inds">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.transpose_packed_sequence_inds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transpose_packed_sequence_inds</span><span class="p">(</span><span class="n">lengths</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Goes from a TxB packed sequence to a BxT or vice versa. Assumes that nothing is a variable</span>
+<span class="sd">    :param ps: PackedSequence</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">new_inds</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_lens</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cum_add</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lengths</span><span class="p">)</span>
+    <span class="n">max_len</span> <span class="o">=</span> <span class="n">lengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">length_pointer</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_len</span><span class="p">):</span>
+        <span class="k">while</span> <span class="n">length_pointer</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">lengths</span><span class="p">[</span><span class="n">length_pointer</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">:</span>
+            <span class="n">length_pointer</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">new_inds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cum_add</span><span class="p">[:</span> <span class="p">(</span><span class="n">length_pointer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">cum_add</span><span class="p">[:</span> <span class="p">(</span><span class="n">length_pointer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">new_lens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">length_pointer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">new_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">new_inds</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_inds</span><span class="p">,</span> <span class="n">new_lens</span></div>
+
+
+
+<div class="viewcode-block" id="right_shift_packed_sequence_inds">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.right_shift_packed_sequence_inds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">right_shift_packed_sequence_inds</span><span class="p">(</span><span class="n">lengths</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param lengths: e.g. [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, ĺeftright, ĺeftright, ĺeftright, ĺeftright, ĺeftright]</span>
+<span class="sd">    :return: perm indices for the old stuff (TxB) to shift it right ĺeftright slot so as to accomodate</span>
+<span class="sd">             BOS toks</span>
+
+<span class="sd">             visual example: of lengths = [4,3,ĺeftright,ĺeftright]</span>
+<span class="sd">    before:</span>
+
+<span class="sd">        a (0)  b (4)  c (7) d (8)</span>
+<span class="sd">        a (ĺeftright)  b (5)</span>
+<span class="sd">        a (2.0)  b (6)</span>
+<span class="sd">        a (3)</span>
+
+<span class="sd">    after:</span>
+
+<span class="sd">        bos a (0)  b (4)  c (7)</span>
+<span class="sd">        bos a (ĺeftright)</span>
+<span class="sd">        bos a (2.0)</span>
+<span class="sd">        bos</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cur_ind</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">inds</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">lengths</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">lengths</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">l2</span><span class="p">):</span>
+            <span class="n">inds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_ind</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">cur_ind</span> <span class="o">+=</span> <span class="n">l1</span>
+    <span class="k">return</span> <span class="n">inds</span></div>
+
+
+
+<div class="viewcode-block" id="clip_grad_norm">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.clip_grad_norm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clip_grad_norm</span><span class="p">(</span><span class="n">named_parameters</span><span class="p">,</span> <span class="n">max_norm</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Clips gradient norm of an iterable of parameters.</span>
+
+<span class="sd">    The norm is computed over all gradients together, as if they were</span>
+<span class="sd">    concatenated into a single vector. Gradients are modified in-place.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        parameters (Iterable[Variable]): an iterable of Variables that will have</span>
+<span class="sd">            gradients normalized</span>
+<span class="sd">        max_norm (float or int): max norm of the gradients</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Total norm of the parameters (viewed as a single vector).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">max_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_norm</span><span class="p">)</span>
+
+    <span class="n">total_norm</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">param_to_norm</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">param_to_shape</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">named_parameters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">param_norm</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">total_norm</span> <span class="o">+=</span> <span class="n">param_norm</span><span class="o">**</span><span class="mi">2</span>
+            <span class="n">param_to_norm</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_norm</span>
+            <span class="n">param_to_shape</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+    <span class="n">total_norm</span> <span class="o">=</span> <span class="n">total_norm</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">clip_coef</span> <span class="o">=</span> <span class="n">max_norm</span> <span class="o">/</span> <span class="p">(</span><span class="n">total_norm</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">clip_coef</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">clip</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">named_parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mul_</span><span class="p">(</span><span class="n">clip_coef</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;---Total norm </span><span class="si">{:.3f}</span><span class="s2"> clip coef </span><span class="si">{:.3f}</span><span class="s2">-----------------&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">total_norm</span><span class="p">,</span> <span class="n">clip_coef</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">norm</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">param_to_norm</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;50s}</span><span class="s2">: </span><span class="si">{:.3f}</span><span class="s2">, (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">param_to_shape</span><span class="p">[</span><span class="n">name</span><span class="p">]))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-------------------------------&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">total_norm</span></div>
+
+
+
+<div class="viewcode-block" id="update_lr">
+<a class="viewcode-back" href="../../api/lib.html#lib.pytorch_misc.update_lr">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_lr</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------ Learning rate -&gt; </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lr</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">param_group</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+        <span class="n">param_group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, DLHM Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

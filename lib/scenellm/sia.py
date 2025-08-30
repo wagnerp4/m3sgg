@@ -32,12 +32,15 @@ except ImportError:
 
 
 def build_hierarchical_graph(boxes):
-    """
-    Build hierarchical graph from bounding boxes using hierarchical clustering.
-    Args:
-        boxes: tensor of shape [N, 4] containing normalized bounding boxes
-    Returns:
-        DGL graph or simple edge list based on hierarchical clustering
+    """Build hierarchical graph from bounding boxes using hierarchical clustering.
+    
+    Creates a graph structure from spatial relationships between bounding boxes
+    using hierarchical clustering algorithms.
+    
+    :param boxes: Tensor of normalized bounding boxes, shape [N, 4]
+    :type boxes: torch.Tensor
+    :return: DGL graph or simple edge list based on hierarchical clustering
+    :rtype: dgl.DGLGraph or dict
     """
     if boxes.size(0) <= 1:
         # Single node or empty - return simple structure

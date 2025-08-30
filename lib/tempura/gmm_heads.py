@@ -3,7 +3,30 @@ import torch.nn as nn
 
 
 class GMM_head(nn.Module):
+    """Gaussian Mixture Model head for uncertainty estimation in Tempura.
+    
+    Implements a GMM-based classification head that models uncertainty
+    through multiple Gaussian components with learnable means, variances,
+    and mixture weights.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
+    
     def __init__(self, hid_dim, num_classes, rel_type=None, k=4):
+        """Initialize the GMM head.
+        
+        :param hid_dim: Hidden dimension size
+        :type hid_dim: int
+        :param num_classes: Number of output classes
+        :type num_classes: int
+        :param rel_type: Type of relation (affects activation function), defaults to None
+        :type rel_type: str, optional
+        :param k: Number of Gaussian mixture components, defaults to 4
+        :type k: int, optional
+        :return: None
+        :rtype: None
+        """
         super(GMM_head, self).__init__()
         self.k = k
         self.num_classes = num_classes
@@ -28,6 +51,17 @@ class GMM_head(nn.Module):
                 nn.init.xavier_uniform_(p)
 
     def uncertainty(self, conf_mu_k, conf_var_k, conf_pi_k_):
+        """Compute epistemic and aleatoric uncertainty.
+        
+        :param conf_mu_k: Mean predictions for each mixture component
+        :type conf_mu_k: dict
+        :param conf_var_k: Variance predictions for each mixture component
+        :type conf_var_k: dict
+        :param conf_pi_k_: Mixture weights for each component
+        :type conf_pi_k_: list
+        :return: Tuple containing prediction, aleatoric uncertainty, and epistemic uncertainty
+        :rtype: tuple
+        """
         batch_conf_k = [conf_mu_k[str(i + 1)] for i in range(self.k)]
         new_conf = torch.zeros(batch_conf_k[0].shape).to(batch_conf_k[0].device)
         for i in range(self.k):

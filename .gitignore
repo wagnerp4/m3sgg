@@ -1,7 +1,7 @@
 data/
 ./models/
 output
-assets
+assets2
 
 action_genome
 *ipynb

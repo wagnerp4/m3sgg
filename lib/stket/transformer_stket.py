@@ -6,7 +6,29 @@ import torch.nn as nn
 
 
 class TransformerEncoderLayer(nn.Module):
+    """STKET transformer encoder layer with prior knowledge integration.
+    
+    Implements transformer encoder with additional prior knowledge integration
+    for spatio-temporal knowledge-enhanced scene graph generation.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
+    
     def __init__(self, embed_dim=1936, nhead=4, dim_feedforward=2048, dropout=0.1):
+        """Initialize STKET transformer encoder layer.
+        
+        :param embed_dim: Embedding dimension, defaults to 1936
+        :type embed_dim: int, optional
+        :param nhead: Number of attention heads, defaults to 4
+        :type nhead: int, optional
+        :param dim_feedforward: Feed-forward dimension, defaults to 2048
+        :type dim_feedforward: int, optional
+        :param dropout: Dropout probability, defaults to 0.1
+        :type dropout: float, optional
+        :return: None
+        :rtype: None
+        """
         super().__init__()
         self.self_attn = nn.MultiheadAttention(embed_dim, nhead, dropout=dropout)
 
@@ -26,6 +48,17 @@ class TransformerEncoderLayer(nn.Module):
         )
 
     def forward(self, src, prior, input_key_padding_mask):
+        """Forward pass with prior knowledge integration.
+        
+        :param src: Source sequence tensor
+        :type src: torch.Tensor
+        :param prior: Prior knowledge tensor
+        :type prior: torch.Tensor
+        :param input_key_padding_mask: Padding mask
+        :type input_key_padding_mask: torch.Tensor
+        :return: Tuple containing output tensor and attention weights
+        :rtype: tuple
+        """
         query, key, value = self.W_q(src + prior), self.W_k(src + prior), self.W_v(src)
         local_src, local_attention_weights = self.self_attn(
             query, key, value, key_padding_mask=input_key_padding_mask

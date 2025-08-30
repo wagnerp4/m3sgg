@@ -5,26 +5,46 @@ import torch.nn as nn
 
 
 class SupConLoss(nn.Module):
-    """Supervised Contrastive Learning: https://arxiv.org/pdf/2004.11362.pdf.
-    It also supports the unsupervised contrastive loss in SimCLR"""
+    """Supervised Contrastive Learning loss implementation.
+    
+    Based on the paper: https://arxiv.org/pdf/2004.11362.pdf
+    Also supports unsupervised contrastive loss as used in SimCLR.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
 
     def __init__(self, temperature=0.1, contrast_mode="all", base_temperature=0.07):
+        """Initialize the supervised contrastive loss.
+        
+        :param temperature: Temperature parameter for scaling, defaults to 0.1
+        :type temperature: float, optional
+        :param contrast_mode: Contrast mode ('all' or 'one'), defaults to "all"
+        :type contrast_mode: str, optional
+        :param base_temperature: Base temperature for normalization, defaults to 0.07
+        :type base_temperature: float, optional
+        :return: None
+        :rtype: None
+        """
         super(SupConLoss, self).__init__()
         self.temperature = temperature
         self.contrast_mode = contrast_mode
         self.base_temperature = base_temperature
 
     def forward(self, features, labels=None, mask=None):
-        """Compute loss for model. If both `labels` and `mask` are None,
-        it degenerates to SimCLR unsupervised loss:
-        https://arxiv.org/pdf/2002.05709.pdf
-        Args:
-            features: hidden vector of shape [bsz, n_views, ...].
-            labels: ground truth of shape [bsz].
-            mask: contrastive mask of shape [bsz, bsz], mask_{i,j}=1 if sample j
-                has the same class as sample i. Can be asymmetric.
-        Returns:
-            A loss scalar.
+        """Compute contrastive loss for the model.
+        
+        If both labels and mask are None, it degenerates to SimCLR unsupervised loss.
+        Reference: https://arxiv.org/pdf/2002.05709.pdf
+        
+        :param features: Hidden vector of shape [bsz, n_views, ...]
+        :type features: torch.Tensor
+        :param labels: Ground truth labels of shape [bsz], defaults to None
+        :type labels: torch.Tensor, optional
+        :param mask: Contrastive mask of shape [bsz, bsz], defaults to None
+        :type mask: torch.Tensor, optional
+        :return: Scalar loss value
+        :rtype: torch.Tensor
         """
         device = features.device if features.is_cuda else torch.device("cpu")
 

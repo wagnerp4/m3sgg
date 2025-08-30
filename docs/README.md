@@ -32,7 +32,9 @@ sphinx-build -b html . _build/html
 
 ```bash
 cd docs
+make html
 python -m sphinx -b html . _build/html
+start _build/html/index.html
 ```
 
 ### Viewing Documentation

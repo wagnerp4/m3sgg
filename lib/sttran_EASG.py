@@ -13,11 +13,25 @@ from lib.word_vectors import obj_edge_vectors, verb_edge_vectors
 
 
 class ObjectClassifier(nn.Module):
-    """
-    Module for computing the object contexts and edge contexts
+    """Module for computing object contexts and edge contexts for EASG.
+    
+    EASG-specific implementation of object classification and contextual
+    feature extraction for efficient scene graph generation.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
     """
 
     def __init__(self, mode="edgecls", obj_classes=None):
+        """Initialize the EASG object classifier.
+        
+        :param mode: Classification mode, defaults to "edgecls"
+        :type mode: str, optional
+        :param obj_classes: List of object class names, defaults to None
+        :type obj_classes: list, optional
+        :return: None
+        :rtype: None
+        """
         super(ObjectClassifier, self).__init__()
         self.mode = mode
         self.obj_classes = obj_classes

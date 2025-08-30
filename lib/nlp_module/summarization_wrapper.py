@@ -11,18 +11,27 @@ from transformers import (
 
 
 class BaseSummarizationWrapper(ABC):
-    """
-    Abstract base class for summarization model wrappers.
-    Provides a unified interface for different summarization models.
+    """Abstract base class for summarization model wrappers.
+    
+    Provides a unified interface for different summarization models including
+    T5 and Pegasus variants. Handles model loading, input preparation, and
+    text summarization with configurable parameters.
+    
+    :param ABC: Abstract Base Class
+    :type ABC: class
     """
 
     def __init__(self, model_name: str, device: Optional[str] = None):
-        """
-        Initialize the summarization wrapper.
-
-        Args:
-            model_name (str): Name of the pretrained model
-            device (Optional[str]): Device to load model on ('cpu', 'cuda', etc.)
+        """Initialize the summarization wrapper.
+        
+        Sets up the model name and device, then loads the tokenizer and model.
+        
+        :param model_name: Name of the pretrained model
+        :type model_name: str
+        :param device: Device to load model on ('cpu', 'cuda', etc.), defaults to None
+        :type device: str, optional
+        :return: None
+        :rtype: None
         """
         self.model_name = model_name
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
@@ -32,17 +41,42 @@ class BaseSummarizationWrapper(ABC):
 
     @abstractmethod
     def _load_model(self):
-        """Load the tokenizer and model. Must be implemented by subclasses."""
+        """Load the tokenizer and model.
+        
+        Abstract method that must be implemented by subclasses to load
+        the specific tokenizer and model for the summarization task.
+        
+        :return: None
+        :rtype: None
+        """
         pass
 
     @abstractmethod
     def _prepare_input(self, text: str) -> Dict[str, torch.Tensor]:
-        """Prepare input for the model. Must be implemented by subclasses."""
+        """Prepare input for the model.
+        
+        Abstract method that must be implemented by subclasses to prepare
+        input text for the specific model format.
+        
+        :param text: Input text to prepare
+        :type text: str
+        :return: Dictionary containing prepared input tensors
+        :rtype: Dict[str, torch.Tensor]
+        """
         pass
 
     @abstractmethod
     def _generate_summary(self, input_ids: torch.Tensor) -> str:
-        """Generate summary from input. Must be implemented by subclasses."""
+        """Generate summary from input.
+        
+        Abstract method that must be implemented by subclasses to generate
+        summary text from tokenized input.
+        
+        :param input_ids: Tokenized input tensor
+        :type input_ids: torch.Tensor
+        :return: Generated summary text
+        :rtype: str
+        """
         pass
 
     def summarize(self, text: str, **kwargs) -> str:

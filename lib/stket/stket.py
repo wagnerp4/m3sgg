@@ -15,11 +15,26 @@ from .transformer_stket import ensemble_decoder, spatial_encoder, temporal_decod
 
 
 class ObjectClassifier(nn.Module):
-    """
-    Module for computing the object contexts and edge contexts
+    """STKET object classifier for computing object and edge contexts.
+    
+    Implements the Spatio-Temporal Knowledge-Enhanced Transformer (STKET)
+    approach for object classification and contextual feature extraction
+    in scene graph generation tasks.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
     """
 
     def __init__(self, mode="sgdet", obj_classes=None):
+        """Initialize the STKET object classifier.
+        
+        :param mode: Classification mode ('predcls', 'sgcls', 'sgdet'), defaults to "sgdet"
+        :type mode: str, optional
+        :param obj_classes: List of object class names, defaults to None
+        :type obj_classes: list, optional
+        :return: None
+        :rtype: None
+        """
         super(ObjectClassifier, self).__init__()
         self.classes = obj_classes
         self.mode = mode

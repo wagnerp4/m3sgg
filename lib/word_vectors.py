@@ -17,7 +17,14 @@ _word_vector_cache = {}
 
 
 def create_ssl_context():
-    """Create an unverified SSL context to bypass certificate verification."""
+    """Create an unverified SSL context to bypass certificate verification.
+    
+    Creates an SSL context with disabled hostname and certificate verification
+    to handle SSL certificate issues when downloading word vectors from external sources.
+    
+    :return: SSL context with verification disabled
+    :rtype: ssl.SSLContext
+    """
     ssl_context = ssl.create_default_context()
     ssl_context.check_hostname = False
     ssl_context.verify_mode = ssl.CERT_NONE
@@ -25,7 +32,20 @@ def create_ssl_context():
 
 
 def download_word_vectors(wv_type, wv_dir, wv_dim):
-    """Download word vectors if they don't exist."""
+    """Download word vectors if they don't exist.
+    
+    Downloads pre-trained word vectors from Stanford NLP resources and extracts
+    the specific dimension file needed for the model.
+    
+    :param wv_type: Type of word vectors to download (e.g., 'glove.6B')
+    :type wv_type: str
+    :param wv_dir: Directory to save the word vectors
+    :type wv_dir: str
+    :param wv_dim: Dimension of word vectors to extract
+    :type wv_dim: int
+    :return: None
+    :rtype: None
+    """
     if not os.path.exists(wv_dir):
         os.makedirs(wv_dir)
 
@@ -59,7 +79,19 @@ def download_word_vectors(wv_type, wv_dir, wv_dim):
 
 
 def get_cache_path(wv_type, wv_dir, wv_dim):
-    """Get the path for the cached word vectors."""
+    """Get the path for the cached word vectors.
+    
+    Constructs the file path for cached word vector pickle files.
+    
+    :param wv_type: Type of word vectors (e.g., 'glove.6B')
+    :type wv_type: str
+    :param wv_dir: Directory containing word vectors
+    :type wv_dir: str
+    :param wv_dim: Dimension of word vectors
+    :type wv_dim: int
+    :return: Path to cached pickle file
+    :rtype: str
+    """
     cache_dir = os.path.join(wv_dir, "cache")
     if not os.path.exists(cache_dir):
         os.makedirs(cache_dir)
@@ -67,7 +99,14 @@ def get_cache_path(wv_type, wv_dir, wv_dim):
 
 
 def get_cache_status():
-    """Get the status of word vector caches."""
+    """Get the status of word vector caches.
+    
+    Returns information about both memory and disk caches for word vectors,
+    including cache sizes and available cached files.
+    
+    :return: Dictionary containing cache status information
+    :rtype: dict
+    """
     cache_dir = os.path.join("data", "cache")
     status = {
         "memory_cache": len(_word_vector_cache),
@@ -90,7 +129,20 @@ def get_cache_status():
 
 
 def clear_word_vector_cache(wv_type=None, wv_dir="data", wv_dim=None):
-    """Clear word vector cache (both memory and disk cache)."""
+    """Clear word vector cache (both memory and disk cache).
+    
+    Clears cached word vectors from memory and optionally from disk.
+    Can target specific word vector types and dimensions or clear all caches.
+    
+    :param wv_type: Type of word vectors to clear, defaults to None
+    :type wv_type: str, optional
+    :param wv_dir: Directory containing cached files, defaults to "data"
+    :type wv_dir: str, optional
+    :param wv_dim: Dimension of word vectors to clear, defaults to None
+    :type wv_dim: int, optional
+    :return: None
+    :rtype: None
+    """
     global _word_vector_cache
 
     # Clear memory cache
@@ -121,7 +173,20 @@ def clear_word_vector_cache(wv_type=None, wv_dir="data", wv_dim=None):
 
 
 def load_word_vectors(wv_type="glove.6B", wv_dir="data", wv_dim=200):
-    """Load word vectors from file or download if not present."""
+    """Load word vectors from file or download if not present.
+    
+    Loads pre-trained word vectors with caching support. Checks memory cache first,
+    then disk cache, and finally downloads from external source if needed.
+    
+    :param wv_type: Type of word vectors to load, defaults to "glove.6B"
+    :type wv_type: str, optional
+    :param wv_dir: Directory containing word vectors, defaults to "data"
+    :type wv_dir: str, optional
+    :param wv_dim: Dimension of word vectors, defaults to 200
+    :type wv_dim: int, optional
+    :return: Dictionary mapping words to their vector representations
+    :rtype: dict
+    """
     # Check in-memory cache first
     cache_key = f"{wv_type}_{wv_dir}_{wv_dim}"
     if cache_key in _word_vector_cache:
@@ -168,7 +233,22 @@ def load_word_vectors(wv_type="glove.6B", wv_dir="data", wv_dim=200):
 
 
 def obj_edge_vectors(names, wv_type="glove.6B", wv_dir="data", wv_dim=200):
-    """Create word vectors for object classes."""
+    """Create word vectors for object classes.
+    
+    Generates word vector embeddings for a list of object class names using
+    pre-trained word vectors. Returns zero vectors for unknown words.
+    
+    :param names: List of object class names
+    :type names: list
+    :param wv_type: Type of word vectors to use, defaults to "glove.6B"
+    :type wv_type: str, optional
+    :param wv_dir: Directory containing word vectors, defaults to "data"
+    :type wv_dir: str, optional
+    :param wv_dim: Dimension of word vectors, defaults to 200
+    :type wv_dim: int, optional
+    :return: Tensor containing word vectors for object classes
+    :rtype: torch.Tensor
+    """
     wv_dict = load_word_vectors(wv_type, wv_dir, wv_dim)
 
     vectors = []
@@ -185,7 +265,22 @@ def obj_edge_vectors(names, wv_type="glove.6B", wv_dir="data", wv_dim=200):
 
 
 def verb_edge_vectors(names, wv_type="glove.6B", wv_dir=None, wv_dim=300):
-    """Create word vectors for verb classes. For now, using the same logic as obj_edge_vectors."""
+    """Create word vectors for verb classes.
+    
+    Generates word vector embeddings for a list of verb class names using
+    pre-trained word vectors. Currently uses the same logic as obj_edge_vectors.
+    
+    :param names: List of verb class names
+    :type names: list
+    :param wv_type: Type of word vectors to use, defaults to "glove.6B"
+    :type wv_type: str, optional
+    :param wv_dir: Directory containing word vectors, defaults to None
+    :type wv_dir: str, optional
+    :param wv_dim: Dimension of word vectors, defaults to 300
+    :type wv_dim: int, optional
+    :return: Tensor containing word vectors for verb classes
+    :rtype: torch.Tensor
+    """
     return obj_edge_vectors(names, wv_type, wv_dir, wv_dim)
 
 

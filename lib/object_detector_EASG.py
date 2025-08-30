@@ -14,9 +14,29 @@ from lib.funcs import assign_relations
 
 
 class detector(nn.Module):
-    """first part: object detection (image/video)"""
+    """Object detector module for EASG (Efficient and Accurate Scene Graph) generation.
+    
+    Implements object detection functionality specifically designed for EASG
+    scene graph generation with video-based detection capabilities.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
 
     def __init__(self, train, object_classes, use_SUPPLY, mode="edgecls"):
+        """Initialize the EASG object detector.
+        
+        :param train: Whether in training mode
+        :type train: bool
+        :param object_classes: List of object class names
+        :type object_classes: list
+        :param use_SUPPLY: Whether to use SUPPLY relations
+        :type use_SUPPLY: bool
+        :param mode: Detection mode, defaults to "edgecls"
+        :type mode: str, optional
+        :return: None
+        :rtype: None
+        """
         super(detector, self).__init__()
 
         self.is_train = train

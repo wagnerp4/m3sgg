@@ -7,11 +7,17 @@ from lib.fpn.box_utils import bbox_overlaps
 
 
 def generalized_box_iou(boxes1, boxes2):
-    """
-    Generalized IoU from https://giou.stanford.edu/
-    The boxes should be in [x0, y0, x1, y1] format
-    Returns a [N, M] pairwise matrix, where N = len(boxes1)
-    and M = len(boxes2)
+    """Compute Generalized Intersection over Union (GIoU) between two sets of boxes.
+    
+    Based on the paper from https://giou.stanford.edu/
+    The boxes should be in [x0, y0, x1, y1] format.
+    
+    :param boxes1: First set of bounding boxes
+    :type boxes1: torch.Tensor
+    :param boxes2: Second set of bounding boxes
+    :type boxes2: torch.Tensor
+    :return: Pairwise GIoU matrix where N = len(boxes1) and M = len(boxes2)
+    :rtype: torch.Tensor
     """
     # degenerate boxes gives inf / nan results
     # so do an early check
@@ -29,6 +35,15 @@ def generalized_box_iou(boxes1, boxes2):
 
 
 def box_iou(boxes1, boxes2):
+    """Compute Intersection over Union (IoU) between two sets of boxes.
+    
+    :param boxes1: First set of bounding boxes
+    :type boxes1: torch.Tensor
+    :param boxes2: Second set of bounding boxes
+    :type boxes2: torch.Tensor
+    :return: Tuple containing IoU values and union areas
+    :rtype: tuple
+    """
     area1 = box_area(boxes1)
     area2 = box_area(boxes2)
 
@@ -45,6 +60,13 @@ def box_iou(boxes1, boxes2):
 
 
 def box_area(boxes):
+    """Compute the area of bounding boxes.
+    
+    :param boxes: Bounding boxes in [x0, y0, x1, y1] format
+    :type boxes: torch.Tensor
+    :return: Areas of the bounding boxes
+    :rtype: torch.Tensor
+    """
     """
     Computes the area of a set of bounding boxes, which are specified by its
     (x1, y1, x2, y2) coordinates.

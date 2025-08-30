@@ -19,7 +19,27 @@ Encoder = nn.TransformerEncoder
 
 
 class PositionalEncoding(nn.Module):
+    """Positional encoding for transformer-based models.
+    
+    Implements sinusoidal positional encoding to provide temporal information
+    to transformer architectures for sequence modeling.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
+    """
+    
     def __init__(self, d_model: int, dropout: float = 0.1, max_len: int = 5000):
+        """Initialize positional encoding.
+        
+        :param d_model: Model dimension
+        :type d_model: int
+        :param dropout: Dropout probability, defaults to 0.1
+        :type dropout: float, optional
+        :param max_len: Maximum sequence length, defaults to 5000
+        :type max_len: int, optional
+        :return: None
+        :rtype: None
+        """
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
 
@@ -33,9 +53,14 @@ class PositionalEncoding(nn.Module):
         self.register_buffer("pe", pe)
 
     def forward(self, x: torch.Tensor, indices=None) -> torch.Tensor:
-        """
-        Args:
-            x: Tensor, shape [batch_size, seq_len, embedding_dim]
+        """Apply positional encoding to input tensor.
+        
+        :param x: Input tensor of shape [batch_size, seq_len, embedding_dim]
+        :type x: torch.Tensor
+        :param indices: Optional indices for position selection, defaults to None
+        :type indices: torch.Tensor, optional
+        :return: Input tensor with positional encoding added
+        :rtype: torch.Tensor
         """
         if indices is None:
             x = x + self.pe[:, : x.size(1)]
@@ -46,8 +71,14 @@ class PositionalEncoding(nn.Module):
 
 
 class ObjectClassifier(nn.Module):
-    """
-    Module for computing the object contexts and edge contexts
+    """Tempura object classifier for computing object and edge contexts.
+    
+    Implements the Tempura model's approach to object classification
+    and contextual feature extraction with memory-augmented learning
+    and uncertainty estimation capabilities.
+    
+    :param nn.Module: Base PyTorch module class
+    :type nn.Module: class
     """
 
     def __init__(

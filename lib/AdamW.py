@@ -5,25 +5,25 @@ from torch.optim.optimizer import Optimizer
 
 
 class AdamW(Optimizer):
-    r"""Implements AdamW algorithm.
+    """Implements AdamW algorithm with decoupled weight decay.
 
     The original Adam algorithm was proposed in `Adam: A Method for Stochastic Optimization`_.
     The AdamW variant was proposed in `Decoupled Weight Decay Regularization`_.
 
-    Arguments:
-        params (iterable): iterable of parameters to optimize or dicts defining
-            parameter groups
-        lr (float, optional): learning rate (default: 1e-3)
-        betas (Tuple[float, float], optional): coefficients used for computing
-            running averages of gradient and its square (default: (0.9, 0.999))
-        eps (float, optional): term added to the denominator to improve
-            numerical stability (default: 1e-8)
-        weight_decay (float, optional): weight decay coefficient (default: 1e-2)
-        amsgrad (boolean, optional): whether to use the AMSGrad variant of this
-            algorithm from the paper `On the Convergence of Adam and Beyond`_
-            (default: False)
+    :param params: Iterable of parameters to optimize or dicts defining parameter groups
+    :type params: iterable
+    :param lr: Learning rate, defaults to 1e-3
+    :type lr: float, optional
+    :param betas: Coefficients used for computing running averages of gradient and its square, defaults to (0.9, 0.999)
+    :type betas: tuple, optional
+    :param eps: Term added to the denominator to improve numerical stability, defaults to 1e-8
+    :type eps: float, optional
+    :param weight_decay: Weight decay coefficient, defaults to 1e-2
+    :type weight_decay: float, optional
+    :param amsgrad: Whether to use the AMSGrad variant, defaults to False
+    :type amsgrad: bool, optional
 
-    .. _Adam\: A Method for Stochastic Optimization:
+    .. _Adam: A Method for Stochastic Optimization:
         https://arxiv.org/abs/1412.6980
     .. _Decoupled Weight Decay Regularization:
         https://arxiv.org/abs/1711.05101
@@ -40,6 +40,23 @@ class AdamW(Optimizer):
         weight_decay=1e-2,
         amsgrad=False,
     ):
+        """Initialize the AdamW optimizer.
+        
+        :param params: Iterable of parameters to optimize
+        :type params: iterable
+        :param lr: Learning rate, defaults to 1e-3
+        :type lr: float, optional
+        :param betas: Coefficients for computing running averages, defaults to (0.9, 0.999)
+        :type betas: tuple, optional
+        :param eps: Term added to denominator for numerical stability, defaults to 1e-8
+        :type eps: float, optional
+        :param weight_decay: Weight decay coefficient, defaults to 1e-2
+        :type weight_decay: float, optional
+        :param amsgrad: Whether to use AMSGrad variant, defaults to False
+        :type amsgrad: bool, optional
+        :return: None
+        :rtype: None
+        """
         if not 0.0 <= lr:
             raise ValueError("Invalid learning rate: {}".format(lr))
         if not 0.0 <= eps:
@@ -54,11 +71,25 @@ class AdamW(Optimizer):
         super(AdamW, self).__init__(params, defaults)
 
     def __setstate__(self, state):
+        """Set the state of the optimizer.
+        
+        :param state: State dictionary to restore
+        :type state: dict
+        :return: None
+        :rtype: None
+        """
         super(AdamW, self).__setstate__(state)
         for group in self.param_groups:
             group.setdefault("amsgrad", False)
 
     def step(self, closure=None):
+        """Perform a single optimization step.
+        
+        :param closure: A closure that reevaluates the model and returns the loss, defaults to None
+        :type closure: callable, optional
+        :return: Loss value if closure is provided
+        :rtype: float or None
+        """
         """Performs a single optimization step.
 
         Arguments:

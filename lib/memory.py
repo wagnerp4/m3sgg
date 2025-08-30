@@ -17,6 +17,36 @@ def memory_computation(
     obj_unc=False,
     include_bg_mem=False,
 ):
+    """Compute memory embeddings for scene graph generation.
+    
+    Generates memory embeddings for objects and relations based on uncertainty values
+    and statistical computations for improved scene graph generation performance.
+    
+    :param unc_vals: Uncertainty values object containing statistics
+    :type unc_vals: uncertainty_values
+    :param output_dir: Output directory for saving embeddings
+    :type output_dir: str
+    :param rel_class_num: Number of relation classes
+    :type rel_class_num: int
+    :param obj_class_num: Number of object classes
+    :type obj_class_num: int
+    :param obj_feature_dim: Object feature dimension, defaults to 1024
+    :type obj_feature_dim: int, optional
+    :param rel_feature_dim: Relation feature dimension, defaults to 1936
+    :type rel_feature_dim: int, optional
+    :param obj_weight_type: Object weight type ('both', 'al', 'ep', 'simple'), defaults to "both"
+    :type obj_weight_type: str, optional
+    :param rel_weight_type: Relation weight type ('both', 'al', 'ep', 'simple'), defaults to "both"
+    :type rel_weight_type: str, optional
+    :param obj_mem: Whether to compute object memory, defaults to False
+    :type obj_mem: bool, optional
+    :param obj_unc: Whether to use object uncertainty, defaults to False
+    :type obj_unc: bool, optional
+    :param include_bg_mem: Whether to include background class in memory, defaults to False
+    :type include_bg_mem: bool, optional
+    :return: None
+    :rtype: None
+    """
     unc_vals.stats2()
     unc_list_rel = unc_vals.unc_list_rel
     unc_list_obj = unc_vals.unc_list_obj

@@ -9,12 +9,23 @@ from lib.fpn.box_intersections_cpu.bbox import bbox_overlaps as bbox_overlaps_np
 
 
 def bbox_loss(prior_boxes, deltas, gt_boxes, eps=1e-4, scale_before=1):
-    """
-    Computes the loss for predicting the GT boxes from prior boxes
-    :param prior_boxes: [num_boxes, 4] (x1, y1, x2, y2)
-    :param deltas: [num_boxes, 4]    (tx, ty, th, tw)
-    :param gt_boxes: [num_boxes, 4] (x1, y1, x2, y2)
-    :return:
+    """Compute bounding box regression loss.
+    
+    Computes smooth L1 loss for predicting ground truth boxes from prior boxes
+    using delta transformations.
+    
+    :param prior_boxes: Prior bounding boxes of shape [num_boxes, 4] (x1, y1, x2, y2)
+    :type prior_boxes: torch.Tensor
+    :param deltas: Predicted box deltas of shape [num_boxes, 4] (tx, ty, th, tw)
+    :type deltas: torch.Tensor
+    :param gt_boxes: Ground truth boxes of shape [num_boxes, 4] (x1, y1, x2, y2)
+    :type gt_boxes: torch.Tensor
+    :param eps: Small epsilon value for numerical stability, defaults to 1e-4
+    :type eps: float, optional
+    :param scale_before: Scaling factor, defaults to 1
+    :type scale_before: int, optional
+    :return: Computed bounding box loss
+    :rtype: torch.Tensor
     """
     prior_centers = center_size(prior_boxes)  # (cx, cy, w, h)
     gt_centers = center_size(gt_boxes)  # (cx, cy, w, h)
@@ -31,15 +42,17 @@ def bbox_loss(prior_boxes, deltas, gt_boxes, eps=1e-4, scale_before=1):
 
 
 def bbox_preds(boxes, deltas):
-    """
-    Converts "deltas" (predicted by the network) along with prior boxes
-    into (x1, y1, x2, y2) representation.
-    :param boxes: Prior boxes, represented as (x1, y1, x2, y2)
-    :param deltas: Offsets (tx, ty, tw, th)
-    :param box_strides [num_boxes,] distance apart between boxes. anchor box can't go more than
-       \pm box_strides/2.0 from its current position. If None then we'll use the widths
-       and heights
-    :return: Transformed boxes
+    """Convert predicted deltas to bounding box coordinates.
+    
+    Transforms predicted deltas along with prior boxes into
+    (x1, y1, x2, y2) coordinate representation.
+    
+    :param boxes: Prior boxes in (x1, y1, x2, y2) format
+    :type boxes: torch.Tensor
+    :param deltas: Predicted offsets (tx, ty, tw, th)
+    :type deltas: torch.Tensor
+    :return: Transformed bounding boxes
+    :rtype: torch.Tensor
     """
 
     if boxes.size(0) == 0:
@@ -123,16 +136,17 @@ def bbox_intersections(box_a, box_b):
 
 
 def bbox_overlaps(box_a, box_b):
-    """Compute the jaccard overlap of two sets of boxes.  The jaccard overlap
-    is simply the intersection over union of two boxes.  Here we operate on
-    ground truth boxes and default boxes.
-    E.g.:
-        A ∩ B / A ∪ B = A ∩ B / (area(A) + area(B) - A ∩ B)
-    Args:
-        box_a: (tensor) Ground truth bounding boxes, Shape: [num_objects,4]
-        box_b: (tensor) Prior boxes from priorbox layers, Shape: [num_priors,4]
-    Return:
-        jaccard overlap: (tensor) Shape: [box_a.size(0), box_b.size(0)]
+    """Compute Jaccard overlap (IoU) between two sets of bounding boxes.
+    
+    Calculates intersection over union (IoU) for all pairs of boxes between
+    two sets. IoU = A ∩ B / A ∪ B = A ∩ B / (area(A) + area(B) - A ∩ B)
+    
+    :param box_a: First set of bounding boxes, shape [num_objects, 4]
+    :type box_a: torch.Tensor
+    :param box_b: Second set of bounding boxes, shape [num_priors, 4]
+    :type box_b: torch.Tensor
+    :return: Jaccard overlap matrix, shape [box_a.size(0), box_b.size(0)]
+    :rtype: torch.Tensor
     """
     if isinstance(box_a, np.ndarray):
         assert isinstance(box_b, np.ndarray)

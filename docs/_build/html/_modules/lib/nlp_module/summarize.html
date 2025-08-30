@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lib.nlp_module.summarize &mdash; VidSGG 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0a84b5b7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=30646c52"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VidSGG
+              <img src="../../../_static/tum-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../evaluation.html">Evaluation Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Additional Information:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VidSGG</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">lib.nlp_module.summarize</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for lib.nlp_module.summarize</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">T5ForConditionalGeneration</span><span class="p">,</span> <span class="n">T5Tokenizer</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">lib.nlp_module.summarization_wrapper</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PegasusCustomConfig</span><span class="p">,</span>
+    <span class="n">PegasusSeparateLoader</span><span class="p">,</span>
+    <span class="n">PegasusSummarizationWrapper</span><span class="p">,</span>
+    <span class="n">T5SummarizationWrapper</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="linearize_triples">
+<a class="viewcode-back" href="../../../api/lib.html#lib.nlp_module.summarize.linearize_triples">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">linearize_triples</span><span class="p">(</span><span class="n">triples</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert scene graph triples into natural language sentences.</span>
+<span class="sd">    </span>
+<span class="sd">    Transforms subject-predicate-object triples into human-readable sentences</span>
+<span class="sd">    using predefined relationship patterns for visual attention, spatial</span>
+<span class="sd">    relationships, and physical interactions.</span>
+<span class="sd">    </span>
+<span class="sd">    :param triples: List of (subject, predicate, object) tuples</span>
+<span class="sd">    :type triples: list</span>
+<span class="sd">    :return: List of natural language sentences</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sentences</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Define relationship patterns for natural language conversion</span>
+    <span class="n">relationship_patterns</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># Visual attention relationships</span>
+        <span class="s2">&quot;lookingat&quot;</span><span class="p">:</span> <span class="s2">&quot;is looking at&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;notlookingat&quot;</span><span class="p">:</span> <span class="s2">&quot;is not looking at&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;unsure&quot;</span><span class="p">:</span> <span class="s2">&quot;may be looking at&quot;</span><span class="p">,</span>
+        <span class="c1"># Spatial relationships</span>
+        <span class="s2">&quot;above&quot;</span><span class="p">:</span> <span class="s2">&quot;is above&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;beneath&quot;</span><span class="p">:</span> <span class="s2">&quot;is beneath&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;infrontof&quot;</span><span class="p">:</span> <span class="s2">&quot;is in front of&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;behind&quot;</span><span class="p">:</span> <span class="s2">&quot;is behind&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;onthesideof&quot;</span><span class="p">:</span> <span class="s2">&quot;is on the side of&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;in&quot;</span><span class="p">:</span> <span class="s2">&quot;is in&quot;</span><span class="p">,</span>
+        <span class="c1"># Physical interactions</span>
+        <span class="s2">&quot;carrying&quot;</span><span class="p">:</span> <span class="s2">&quot;is carrying&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;coveredby&quot;</span><span class="p">:</span> <span class="s2">&quot;is covered by&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;drinkingfrom&quot;</span><span class="p">:</span> <span class="s2">&quot;is drinking from&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;eating&quot;</span><span class="p">:</span> <span class="s2">&quot;is eating&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;haveitontheback&quot;</span><span class="p">:</span> <span class="s2">&quot;has it on the back&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;holding&quot;</span><span class="p">:</span> <span class="s2">&quot;is holding&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;leaningon&quot;</span><span class="p">:</span> <span class="s2">&quot;is leaning on&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lyingon&quot;</span><span class="p">:</span> <span class="s2">&quot;is lying on&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;notcontacting&quot;</span><span class="p">:</span> <span class="s2">&quot;is not contacting&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;otherrelationship&quot;</span><span class="p">:</span> <span class="s2">&quot;has some relationship with&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sittingon&quot;</span><span class="p">:</span> <span class="s2">&quot;is sitting on&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;standingon&quot;</span><span class="p">:</span> <span class="s2">&quot;is standing on&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;touching&quot;</span><span class="p">:</span> <span class="s2">&quot;is touching&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;twisting&quot;</span><span class="p">:</span> <span class="s2">&quot;is twisting&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;wearing&quot;</span><span class="p">:</span> <span class="s2">&quot;is wearing&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;wiping&quot;</span><span class="p">:</span> <span class="s2">&quot;is wiping&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;writingon&quot;</span><span class="p">:</span> <span class="s2">&quot;is writing on&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">triple</span> <span class="ow">in</span> <span class="n">triples</span><span class="p">:</span>
+        <span class="n">subject</span><span class="p">,</span> <span class="n">predicate</span><span class="p">,</span> <span class="n">object_item</span> <span class="o">=</span> <span class="n">triple</span>
+
+        <span class="c1"># Get the natural language pattern for this relationship</span>
+        <span class="k">if</span> <span class="n">predicate</span> <span class="ow">in</span> <span class="n">relationship_patterns</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">relationship_patterns</span><span class="p">[</span><span class="n">predicate</span><span class="p">]</span>
+            <span class="n">sentence</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">pattern</span><span class="si">}</span><span class="s2"> the </span><span class="si">{</span><span class="n">object_item</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Fallback for unknown relationships</span>
+            <span class="n">sentence</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2"> is </span><span class="si">{</span><span class="n">predicate</span><span class="si">}</span><span class="s2"> the </span><span class="si">{</span><span class="n">object_item</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+        <span class="n">sentences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sentences</span></div>
+
+
+
+<div class="viewcode-block" id="summarize_sentences">
+<a class="viewcode-back" href="../../../api/lib.html#lib.nlp_module.summarize.summarize_sentences">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize_sentences</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;google-t5/t5-base&quot;</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s2">&quot;t5&quot;</span><span class="p">):</span>
+    <span class="n">combined_text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sentences</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">model_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;t5&quot;</span><span class="p">:</span>
+        <span class="n">wrapper</span> <span class="o">=</span> <span class="n">T5SummarizationWrapper</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">combined_text</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">model_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;pegasus&quot;</span><span class="p">:</span>
+        <span class="n">wrapper</span> <span class="o">=</span> <span class="n">PegasusSummarizationWrapper</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">combined_text</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported model type: </span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">summary</span></div>
+
+
+
+<div class="viewcode-block" id="summarize_with_pegasus_separate">
+<a class="viewcode-back" href="../../../api/lib.html#lib.nlp_module.summarize.summarize_with_pegasus_separate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize_with_pegasus_separate</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;google/pegasus-xsum&quot;</span><span class="p">):</span>
+    <span class="n">combined_text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sentences</span><span class="p">)</span>
+    <span class="n">separate_loader</span> <span class="o">=</span> <span class="n">PegasusSeparateLoader</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+    <span class="n">separate_loader</span><span class="o">.</span><span class="n">load_tokenizer</span><span class="p">()</span>
+    <span class="n">separate_loader</span><span class="o">.</span><span class="n">load_model</span><span class="p">()</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">separate_loader</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">combined_text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">summary</span></div>
+
+
+
+<div class="viewcode-block" id="summarize_with_pegasus_custom">
+<a class="viewcode-back" href="../../../api/lib.html#lib.nlp_module.summarize.summarize_with_pegasus_custom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">summarize_with_pegasus_custom</span><span class="p">(</span>
+    <span class="n">sentences</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;google/pegasus-xsum&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+    <span class="n">combined_text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sentences</span><span class="p">)</span>
+    <span class="n">custom_config</span> <span class="o">=</span> <span class="n">PegasusCustomConfig</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+    <span class="n">custom_config</span><span class="o">.</span><span class="n">load_with_config</span><span class="p">()</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">custom_config</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">combined_text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">summary</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../api/lib.html#lib.nlp_module.summarize.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">triples</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;man&quot;</span><span class="p">,</span> <span class="s2">&quot;riding&quot;</span><span class="p">,</span> <span class="s2">&quot;bicycle&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;woman&quot;</span><span class="p">,</span> <span class="s2">&quot;holding&quot;</span><span class="p">,</span> <span class="s2">&quot;umbrella&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;child&quot;</span><span class="p">,</span> <span class="s2">&quot;playing with&quot;</span><span class="p">,</span> <span class="s2">&quot;dog&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;girl&quot;</span><span class="p">,</span> <span class="s2">&quot;wearing&quot;</span><span class="p">,</span> <span class="s2">&quot;red dress&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;boy&quot;</span><span class="p">,</span> <span class="s2">&quot;sitting on&quot;</span><span class="p">,</span> <span class="s2">&quot;bench&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">sentences</span> <span class="o">=</span> <span class="n">linearize_triples</span><span class="p">(</span><span class="n">triples</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original sentences:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">sentence</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+    <span class="c1"># Test different summarization approaches</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;T5 Summarization:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">summary_t5</span> <span class="o">=</span> <span class="n">summarize_sentences</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s2">&quot;t5&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Summary: </span><span class="si">{</span><span class="n">summary_t5</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pegasus Summarization:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">summary_pegasus</span> <span class="o">=</span> <span class="n">summarize_sentences</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s2">&quot;pegasus&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Summary: </span><span class="si">{</span><span class="n">summary_pegasus</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pegasus Separate Loader:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">summary_separate</span> <span class="o">=</span> <span class="n">summarize_with_pegasus_separate</span><span class="p">(</span><span class="n">sentences</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Summary: </span><span class="si">{</span><span class="n">summary_separate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+    <span class="n">summary_custom</span> <span class="o">=</span> <span class="n">summarize_with_pegasus_custom</span><span class="p">(</span>
+        <span class="n">sentences</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">length_penalty</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">num_beams</span><span class="o">=</span><span class="mi">6</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Summary: </span><span class="si">{</span><span class="n">summary_custom</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, DLHM Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
