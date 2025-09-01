@@ -31,11 +31,9 @@ Visit https://www.dgl.ai/pages/start.html and choose the DGL version with CUDA s
 Install the remaining dependencies using uv:
 ```bash
 uv sync
-```
-
-Or using pip:
-```bash
-pip install -e .
+or:
+uv venv
+uv pip install -e .
 ```
 
 ## General Usage
@@ -56,7 +54,7 @@ fasterRCNN/models/faster_rcnn_ag.pth
 - STKET
 - Tempura
 - OED
-- SceneLLM (new)
+- SceneLLM
 
 We provide a [checkpoint-link] for the best performing SGG model to try with the streamlit app.
 Please put it under 'data/checkpoints/best_model.pth'. 
@@ -64,9 +62,8 @@ If you want to try a different model to assess it's performance, follow the belo
 place the checkpoint at 'data/checkpoints'.
 
 ## NLP Models
-- T5/Pegasus (summarization)
-- gemma3 270M (action anticipation, language modeling)
-- feature processing (?)
+- T5/Pegasus (Summarization)
+- Gemma3 270M (Action Anticipation, Language Modelling)
 
 ## Dataset
 Action Genome: We use the dataset [Action Genome](https://www.actiongenome.org/#download) to train/evaluate our method. Please process the downloaded dataset with the [Toolkit](https://github.com/JingweiJ/ActionGenome). The directories of the dataset should look like:
@@ -76,10 +73,6 @@ Action Genome: We use the dataset [Action Genome](https://www.actiongenome.org/#
     |-- frames        #sampled frames
     |-- videos        #original videos
 ```
-
-EASG dataset: TODO
-
-Visual Genome: TODO
 
  In the experiments for SGCLS/SGDET, we only keep bounding boxes with short edges larger than 16 pixels. 
  Please download the file [object_bbox_and_relationship_filtersmall.pkl](https://drive.google.com/file/d/19BkAwjCw5ByyGyZjFo174Oc3Ud56fkaT/view?usp=sharing) and put it in the ```dataloader```
@@ -140,6 +133,7 @@ output/
 # Demo Applications:
 
 ## Streamlit Web App (Recommended)
+Required deps: pip install streamlit streamlit_chat
 Start the modern web-based interface:
 ```powershell
 streamlit run app.py
