@@ -56,7 +56,7 @@ fasterRCNN/models/faster_rcnn_ag.pth
 - OED
 - SceneLLM
 
-We provide a [checkpoint-link] for the best performing SGG model to try with the streamlit app.
+We provide a [[checkpoint-link](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link)] for the best performing SGG model to try with the streamlit app.
 Please put it under 'data/checkpoints/best_model.pth'. 
 If you want to try a different model to assess it's performance, follow the below training guide and
 place the checkpoint at 'data/checkpoints'.
