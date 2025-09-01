@@ -1,13 +1,13 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Models &mdash; VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0a84b5b7" />
@@ -15,9 +15,9 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=30646c52"></script>
     <script src="_static/js/theme.js"></script>
@@ -128,10 +128,10 @@
            <div itemprop="articleBody">
              
   <section id="models">
-<h1>Models<a class="headerlink" href="#models" title="Link to this heading"></a></h1>
+<h1>Models<a class="headerlink" href="#models" title="Permalink to this heading"></a></h1>
 <p>This section provides detailed information about the scene graph generation models implemented in DLHM VidSGG.</p>
 <section id="model-overview">
-<h2>Model Overview<a class="headerlink" href="#model-overview" title="Link to this heading"></a></h2>
+<h2>Model Overview<a class="headerlink" href="#model-overview" title="Permalink to this heading"></a></h2>
 <p>DLHM VidSGG implements several state-of-the-art models for video scene graph generation:</p>
 <ul class="simple">
 <li><p><strong>STTran</strong>: Spatial-Temporal Transformer baseline</p></li>
@@ -144,7 +144,7 @@
 <p>Each model can be trained and evaluated in three modes: PredCLS, SGCLS, and SGDET.</p>
 </section>
 <section id="sttran-model">
-<h2>STTran Model<a class="headerlink" href="#sttran-model" title="Link to this heading"></a></h2>
+<h2>STTran Model<a class="headerlink" href="#sttran-model" title="Permalink to this heading"></a></h2>
 <p>The Spatial-Temporal Transformer serves as the baseline model for video scene graph generation.</p>
 <p><strong>Architecture</strong></p>
 <p>STTran uses a transformer-based architecture to model spatial and temporal relationships:</p>
@@ -176,7 +176,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </div>
 </section>
 <section id="tempura-model">
-<h2>Tempura Model<a class="headerlink" href="#tempura-model" title="Link to this heading"></a></h2>
+<h2>Tempura Model<a class="headerlink" href="#tempura-model" title="Permalink to this heading"></a></h2>
 <p>Tempura focuses on temporal relationship modeling with uncertainty quantification.</p>
 <p><strong>Architecture</strong></p>
 <ul class="simple">
@@ -206,7 +206,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </div>
 </section>
 <section id="scenellm-model">
-<h2>SceneLLM Model<a class="headerlink" href="#scenellm-model" title="Link to this heading"></a></h2>
+<h2>SceneLLM Model<a class="headerlink" href="#scenellm-model" title="Permalink to this heading"></a></h2>
 <p>SceneLLM integrates large language models for enhanced scene understanding.</p>
 <p><strong>Architecture</strong></p>
 <ul class="simple">
@@ -238,7 +238,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </div>
 </section>
 <section id="stket-model">
-<h2>STKET Model<a class="headerlink" href="#stket-model" title="Link to this heading"></a></h2>
+<h2>STKET Model<a class="headerlink" href="#stket-model" title="Permalink to this heading"></a></h2>
 <p>Spatial-Temporal Knowledge-Enhanced Transformer incorporates external knowledge.</p>
 <p><strong>Architecture</strong></p>
 <ul class="simple">
@@ -259,11 +259,11 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </div>
 </section>
 <section id="model-comparison">
-<h2>Model Comparison<a class="headerlink" href="#model-comparison" title="Link to this heading"></a></h2>
+<h2>Model Comparison<a class="headerlink" href="#model-comparison" title="Permalink to this heading"></a></h2>
 <section id="performance-comparison">
-<h3>Performance Comparison<a class="headerlink" href="#performance-comparison" title="Link to this heading"></a></h3>
+<h3>Performance Comparison<a class="headerlink" href="#performance-comparison" title="Permalink to this heading"></a></h3>
 <table class="docutils align-default" id="id1">
-<caption><span class="caption-text">Model Performance on Action Genome (PredCLS)</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<caption><span class="caption-text">Model Performance on Action Genome (PredCLS)</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 20.0%" />
@@ -308,9 +308,9 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </table>
 </section>
 <section id="computational-requirements">
-<h3>Computational Requirements<a class="headerlink" href="#computational-requirements" title="Link to this heading"></a></h3>
+<h3>Computational Requirements<a class="headerlink" href="#computational-requirements" title="Permalink to this heading"></a></h3>
 <table class="docutils align-default" id="id2">
-<caption><span class="caption-text">Computational Requirements</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<caption><span class="caption-text">Computational Requirements</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 20.0%" />
@@ -356,9 +356,9 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </section>
 </section>
 <section id="model-selection-guidelines">
-<h2>Model Selection Guidelines<a class="headerlink" href="#model-selection-guidelines" title="Link to this heading"></a></h2>
+<h2>Model Selection Guidelines<a class="headerlink" href="#model-selection-guidelines" title="Permalink to this heading"></a></h2>
 <section id="choose-based-on-requirements">
-<h3>Choose Based on Requirements<a class="headerlink" href="#choose-based-on-requirements" title="Link to this heading"></a></h3>
+<h3>Choose Based on Requirements<a class="headerlink" href="#choose-based-on-requirements" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt><strong>For Speed and Efficiency</strong></dt><dd><ul class="simple">
 <li><p><strong>STTran</strong>: Best balance of speed and accuracy</p></li>
@@ -384,9 +384,9 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </section>
 </section>
 <section id="training-considerations">
-<h2>Training Considerations<a class="headerlink" href="#training-considerations" title="Link to this heading"></a></h2>
+<h2>Training Considerations<a class="headerlink" href="#training-considerations" title="Permalink to this heading"></a></h2>
 <section id="hyperparameter-tuning">
-<h3>Hyperparameter Tuning<a class="headerlink" href="#hyperparameter-tuning" title="Link to this heading"></a></h3>
+<h3>Hyperparameter Tuning<a class="headerlink" href="#hyperparameter-tuning" title="Permalink to this heading"></a></h3>
 <p><strong>Common Hyperparameters</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">base_config</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span>
@@ -416,7 +416,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </div>
 </section>
 <section id="training-strategies">
-<h3>Training Strategies<a class="headerlink" href="#training-strategies" title="Link to this heading"></a></h3>
+<h3>Training Strategies<a class="headerlink" href="#training-strategies" title="Permalink to this heading"></a></h3>
 <p><strong>Progressive Training</strong></p>
 <ol class="arabic simple">
 <li><p>Start with simpler models (STTran)</p></li>
@@ -432,22 +432,22 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </section>
 </section>
 <section id="model-customization">
-<h2>Model Customization<a class="headerlink" href="#model-customization" title="Link to this heading"></a></h2>
+<h2>Model Customization<a class="headerlink" href="#model-customization" title="Permalink to this heading"></a></h2>
 <section id="custom-model-development">
-<h3>Custom Model Development<a class="headerlink" href="#custom-model-development" title="Link to this heading"></a></h3>
+<h3>Custom Model Development<a class="headerlink" href="#custom-model-development" title="Permalink to this heading"></a></h3>
 <p>To implement a custom model:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">lib.base_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib.base_model</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">CustomModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CustomModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="c1"># Define model components</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
         <span class="c1"># Implement forward pass</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
         <span class="c1"># Implement loss computation</span>
         <span class="k">pass</span>
 </pre></div>
@@ -461,7 +461,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </ol>
 </section>
 <section id="transfer-learning">
-<h3>Transfer Learning<a class="headerlink" href="#transfer-learning" title="Link to this heading"></a></h3>
+<h3>Transfer Learning<a class="headerlink" href="#transfer-learning" title="Permalink to this heading"></a></h3>
 <p><strong>Pretrained Models</strong></p>
 <p>Download pretrained models for different datasets:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download Action Genome pretrained models</span>
@@ -479,9 +479,9 @@ wget<span class="w"> </span>&lt;model_url&gt;<span class="w"> </span>-P<span cla
 </section>
 </section>
 <section id="deployment">
-<h2>Deployment<a class="headerlink" href="#deployment" title="Link to this heading"></a></h2>
+<h2>Deployment<a class="headerlink" href="#deployment" title="Permalink to this heading"></a></h2>
 <section id="model-export">
-<h3>Model Export<a class="headerlink" href="#model-export" title="Link to this heading"></a></h3>
+<h3>Model Export<a class="headerlink" href="#model-export" title="Permalink to this heading"></a></h3>
 <p>Export trained models for deployment:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Export to ONNX</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">onnx</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sample_input</span><span class="p">,</span> <span class="s1">&#39;model.onnx&#39;</span><span class="p">)</span>
@@ -493,7 +493,7 @@ wget<span class="w"> </span>&lt;model_url&gt;<span class="w"> </span>-P<span cla
 </div>
 </section>
 <section id="optimization">
-<h3>Optimization<a class="headerlink" href="#optimization" title="Link to this heading"></a></h3>
+<h3>Optimization<a class="headerlink" href="#optimization" title="Permalink to this heading"></a></h3>
 <p><strong>Model Quantization</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Post-training quantization</span>
 <span class="n">quantized_model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">quantization</span><span class="o">.</span><span class="n">quantize_dynamic</span><span class="p">(</span>
@@ -503,7 +503,7 @@ wget<span class="w"> </span>&lt;model_url&gt;<span class="w"> </span>-P<span cla
 </div>
 <p><strong>Model Pruning</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Structured pruning</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">prune</span>
+<span class="kn">from</span> <span class="nn">torch.nn.utils</span> <span class="kn">import</span> <span class="n">prune</span>
 <span class="n">prune</span><span class="o">.</span><span class="n">global_unstructured</span><span class="p">(</span>
     <span class="n">parameters_to_prune</span><span class="p">,</span>
     <span class="n">pruning_method</span><span class="o">=</span><span class="n">prune</span><span class="o">.</span><span class="n">L1Unstructured</span><span class="p">,</span>
@@ -514,9 +514,9 @@ wget<span class="w"> </span>&lt;model_url&gt;<span class="w"> </span>-P<span cla
 </section>
 </section>
 <section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
 <section id="common-issues">
-<h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading"></a></h3>
+<h3>Common Issues<a class="headerlink" href="#common-issues" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt><strong>Training Instability</strong></dt><dd><ul class="simple">
 <li><p>Reduce learning rate</p></li>
@@ -540,7 +540,7 @@ wget<span class="w"> </span>&lt;model_url&gt;<span class="w"> </span>-P<span cla
 </section>
 </section>
 <section id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="training.html"><span class="doc">Training Guide</span></a> - Detailed training procedures</p></li>
 <li><p><a class="reference internal" href="evaluation.html"><span class="doc">Evaluation Guide</span></a> - Model evaluation and metrics</p></li>

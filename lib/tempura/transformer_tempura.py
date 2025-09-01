@@ -108,12 +108,16 @@ class TransformerDecoder(nn.Module):
 
 
 class transformer(nn.Module):
-    """Spatial Temporal Transformer
-    local_attention: spatial encoder
-    global_attention: temporal decoder
-    position_embedding: frame encoding (window_size*dim)
-    mode: both--use the features from both frames in the window
-          latter--use the features from the latter frame in the window
+    """Spatial Temporal Transformer.
+    
+    :param local_attention: spatial encoder
+    :type local_attention: object
+    :param global_attention: temporal decoder
+    :type global_attention: object
+    :param position_embedding: frame encoding (window_size*dim)
+    :type position_embedding: object
+    :param mode: both--use the features from both frames in the window, latter--use the features from the latter frame in the window
+    :type mode: str
     """
 
     def __init__(

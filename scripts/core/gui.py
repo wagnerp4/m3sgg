@@ -49,16 +49,16 @@ from dataloader.EASG import cuda_collate_fn as easg_cuda_collate_fn
 from lib.config import Config
 from lib.evaluation_recall import BasicSceneGraphEvaluator
 from lib.matcher import HungarianMatcher
-from lib.nlp_module.summarization_wrapper import (
+from lib.nlp.summarization_wrapper import (
     PegasusCustomConfig,
     PegasusSeparateLoader,
     PegasusSummarizationWrapper,
     T5SummarizationWrapper,
 )
 from lib.object_detector import detector
-from lib.object_detector_EASG import detector as detector_EASG
+from lib.easg.object_detector_EASG import detector as detector_EASG
 from lib.sttran import STKET, STTran
-from lib.sttran_EASG import STTran as STTran_EASG
+from lib.easg.sttran_EASG import STTran as STTran_EASG
 from lib.tempura.tempura import TEMPURA
 from lib.track import get_sequence
 

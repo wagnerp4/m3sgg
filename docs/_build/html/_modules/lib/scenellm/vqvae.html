@@ -1,12 +1,12 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>lib.scenellm.vqvae &mdash; VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0a84b5b7" />
@@ -14,9 +14,9 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=30646c52"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -94,14 +94,12 @@
 <span class="sd">Credit to the authors of the original code: https://doi.org/10.1016/j.patcog.2025.111992.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
 
 
-<div class="viewcode-block" id="VQVAEQuantizer">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">VQVAEQuantizer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="VQVAEQuantizer"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer">[docs]</a><span class="k">class</span> <span class="nc">VQVAEQuantizer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Vector Quantized Variational AutoEncoder (VQ-VAE) quantizer.</span>
 <span class="sd">    </span>
 <span class="sd">    Implements discrete latent space quantization for scene representations</span>
@@ -111,9 +109,7 @@
 <span class="sd">    :type nn.Module: class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-<div class="viewcode-block" id="VQVAEQuantizer.__init__">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="VQVAEQuantizer.__init__"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">codebook_size</span><span class="o">=</span><span class="mi">8192</span><span class="p">,</span> <span class="n">commitment_cost</span><span class="o">=</span><span class="mf">0.25</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the VQ-VAE quantizer.</span>
@@ -140,13 +136,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">codebook</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="n">codebook_size</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">codebook_size</span><span class="p">)</span>
-        <span class="c1"># For tracking usage</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;usage_count&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">codebook_size</span><span class="p">))</span></div>
 
-
-<div class="viewcode-block" id="VQVAEQuantizer.forward">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer.forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">roi_feats</span><span class="p">):</span>
+<div class="viewcode-block" id="VQVAEQuantizer.forward"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">roi_feats</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass through VQ-VAE quantizer.</span>
 <span class="sd">        </span>
 <span class="sd">        :param roi_feats: ROI features tensor of shape [N, input_dim]</span>
@@ -154,7 +146,34 @@
 <span class="sd">        :return: Tuple containing reconstructed features, reconstruction loss, embedding loss, and commitment loss</span>
 <span class="sd">        :rtype: tuple</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check for NaN/inf in inputs</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">roi_feats</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">roi_feats</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: NaN/Inf detected in VQ-VAE input, using zero output&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="s2">&quot;z_q&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="s2">&quot;recon&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">roi_feats</span><span class="p">),</span>
+                <span class="s2">&quot;vq_loss&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="s2">&quot;recon_loss&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="s2">&quot;embedding_loss&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="s2">&quot;commitment_loss&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="n">roi_feats</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">roi_feats</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+        
         <span class="n">z_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_projection</span><span class="p">(</span><span class="n">roi_feats</span><span class="p">))</span>  <span class="c1"># [N, dim]</span>
+        
+        <span class="c1"># Check for NaN in encoded features</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">z_e</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">z_e</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: NaN/Inf detected in VQ-VAE encoder output, using zero output&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="s2">&quot;z_q&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="s2">&quot;recon&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">roi_feats</span><span class="p">),</span>
+                <span class="s2">&quot;vq_loss&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="s2">&quot;recon_loss&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="s2">&quot;embedding_loss&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+                <span class="s2">&quot;commitment_loss&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">),</span>
+            <span class="p">}</span>
         <span class="n">z_e_flat</span> <span class="o">=</span> <span class="n">z_e</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>  <span class="c1"># [N, D]</span>
         <span class="n">d</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">z_e_flat</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -172,6 +191,12 @@
         <span class="c1"># Reconstruct</span>
         <span class="n">decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">z_q</span><span class="p">)</span>
         <span class="n">recon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_projection</span><span class="p">(</span><span class="n">decoded</span><span class="p">)</span>  <span class="c1"># Project back to input dimension</span>
+        
+        <span class="c1"># Check for NaN in reconstruction</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">recon</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">recon</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: NaN/Inf detected in VQ-VAE reconstruction, using input&quot;</span><span class="p">)</span>
+            <span class="n">recon</span> <span class="o">=</span> <span class="n">roi_feats</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        
         <span class="n">recon_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">recon</span><span class="p">,</span> <span class="n">roi_feats</span><span class="p">)</span>  <span class="c1"># Calculate VQ-VAE losses</span>
         <span class="n">embedding_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span>
             <span class="n">z_q</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">z_e</span>
@@ -179,6 +204,14 @@
         <span class="n">commitment_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span>
             <span class="n">z_q</span><span class="p">,</span> <span class="n">z_e</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="p">)</span>  <span class="c1"># Commitment loss: encourage encoder to commit to embeddings</span>
+        
+        <span class="c1"># Check for NaN in individual losses</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">recon_loss</span><span class="p">)</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">embedding_loss</span><span class="p">)</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">commitment_loss</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: NaN detected in VQ-VAE losses, using zero loss&quot;</span><span class="p">)</span>
+            <span class="n">recon_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">embedding_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">commitment_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">roi_feats</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        
         <span class="n">vq_loss</span> <span class="o">=</span> <span class="n">recon_loss</span> <span class="o">+</span> <span class="n">embedding_loss</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">commitment_cost</span> <span class="o">*</span> <span class="n">commitment_loss</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="n">min_encoding_indices</span><span class="p">,</span>
@@ -190,29 +223,18 @@
             <span class="s2">&quot;commitment_loss&quot;</span><span class="p">:</span> <span class="n">commitment_loss</span><span class="p">,</span>
         <span class="p">}</span></div>
 
-
-<div class="viewcode-block" id="VQVAEQuantizer.get_usage_histogram">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer.get_usage_histogram">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_usage_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="VQVAEQuantizer.get_usage_histogram"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer.get_usage_histogram">[docs]</a>    <span class="k">def</span> <span class="nf">get_usage_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get current usage histogram for OT update.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage_count</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span></div>
 
-
-<div class="viewcode-block" id="VQVAEQuantizer.reset_usage_count">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer.reset_usage_count">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">reset_usage_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="VQVAEQuantizer.reset_usage_count"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer.reset_usage_count">[docs]</a>    <span class="k">def</span> <span class="nf">reset_usage_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset usage counter.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">usage_count</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span></div>
 
-
-<div class="viewcode-block" id="VQVAEQuantizer.update_codebook">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer.update_codebook">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">update_codebook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_codebook_weights</span><span class="p">):</span>
+<div class="viewcode-block" id="VQVAEQuantizer.update_codebook"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.VQVAEQuantizer.update_codebook">[docs]</a>    <span class="k">def</span> <span class="nf">update_codebook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_codebook_weights</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update codebook with new weights.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">codebook</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">new_codebook_weights</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_usage_count</span><span class="p">()</span>  <span class="c1"># Reset usage count after update</span></div>
-</div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_usage_count</span><span class="p">()</span>  <span class="c1"># Reset usage count after update</span></div></div>
 </pre></div>
 
            </div>

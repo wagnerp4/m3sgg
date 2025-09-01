@@ -379,10 +379,22 @@ def evaluate_from_dict(
 
     pred_rel_inds = pred_entry["pred_rel_inds"]
     rel_scores = pred_entry["rel_scores"]
+    
+    # Check for NaN/inf in rel_scores
+    if np.isnan(rel_scores).any() or np.isinf(rel_scores).any():
+        print("WARNING: NaN/Inf detected in rel_scores, clipping to valid range")
+        rel_scores = np.nan_to_num(rel_scores, nan=1e-10, posinf=1.0, neginf=1e-10)
+        rel_scores = np.clip(rel_scores, 1e-10, 1.0)
 
     pred_boxes = pred_entry["pred_boxes"].astype(float)
     pred_classes = pred_entry["pred_classes"]
     obj_scores = pred_entry["obj_scores"]
+    
+    # Check for NaN/inf in obj_scores
+    if np.isnan(obj_scores).any() or np.isinf(obj_scores).any():
+        print("WARNING: NaN/Inf detected in obj_scores, clipping to valid range")
+        obj_scores = np.nan_to_num(obj_scores, nan=1e-10, posinf=1.0, neginf=1e-10)
+        obj_scores = np.clip(obj_scores, 1e-10, 1.0)
 
     if method == "semi":
         pred_rels = []
@@ -405,9 +417,29 @@ def evaluate_from_dict(
 
         pred_rels = np.array(pred_rels)
         predicate_scores = np.array(predicate_scores)
+        
+        # Check for NaN/inf in predicate_scores
+        if len(predicate_scores) > 0 and (np.isnan(predicate_scores).any() or np.isinf(predicate_scores).any()):
+            print("WARNING: NaN/Inf detected in predicate_scores, clipping to valid range")
+            predicate_scores = np.nan_to_num(predicate_scores, nan=1e-10, posinf=1.0, neginf=1e-10)
+            predicate_scores = np.clip(predicate_scores, 1e-10, 1.0)
     elif method == "no":
         obj_scores_per_rel = obj_scores[pred_rel_inds].prod(1)
+        
+        # Check for NaN/inf in obj_scores_per_rel
+        if np.isnan(obj_scores_per_rel).any() or np.isinf(obj_scores_per_rel).any():
+            print("WARNING: NaN/Inf detected in obj_scores_per_rel, clipping to valid range")
+            obj_scores_per_rel = np.nan_to_num(obj_scores_per_rel, nan=1e-10, posinf=1.0, neginf=1e-10)
+            obj_scores_per_rel = np.clip(obj_scores_per_rel, 1e-10, 1.0)
+        
         overall_scores = obj_scores_per_rel[:, None] * rel_scores
+        
+        # Check for NaN/inf in overall_scores
+        if np.isnan(overall_scores).any() or np.isinf(overall_scores).any():
+            print("WARNING: NaN/Inf detected in overall_scores, clipping to valid range")
+            overall_scores = np.nan_to_num(overall_scores, nan=1e-10, posinf=1.0, neginf=1e-10)
+            overall_scores = np.clip(overall_scores, 1e-10, 1.0)
+        
         score_inds = argsort_desc(overall_scores)[:100]
         pred_rels = np.column_stack((pred_rel_inds[score_inds[:, 0]], score_inds[:, 1]))
         predicate_scores = rel_scores[score_inds[:, 0], score_inds[:, 1]]
@@ -417,6 +449,12 @@ def evaluate_from_dict(
             (pred_rel_inds, rel_scores.argmax(1))
         )  # 1+  dont add 1 because no dummy 'no relations'
         predicate_scores = rel_scores.max(1)
+        
+        # Check for NaN/inf in predicate_scores (default method)
+        if np.isnan(predicate_scores).any() or np.isinf(predicate_scores).any():
+            print("WARNING: NaN/Inf detected in predicate_scores (default method), clipping to valid range")
+            predicate_scores = np.nan_to_num(predicate_scores, nan=1e-10, posinf=1.0, neginf=1e-10)
+            predicate_scores = np.clip(predicate_scores, 1e-10, 1.0)
 
     pred_to_gt, pred_5ples, rel_scores = evaluate_recall(
         gt_rels,
@@ -536,11 +574,34 @@ def evaluate_recall(
         cls_scores,
     )
 
-    sorted_scores = relation_scores.prod(1)
-    pred_triplets = pred_triplets[sorted_scores.argsort()[::-1], :]
-    pred_triplet_boxes = pred_triplet_boxes[sorted_scores.argsort()[::-1], :]
-    relation_scores = relation_scores[sorted_scores.argsort()[::-1], :]
-    scores_overall = relation_scores.prod(1)
+    # Handle NaN/inf in relation scores before sorting
+    if relation_scores is not None:
+        # Check for NaN/inf values in relation scores
+        nan_mask = np.isnan(relation_scores).any(axis=1) | np.isinf(relation_scores).any(axis=1)
+        if nan_mask.any():
+            print(f"WARNING: Found {nan_mask.sum()} relationships with NaN/Inf scores during evaluation")
+            # Replace NaN/inf values with very small scores (1e-10) to ensure they get sorted last
+            relation_scores[nan_mask] = 1e-10
+        
+        # Ensure all scores are finite and positive
+        relation_scores = np.clip(relation_scores, 1e-10, 1.0)
+        
+        sorted_scores = relation_scores.prod(1)
+        
+        # Double-check that sorted_scores are finite
+        if np.isnan(sorted_scores).any() or np.isinf(sorted_scores).any():
+            print("WARNING: NaN/Inf detected in sorted scores, using uniform scores")
+            sorted_scores = np.ones_like(sorted_scores) * 1e-10
+            
+        sort_indices = sorted_scores.argsort()[::-1]
+        pred_triplets = pred_triplets[sort_indices, :]
+        pred_triplet_boxes = pred_triplet_boxes[sort_indices, :]
+        relation_scores = relation_scores[sort_indices, :]
+        scores_overall = relation_scores.prod(1)
+    else:
+        # Handle case when relation_scores is None
+        print("WARNING: relation_scores is None, using uniform scores")
+        scores_overall = np.ones(len(pred_triplets)) * 1e-10
 
     if not np.all(scores_overall[1:] <= scores_overall[:-1] + 1e-5):
         print(

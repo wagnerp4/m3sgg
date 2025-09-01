@@ -1,13 +1,13 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contributing &mdash; VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0a84b5b7" />
@@ -15,9 +15,9 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=30646c52"></script>
     <script src="_static/js/theme.js"></script>
@@ -141,12 +141,12 @@
            <div itemprop="articleBody">
              
   <section id="contributing">
-<h1>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h1>
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading"></a></h1>
 <p>We welcome contributions to DLHM VidSGG! This guide explains how to contribute to the project.</p>
 <section id="getting-started">
-<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h2>
 <section id="development-setup">
-<h3>Development Setup<a class="headerlink" href="#development-setup" title="Link to this heading"></a></h3>
+<h3>Development Setup<a class="headerlink" href="#development-setup" title="Permalink to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p>Fork the repository on GitHub</p></li>
 <li><p>Clone your fork locally:</p></li>
@@ -171,7 +171,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </div>
 </section>
 <section id="code-style">
-<h3>Code Style<a class="headerlink" href="#code-style" title="Link to this heading"></a></h3>
+<h3>Code Style<a class="headerlink" href="#code-style" title="Permalink to this heading"></a></h3>
 <p>We follow Python PEP 8 style guidelines with some project-specific conventions:</p>
 <ul class="simple">
 <li><p>Use double quotes for strings</p></li>
@@ -179,7 +179,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <li><p>Use type hints for function parameters and return values</p></li>
 <li><p>Add docstrings to all public functions and classes</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">example_function</span><span class="p">(</span><span class="n">param1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param2</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">example_function</span><span class="p">(</span><span class="n">param1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param2</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Example function with proper style.</span>
 
@@ -196,9 +196,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </section>
 </section>
 <section id="types-of-contributions">
-<h2>Types of Contributions<a class="headerlink" href="#types-of-contributions" title="Link to this heading"></a></h2>
+<h2>Types of Contributions<a class="headerlink" href="#types-of-contributions" title="Permalink to this heading"></a></h2>
 <section id="bug-reports">
-<h3>Bug Reports<a class="headerlink" href="#bug-reports" title="Link to this heading"></a></h3>
+<h3>Bug Reports<a class="headerlink" href="#bug-reports" title="Permalink to this heading"></a></h3>
 <p>When reporting bugs, please include:</p>
 <ul class="simple">
 <li><p>Python version and operating system</p></li>
@@ -226,7 +226,7 @@ What should happen.
 </div>
 </section>
 <section id="feature-requests">
-<h3>Feature Requests<a class="headerlink" href="#feature-requests" title="Link to this heading"></a></h3>
+<h3>Feature Requests<a class="headerlink" href="#feature-requests" title="Permalink to this heading"></a></h3>
 <p>For feature requests, please:</p>
 <ul class="simple">
 <li><p>Check if the feature already exists</p></li>
@@ -236,7 +236,7 @@ What should happen.
 </ul>
 </section>
 <section id="new-models">
-<h3>New Models<a class="headerlink" href="#new-models" title="Link to this heading"></a></h3>
+<h3>New Models<a class="headerlink" href="#new-models" title="Permalink to this heading"></a></h3>
 <p>To contribute a new model:</p>
 <ol class="arabic simple">
 <li><p>Implement the model following the base model interface</p></li>
@@ -245,23 +245,23 @@ What should happen.
 <li><p>Provide documentation and examples</p></li>
 <li><p>Compare against existing baselines</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">lib.base_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib.base_model</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">NewModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">NewModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;New model implementation.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="c1"># Model implementation</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
         <span class="c1"># Forward pass implementation</span>
         <span class="k">pass</span>
 </pre></div>
 </div>
 </section>
 <section id="dataset-support">
-<h3>Dataset Support<a class="headerlink" href="#dataset-support" title="Link to this heading"></a></h3>
+<h3>Dataset Support<a class="headerlink" href="#dataset-support" title="Permalink to this heading"></a></h3>
 <p>To add support for a new dataset:</p>
 <ol class="arabic simple">
 <li><p>Create a dataloader following the base dataset interface</p></li>
@@ -269,16 +269,16 @@ What should happen.
 <li><p>Add dataset documentation</p></li>
 <li><p>Provide download and setup instructions</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataloader.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataset</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataloader.base</span> <span class="kn">import</span> <span class="n">BaseDataset</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">NewDataset</span><span class="p">(</span><span class="n">BaseDataset</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">NewDataset</span><span class="p">(</span><span class="n">BaseDataset</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;New dataset implementation.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
         <span class="c1"># Dataset initialization</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="c1"># Data loading implementation</span>
         <span class="k">pass</span>
 </pre></div>
@@ -286,9 +286,9 @@ What should happen.
 </section>
 </section>
 <section id="development-workflow">
-<h2>Development Workflow<a class="headerlink" href="#development-workflow" title="Link to this heading"></a></h2>
+<h2>Development Workflow<a class="headerlink" href="#development-workflow" title="Permalink to this heading"></a></h2>
 <section id="branch-naming">
-<h3>Branch Naming<a class="headerlink" href="#branch-naming" title="Link to this heading"></a></h3>
+<h3>Branch Naming<a class="headerlink" href="#branch-naming" title="Permalink to this heading"></a></h3>
 <p>Use descriptive branch names:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">feature/model-name</span></code> - for new models</p></li>
@@ -298,7 +298,7 @@ What should happen.
 </ul>
 </section>
 <section id="commit-messages">
-<h3>Commit Messages<a class="headerlink" href="#commit-messages" title="Link to this heading"></a></h3>
+<h3>Commit Messages<a class="headerlink" href="#commit-messages" title="Permalink to this heading"></a></h3>
 <p>Follow conventional commit format:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>type(scope): description
 
@@ -319,7 +319,7 @@ test(evaluation): add unit tests for recall metrics
 </div>
 </section>
 <section id="pull-request-process">
-<h3>Pull Request Process<a class="headerlink" href="#pull-request-process" title="Link to this heading"></a></h3>
+<h3>Pull Request Process<a class="headerlink" href="#pull-request-process" title="Permalink to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p>Create a feature branch from main</p></li>
 <li><p>Make your changes with appropriate tests</p></li>
@@ -351,9 +351,9 @@ Brief description of changes
 </section>
 </section>
 <section id="testing">
-<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading"></a></h2>
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this heading"></a></h2>
 <section id="running-tests">
-<h3>Running Tests<a class="headerlink" href="#running-tests" title="Link to this heading"></a></h3>
+<h3>Running Tests<a class="headerlink" href="#running-tests" title="Permalink to this heading"></a></h3>
 <p>Run the full test suite:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run all tests</span>
 pytest<span class="w"> </span>tests/
@@ -367,20 +367,20 @@ pytest<span class="w"> </span>--cov<span class="o">=</span>lib<span class="w"> <
 </div>
 </section>
 <section id="writing-tests">
-<h3>Writing Tests<a class="headerlink" href="#writing-tests" title="Link to this heading"></a></h3>
+<h3>Writing Tests<a class="headerlink" href="#writing-tests" title="Permalink to this heading"></a></h3>
 <p>All new code should include tests:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">lib.models.new_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">NewModel</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">lib.models.new_model</span> <span class="kn">import</span> <span class="n">NewModel</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">TestNewModel</span><span class="p">:</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">test_model_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">TestNewModel</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">test_model_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Test model initializes correctly.&quot;&quot;&quot;</span>
         <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hidden_dim&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">}</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">NewModel</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">==</span> <span class="mi">512</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">test_forward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_forward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Test model forward pass.&quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">NewModel</span><span class="p">({</span><span class="s2">&quot;hidden_dim&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">})</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
@@ -390,7 +390,7 @@ pytest<span class="w"> </span>--cov<span class="o">=</span>lib<span class="w"> <
 </div>
 </section>
 <section id="test-categories">
-<h3>Test Categories<a class="headerlink" href="#test-categories" title="Link to this heading"></a></h3>
+<h3>Test Categories<a class="headerlink" href="#test-categories" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>Unit Tests</strong>: Test individual functions and classes</p></li>
 <li><p><strong>Integration Tests</strong>: Test component interactions</p></li>
@@ -400,9 +400,9 @@ pytest<span class="w"> </span>--cov<span class="o">=</span>lib<span class="w"> <
 </section>
 </section>
 <section id="documentation">
-<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading"></a></h2>
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading"></a></h2>
 <section id="documentation-structure">
-<h3>Documentation Structure<a class="headerlink" href="#documentation-structure" title="Link to this heading"></a></h3>
+<h3>Documentation Structure<a class="headerlink" href="#documentation-structure" title="Permalink to this heading"></a></h3>
 <p>Documentation is organized as follows:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>docs/
 ├── index.rst           # Main documentation page
@@ -417,7 +417,7 @@ pytest<span class="w"> </span>--cov<span class="o">=</span>lib<span class="w"> <
 </div>
 </section>
 <section id="writing-documentation">
-<h3>Writing Documentation<a class="headerlink" href="#writing-documentation" title="Link to this heading"></a></h3>
+<h3>Writing Documentation<a class="headerlink" href="#writing-documentation" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Use clear, concise language</p></li>
 <li><p>Include code examples for all features</p></li>
@@ -439,7 +439,7 @@ Usage example:
 </div>
 </section>
 <section id="building-documentation">
-<h3>Building Documentation<a class="headerlink" href="#building-documentation" title="Link to this heading"></a></h3>
+<h3>Building Documentation<a class="headerlink" href="#building-documentation" title="Permalink to this heading"></a></h3>
 <p>Build documentation locally:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
 make<span class="w"> </span>html
@@ -451,9 +451,9 @@ open<span class="w"> </span>_build/html/index.html
 </section>
 </section>
 <section id="code-review-guidelines">
-<h2>Code Review Guidelines<a class="headerlink" href="#code-review-guidelines" title="Link to this heading"></a></h2>
+<h2>Code Review Guidelines<a class="headerlink" href="#code-review-guidelines" title="Permalink to this heading"></a></h2>
 <section id="reviewing-code">
-<h3>Reviewing Code<a class="headerlink" href="#reviewing-code" title="Link to this heading"></a></h3>
+<h3>Reviewing Code<a class="headerlink" href="#reviewing-code" title="Permalink to this heading"></a></h3>
 <p>When reviewing pull requests:</p>
 <ul class="simple">
 <li><p>Check code correctness and style</p></li>
@@ -473,7 +473,7 @@ open<span class="w"> </span>_build/html/index.html
 </ul>
 </section>
 <section id="responding-to-reviews">
-<h3>Responding to Reviews<a class="headerlink" href="#responding-to-reviews" title="Link to this heading"></a></h3>
+<h3>Responding to Reviews<a class="headerlink" href="#responding-to-reviews" title="Permalink to this heading"></a></h3>
 <p>When receiving code review feedback:</p>
 <ul class="simple">
 <li><p>Address all comments promptly</p></li>
@@ -484,9 +484,9 @@ open<span class="w"> </span>_build/html/index.html
 </section>
 </section>
 <section id="community-guidelines">
-<h2>Community Guidelines<a class="headerlink" href="#community-guidelines" title="Link to this heading"></a></h2>
+<h2>Community Guidelines<a class="headerlink" href="#community-guidelines" title="Permalink to this heading"></a></h2>
 <section id="code-of-conduct">
-<h3>Code of Conduct<a class="headerlink" href="#code-of-conduct" title="Link to this heading"></a></h3>
+<h3>Code of Conduct<a class="headerlink" href="#code-of-conduct" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Be respectful and inclusive</p></li>
 <li><p>Welcome newcomers and help them learn</p></li>
@@ -495,7 +495,7 @@ open<span class="w"> </span>_build/html/index.html
 </ul>
 </section>
 <section id="communication-channels">
-<h3>Communication Channels<a class="headerlink" href="#communication-channels" title="Link to this heading"></a></h3>
+<h3>Communication Channels<a class="headerlink" href="#communication-channels" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>GitHub Issues</strong>: Bug reports and feature requests</p></li>
 <li><p><strong>Pull Requests</strong>: Code contributions and discussions</p></li>
@@ -503,7 +503,7 @@ open<span class="w"> </span>_build/html/index.html
 </ul>
 </section>
 <section id="getting-help">
-<h3>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading"></a></h3>
+<h3>Getting Help<a class="headerlink" href="#getting-help" title="Permalink to this heading"></a></h3>
 <p>If you need help:</p>
 <ol class="arabic simple">
 <li><p>Check existing documentation and issues</p></li>
@@ -514,9 +514,9 @@ open<span class="w"> </span>_build/html/index.html
 </section>
 </section>
 <section id="release-process">
-<h2>Release Process<a class="headerlink" href="#release-process" title="Link to this heading"></a></h2>
+<h2>Release Process<a class="headerlink" href="#release-process" title="Permalink to this heading"></a></h2>
 <section id="versioning">
-<h3>Versioning<a class="headerlink" href="#versioning" title="Link to this heading"></a></h3>
+<h3>Versioning<a class="headerlink" href="#versioning" title="Permalink to this heading"></a></h3>
 <p>We follow semantic versioning (SemVer):</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">MAJOR.MINOR.PATCH</span></code></p></li>
@@ -526,7 +526,7 @@ open<span class="w"> </span>_build/html/index.html
 </ul>
 </section>
 <section id="release-checklist">
-<h3>Release Checklist<a class="headerlink" href="#release-checklist" title="Link to this heading"></a></h3>
+<h3>Release Checklist<a class="headerlink" href="#release-checklist" title="Permalink to this heading"></a></h3>
 <p>Before creating a release:</p>
 <ul class="simple">
 <li><p>[ ] All tests pass</p></li>
@@ -538,7 +538,7 @@ open<span class="w"> </span>_build/html/index.html
 </section>
 </section>
 <section id="recognition">
-<h2>Recognition<a class="headerlink" href="#recognition" title="Link to this heading"></a></h2>
+<h2>Recognition<a class="headerlink" href="#recognition" title="Permalink to this heading"></a></h2>
 <p>Contributors are recognized in:</p>
 <ul class="simple">
 <li><p>README.md contributors section</p></li>

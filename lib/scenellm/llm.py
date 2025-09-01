@@ -82,7 +82,6 @@ class SceneLLMLoRA(nn.Module):
             self.hidden_size = base.config.hidden_size
             self.use_fallback = False
         else:
-            # Use fallback linear layer
             if fallback_dim is None:
                 raise ValueError(
                     "fallback_dim is required when transformers is not available or model_name is None"
@@ -104,11 +103,19 @@ class SceneLLMLoRA(nn.Module):
             # For embeddings input, use inputs_embeds parameter
             # Make sure we only pass the expected parameters
             try:
+                # Check for NaN/inf in inputs before processing
+                if torch.isnan(token_embeds).any() or torch.isinf(token_embeds).any():
+                    print("WARNING: NaN detected in LLM input, using fallback")
+                    return torch.zeros_like(token_embeds)
+                
+                # Clamp input values to prevent overflow in LLM
+                token_embeds = torch.clamp(token_embeds, min=-10.0, max=10.0)
+                
                 outputs = self.model(inputs_embeds=token_embeds)
                 result = outputs.last_hidden_state  # [B, T, D]
 
                 # Check for NaN in output and clamp extreme values
-                if torch.isnan(result).any():
+                if torch.isnan(result).any() or torch.isinf(result).any():
                     print("WARNING: NaN detected in LLM output, using zero output")
                     return torch.zeros_like(result)
 

@@ -1,12 +1,12 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>lib.scenellm.network &mdash; VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0a84b5b7" />
@@ -14,9 +14,9 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=30646c52"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -94,23 +94,21 @@
 <span class="sd">Credit to the authors of the original code: https://doi.org/10.1016/j.patcog.2025.111992.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">lib.sttran</span><span class="w"> </span><span class="kn">import</span> <span class="n">STTran</span>
+<span class="kn">from</span> <span class="nn">lib.sttran</span> <span class="kn">import</span> <span class="n">STTran</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.llm</span><span class="w"> </span><span class="kn">import</span> <span class="n">SceneLLMLoRA</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.ot</span><span class="w"> </span><span class="kn">import</span> <span class="n">OT_AVAILABLE</span><span class="p">,</span> <span class="n">OTCodebookUpdater</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.sia</span><span class="w"> </span><span class="kn">import</span> <span class="n">SIA</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.vqvae</span><span class="w"> </span><span class="kn">import</span> <span class="n">VQVAEQuantizer</span>
+<span class="kn">from</span> <span class="nn">.llm</span> <span class="kn">import</span> <span class="n">SceneLLMLoRA</span>
+<span class="kn">from</span> <span class="nn">.ot</span> <span class="kn">import</span> <span class="n">OT_AVAILABLE</span><span class="p">,</span> <span class="n">OTCodebookUpdater</span>
+<span class="kn">from</span> <span class="nn">.sia</span> <span class="kn">import</span> <span class="n">SIA</span>
+<span class="kn">from</span> <span class="nn">.vqvae</span> <span class="kn">import</span> <span class="n">VQVAEQuantizer</span>
 
 <span class="c1"># TODO: Improve GCN architecture</span>
 <span class="c1"># TODO: Use Cross Entropy instead of MSE</span>
 
 
-<div class="viewcode-block" id="SceneLLM">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLM">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SceneLLM</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="SceneLLM"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLM">[docs]</a><span class="k">class</span> <span class="nc">SceneLLM</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;SceneLLM model for scene graph generation with language model integration.</span>
 <span class="sd">    </span>
 <span class="sd">    Combines VQ-VAE quantization, Spatial Information Aggregator (SIA),</span>
@@ -121,9 +119,7 @@
 <span class="sd">    :type nn.Module: class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-<div class="viewcode-block" id="SceneLLM.__init__">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLM.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+<div class="viewcode-block" id="SceneLLM.__init__"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLM.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the SceneLLM model.</span>
 <span class="sd">        </span>
 <span class="sd">        :param cfg: Configuration object containing model parameters</span>
@@ -184,10 +180,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">freeze_llm</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span></div>
 
-
-<div class="viewcode-block" id="SceneLLM.forward">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLM.forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<div class="viewcode-block" id="SceneLLM.forward"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLM.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
         <span class="n">roi_feat</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]</span>  <span class="c1"># [R, D]</span>
         <span class="n">boxes_tensor</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;boxes&quot;</span><span class="p">]</span>
 
@@ -229,16 +222,18 @@
         <span class="c1"># Check for NaN in quantized vectors</span>
         <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">code_vecs</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot;WARNING: NaN detected in VQ-VAE output, using input features directly&quot;</span>
+                <span class="s2">&quot;WARNING: NaN detected in VQ-VAE output, using zero vectors&quot;</span>
             <span class="p">)</span>
-            <span class="n">code_vecs</span> <span class="o">=</span> <span class="n">roi_feat</span>  <span class="c1"># Fallback to original features</span>
+            <span class="c1"># Use in-place fill with zeros to preserve gradient tracking</span>
+            <span class="n">code_vecs</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
 
         <span class="n">frame_tok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sia</span><span class="p">(</span><span class="n">code_vecs</span><span class="p">,</span> <span class="n">boxes</span><span class="p">)</span>  <span class="c1"># [D] SIA</span>
 
         <span class="c1"># Check for NaN in SIA output</span>
         <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">frame_tok</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: NaN detected in SIA output, using mean of input&quot;</span><span class="p">)</span>
-            <span class="n">frame_tok</span> <span class="o">=</span> <span class="n">code_vecs</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Use mean of code vectors as fallback</span>
+            <span class="c1"># Use in-place copy to preserve gradient tracking</span>
+            <span class="n">frame_tok</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">code_vecs</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
         <span class="c1"># For video sequences, we need to handle temporal dimension</span>
         <span class="c1"># Currently handling single frame - extend for video sequences</span>
@@ -284,11 +279,35 @@
         <span class="n">enhanced_roi_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi_feature_projection</span><span class="p">(</span>
             <span class="n">code_vecs</span>
         <span class="p">)</span>  <span class="c1"># [R, D] -&gt; [R, 2048]</span>
+        
+        <span class="c1"># Check for NaN in enhanced ROI features</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">enhanced_roi_features</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">enhanced_roi_features</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: NaN/Inf detected in enhanced ROI features, using clipped values&quot;</span><span class="p">)</span>
+            <span class="c1"># Use in-place operations to preserve gradient tracking</span>
+            <span class="n">enhanced_roi_features</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">enhanced_roi_features</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">posinf</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">neginf</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">enhanced_roi_features</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+        
         <span class="n">num_rois</span> <span class="o">=</span> <span class="n">enhanced_roi_features</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">frame_features</span> <span class="o">=</span> <span class="n">enhanced_frame_token</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span>
             <span class="n">num_rois</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
         <span class="p">)</span>  <span class="c1"># [R, 2048]</span>
+        
+        <span class="c1"># Check for NaN in frame features</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">frame_features</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">frame_features</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: NaN/Inf detected in frame features, using clipped values&quot;</span><span class="p">)</span>
+            <span class="c1"># Use in-place operations to preserve gradient tracking</span>
+            <span class="n">frame_features</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">frame_features</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">posinf</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">neginf</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">frame_features</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+        
         <span class="n">combined_features</span> <span class="o">=</span> <span class="n">enhanced_roi_features</span> <span class="o">+</span> <span class="n">frame_features</span>  <span class="c1"># [R, 2048]</span>
+        
+        <span class="c1"># Final check for NaN in combined features before passing to decoder</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">combined_features</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">combined_features</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: NaN/Inf detected in combined features, using clipped values&quot;</span><span class="p">)</span>
+            <span class="c1"># Use in-place operations to preserve gradient tracking</span>
+            <span class="n">combined_features</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">combined_features</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">posinf</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">neginf</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">combined_features</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+        
         <span class="n">sttran_entry</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># Start with original entry</span>
         <span class="n">sttran_entry</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">combined_features</span>  <span class="c1"># Enhanced 2048-dim features</span>
 
@@ -300,6 +319,38 @@
 
         <span class="c1"># SGG prediction using STTran with enhanced features</span>
         <span class="n">pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">sttran_entry</span><span class="p">)</span>
+        
+        <span class="c1"># Check for NaN/inf in decoder outputs and clean them</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;attention_distribution&quot;</span><span class="p">,</span> <span class="s2">&quot;spatial_distribution&quot;</span><span class="p">,</span> <span class="s2">&quot;contact_distribution&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">pred</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: NaN/Inf detected in </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">, using uniform distribution&quot;</span><span class="p">)</span>
+                    <span class="c1"># Replace with uniform distribution over classes, preserving gradient tracking</span>
+                    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                        <span class="n">uniform_dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">/</span> <span class="n">pred</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="c1"># Use in-place operations to preserve gradient tracking</span>
+                    <span class="n">pred</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">uniform_dist</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Ensure probabilities are in valid range using in-place operations</span>
+                    <span class="n">pred</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+                    <span class="c1"># Ensure they sum to 1 (normalize) using in-place operations</span>
+                    <span class="n">pred</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        
+        <span class="c1"># Check for NaN in object distributions</span>
+        <span class="k">if</span> <span class="s2">&quot;distribution&quot;</span> <span class="ow">in</span> <span class="n">pred</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: NaN/Inf detected in object distribution, using uniform distribution&quot;</span><span class="p">)</span>
+                <span class="c1"># Replace with uniform distribution, preserving gradient tracking</span>
+                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                    <span class="n">uniform_dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">pred</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="c1"># Use in-place operations to preserve gradient tracking</span>
+                <span class="n">pred</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">uniform_dist</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Ensure probabilities are in valid range using in-place operations</span>
+                <span class="n">pred</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+                <span class="c1"># Ensure they sum to 1 (normalize) using in-place operations</span>
+                <span class="n">pred</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">div_</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        
         <span class="n">pred</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;vq_loss&quot;</span><span class="p">:</span> <span class="n">vq_results</span><span class="p">[</span><span class="s2">&quot;vq_loss&quot;</span><span class="p">],</span>
@@ -310,10 +361,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">pred</span></div>
 
-
-<div class="viewcode-block" id="SceneLLM.set_training_stage">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLM.set_training_stage">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_training_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
+<div class="viewcode-block" id="SceneLLM.set_training_stage"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLM.set_training_stage">[docs]</a>    <span class="k">def</span> <span class="nf">set_training_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set training stage and freeze/unfreeze components accordingly.&quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DEBUG: set_training_stage called with: </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">training_stage</span> <span class="o">=</span> <span class="n">stage</span>
@@ -408,10 +456,7 @@
                 <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">is_floating_point</span><span class="p">:</span>
                     <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-
-<div class="viewcode-block" id="SceneLLM.update_codebook_with_ot">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLM.update_codebook_with_ot">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">update_codebook_with_ot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SceneLLM.update_codebook_with_ot"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLM.update_codebook_with_ot">[docs]</a>    <span class="k">def</span> <span class="nf">update_codebook_with_ot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update codebook using Optimal Transport scheme.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_stage</span> <span class="o">!=</span> <span class="s2">&quot;vqvae&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ot_updater</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">usage_hist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantiser</span><span class="o">.</span><span class="n">get_usage_histogram</span><span class="p">()</span>
@@ -421,15 +466,11 @@
                 <span class="sa">f</span><span class="s2">&quot;Updated codebook from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">quantiser</span><span class="o">.</span><span class="n">codebook_size</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">new_codebook</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2"> entries&quot;</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ot_updater</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OT library not available - skipping codebook update&quot;</span><span class="p">)</span></div>
-</div>
-
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OT library not available - skipping codebook update&quot;</span><span class="p">)</span></div></div>
 
 
 <span class="c1"># Deprecated: Replace with SGG module</span>
-<div class="viewcode-block" id="SGGDecoder">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SGGDecoder">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SGGDecoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="SGGDecoder"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SGGDecoder">[docs]</a><span class="k">class</span> <span class="nc">SGGDecoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Scene Graph Generation decoder with transformer architecture.</span>
 <span class="sd">    </span>
 <span class="sd">    Decodes hidden representations into attention, spatial, and contact</span>
@@ -439,9 +480,7 @@
 <span class="sd">    :type nn.Module: class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-<div class="viewcode-block" id="SGGDecoder.__init__">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SGGDecoder.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">attn_c</span><span class="p">,</span> <span class="n">spat_c</span><span class="p">,</span> <span class="n">cont_c</span><span class="p">):</span>
+<div class="viewcode-block" id="SGGDecoder.__init__"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SGGDecoder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">attn_c</span><span class="p">,</span> <span class="n">spat_c</span><span class="p">,</span> <span class="n">cont_c</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the SGG decoder.</span>
 <span class="sd">        </span>
 <span class="sd">        :param hidden_dim: Hidden dimension size</span>
@@ -463,10 +502,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">spat_head</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">spat_c</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cont_head</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">cont_c</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="SGGDecoder.forward">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SGGDecoder.forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">):</span>
+<div class="viewcode-block" id="SGGDecoder.forward"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SGGDecoder.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass through the SGG decoder.</span>
 <span class="sd">        </span>
 <span class="sd">        :param seq: Input sequence tensor of shape [B, T, D]</span>
@@ -480,9 +516,7 @@
             <span class="s2">&quot;attention_distribution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn_head</span><span class="p">(</span><span class="n">g</span><span class="p">),</span>
             <span class="s2">&quot;spatial_distribution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spat_head</span><span class="p">(</span><span class="n">g</span><span class="p">),</span>
             <span class="s2">&quot;contact_distribution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cont_head</span><span class="p">(</span><span class="n">g</span><span class="p">),</span>
-        <span class="p">}</span></div>
-</div>
-
+        <span class="p">}</span></div></div>
 </pre></div>
 
            </div>

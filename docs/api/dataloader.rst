@@ -19,10 +19,4 @@ EASG Dataloader
    :undoc-members:
    :show-inheritance:
 
-Visual Genome Dataloader
--------------------------
 
-.. automodule:: dataloader.visual_genome
-   :members:
-   :undoc-members:
-   :show-inheritance:

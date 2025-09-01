@@ -1,13 +1,13 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dataloader Module &mdash; VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0a84b5b7" />
@@ -15,9 +15,9 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=30646c52"></script>
     <script src="../_static/js/theme.js"></script>
@@ -70,7 +70,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#dataloader.easg.cuda_collate_fn"><code class="docutils literal notranslate"><span class="pre">cuda_collate_fn()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-dataloader.visual_genome">Visual Genome Dataloader</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="lib.html">Library Module</a></li>
@@ -112,22 +111,22 @@
            <div itemprop="articleBody">
              
   <section id="dataloader-module">
-<h1>Dataloader Module<a class="headerlink" href="#dataloader-module" title="Link to this heading"></a></h1>
+<h1>Dataloader Module<a class="headerlink" href="#dataloader-module" title="Permalink to this heading"></a></h1>
 <p>The dataloader module provides dataset loading and preprocessing functionality for different video scene graph datasets.</p>
 <section id="module-dataloader.action_genome">
-<span id="action-genome-dataloader"></span><h2>Action Genome Dataloader<a class="headerlink" href="#module-dataloader.action_genome" title="Link to this heading"></a></h2>
+<span id="action-genome-dataloader"></span><h2>Action Genome Dataloader<a class="headerlink" href="#module-dataloader.action_genome" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="dataloader.action_genome.AG">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dataloader.action_genome.</span></span><span class="sig-name descname"><span class="pre">AG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_nonperson_box_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_small_box</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/action_genome.html#AG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.action_genome.AG" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dataloader.action_genome.</span></span><span class="sig-name descname"><span class="pre">AG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_nonperson_box_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_small_box</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/action_genome.html#AG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.action_genome.AG" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.Dataset" title="(in PyTorch v2.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dataloader.action_genome.AG.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_nonperson_box_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_small_box</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/action_genome.html#AG.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.action_genome.AG.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_nonperson_box_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_small_box</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/action_genome.html#AG.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.action_genome.AG.__init__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="dataloader.action_genome.AG.valid_nums">
-<span class="sig-name descname"><span class="pre">valid_nums</span></span><a class="headerlink" href="#dataloader.action_genome.AG.valid_nums" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">valid_nums</span></span><a class="headerlink" href="#dataloader.action_genome.AG.valid_nums" title="Permalink to this definition"></a></dt>
 <dd><p>according to the stanford method, remove the frames without person box both for training and testing
 filter_nonperson_box_frame = False: still use the frames without person box, FasterRCNN may find the person</p>
 <dl class="field-list simple">
@@ -141,34 +140,31 @@ filter_nonperson_box_frame = False: still use the frames without person box, Fas
 
 <dl class="py function">
 <dt class="sig sig-object py" id="dataloader.action_genome.cuda_collate_fn">
-<span class="sig-prename descclassname"><span class="pre">dataloader.action_genome.</span></span><span class="sig-name descname"><span class="pre">cuda_collate_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/action_genome.html#cuda_collate_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.action_genome.cuda_collate_fn" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">dataloader.action_genome.</span></span><span class="sig-name descname"><span class="pre">cuda_collate_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/action_genome.html#cuda_collate_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.action_genome.cuda_collate_fn" title="Permalink to this definition"></a></dt>
 <dd><p>Proper collate function that handles variable-length sequences
 and ensures consistent batch sizes for the model</p>
 </dd></dl>
 
 </section>
 <section id="module-dataloader.easg">
-<span id="easg-dataloader"></span><h2>EASG Dataloader<a class="headerlink" href="#module-dataloader.easg" title="Link to this heading"></a></h2>
+<span id="easg-dataloader"></span><h2>EASG Dataloader<a class="headerlink" href="#module-dataloader.easg" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="dataloader.easg.EASG">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dataloader.easg.</span></span><span class="sig-name descname"><span class="pre">EASG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/easg.html#EASG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.easg.EASG" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dataloader.easg.</span></span><span class="sig-name descname"><span class="pre">EASG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/easg.html#EASG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.easg.EASG" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.Dataset" title="(in PyTorch v2.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dataloader.easg.EASG.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/easg.html#EASG.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.easg.EASG.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/easg.html#EASG.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.easg.EASG.__init__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="dataloader.easg.cuda_collate_fn">
-<span class="sig-prename descclassname"><span class="pre">dataloader.easg.</span></span><span class="sig-name descname"><span class="pre">cuda_collate_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/easg.html#cuda_collate_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.easg.cuda_collate_fn" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">dataloader.easg.</span></span><span class="sig-name descname"><span class="pre">cuda_collate_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataloader/easg.html#cuda_collate_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dataloader.easg.cuda_collate_fn" title="Permalink to this definition"></a></dt>
 <dd><p>don’t need to zip the tensor</p>
 </dd></dl>
 
-</section>
-<section id="module-dataloader.visual_genome">
-<span id="visual-genome-dataloader"></span><h2>Visual Genome Dataloader<a class="headerlink" href="#module-dataloader.visual_genome" title="Link to this heading"></a></h2>
 </section>
 </section>
 

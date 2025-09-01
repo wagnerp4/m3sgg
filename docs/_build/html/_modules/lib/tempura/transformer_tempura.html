@@ -1,12 +1,12 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lib.tempura.transformer_tempura &mdash; DLHM VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+  <title>lib.tempura.transformer_tempura &mdash; VidSGG 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0a84b5b7" />
@@ -14,9 +14,9 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=30646c52"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -33,7 +33,7 @@
           
           
           <a href="../../../index.html" class="icon icon-home">
-            DLHM VidSGG
+            VidSGG
               <img src="../../../_static/tum-logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -70,7 +70,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">DLHM VidSGG</a>
+          <a href="../../../index.html">VidSGG</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -89,18 +89,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for lib.tempura.transformer_tempura</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 
 
-<div class="viewcode-block" id="TransformerEncoderLayer">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoderLayer">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TransformerEncoderLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<div class="viewcode-block" id="TransformerEncoderLayer.__init__">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoderLayer.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embed_dim</span><span class="o">=</span><span class="mi">1936</span><span class="p">,</span> <span class="n">nhead</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dim_feedforward</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerEncoderLayer"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoderLayer">[docs]</a><span class="k">class</span> <span class="nc">TransformerEncoderLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerEncoderLayer.__init__"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoderLayer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embed_dim</span><span class="o">=</span><span class="mi">1936</span><span class="p">,</span> <span class="n">nhead</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dim_feedforward</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MultiheadAttention</span><span class="p">(</span><span class="n">embed_dim</span><span class="p">,</span> <span class="n">nhead</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">)</span>
 
@@ -113,10 +109,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dropout2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="TransformerEncoderLayer.forward">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoderLayer.forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">input_key_padding_mask</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerEncoderLayer.forward"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoderLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">input_key_padding_mask</span><span class="p">):</span>
         <span class="c1"># local attention</span>
         <span class="n">src2</span><span class="p">,</span> <span class="n">local_attention_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="p">(</span>
             <span class="n">src</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">key_padding_mask</span><span class="o">=</span><span class="n">input_key_padding_mask</span>
@@ -128,17 +121,11 @@
         <span class="n">src</span> <span class="o">=</span> <span class="n">src</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout2</span><span class="p">(</span><span class="n">src2</span><span class="p">)</span>
         <span class="n">src</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm2</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">src</span><span class="p">,</span> <span class="n">local_attention_weights</span></div>
-</div>
+        <span class="k">return</span> <span class="n">src</span><span class="p">,</span> <span class="n">local_attention_weights</span></div></div>
 
 
-
-<div class="viewcode-block" id="TransformerDecoderLayer">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoderLayer">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TransformerDecoderLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<div class="viewcode-block" id="TransformerDecoderLayer.__init__">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoderLayer.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embed_dim</span><span class="o">=</span><span class="mi">1936</span><span class="p">,</span> <span class="n">nhead</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dim_feedforward</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerDecoderLayer"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoderLayer">[docs]</a><span class="k">class</span> <span class="nc">TransformerDecoderLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerDecoderLayer.__init__"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoderLayer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embed_dim</span><span class="o">=</span><span class="mi">1936</span><span class="p">,</span> <span class="n">nhead</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dim_feedforward</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">multihead2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MultiheadAttention</span><span class="p">(</span><span class="n">embed_dim</span><span class="p">,</span> <span class="n">nhead</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">)</span>
@@ -151,10 +138,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dropout2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dropout3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="TransformerDecoderLayer.forward">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoderLayer.forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">global_input</span><span class="p">,</span> <span class="n">input_key_padding_mask</span><span class="p">,</span> <span class="n">position_embed</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerDecoderLayer.forward"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoderLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">global_input</span><span class="p">,</span> <span class="n">input_key_padding_mask</span><span class="p">,</span> <span class="n">position_embed</span><span class="p">):</span>
         <span class="n">tgt2</span><span class="p">,</span> <span class="n">global_attention_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multihead2</span><span class="p">(</span>
             <span class="n">query</span><span class="o">=</span><span class="n">global_input</span> <span class="o">+</span> <span class="n">position_embed</span><span class="p">,</span>
             <span class="n">key</span><span class="o">=</span><span class="n">global_input</span> <span class="o">+</span> <span class="n">position_embed</span><span class="p">,</span>
@@ -166,25 +150,16 @@
         <span class="n">tgt2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linear1</span><span class="p">(</span><span class="n">tgt</span><span class="p">))))</span>
         <span class="n">tgt</span> <span class="o">=</span> <span class="n">tgt</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout3</span><span class="p">(</span><span class="n">tgt2</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">tgt</span><span class="p">,</span> <span class="n">global_attention_weights</span></div>
-</div>
+        <span class="k">return</span> <span class="n">tgt</span><span class="p">,</span> <span class="n">global_attention_weights</span></div></div>
 
 
-
-<div class="viewcode-block" id="TransformerEncoder">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoder">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TransformerEncoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<div class="viewcode-block" id="TransformerEncoder.__init__">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoder.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder_layer</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerEncoder"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoder">[docs]</a><span class="k">class</span> <span class="nc">TransformerEncoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerEncoder.__init__"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder_layer</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">_get_clones</span><span class="p">(</span><span class="n">encoder_layer</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span></div>
 
-
-<div class="viewcode-block" id="TransformerEncoder.forward">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoder.forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">input_key_padding_mask</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerEncoder.forward"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerEncoder.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">input_key_padding_mask</span><span class="p">):</span>
         <span class="n">output</span> <span class="o">=</span> <span class="nb">input</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
@@ -196,25 +171,16 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">weights</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="kc">None</span></div>
-</div>
+            <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="kc">None</span></div></div>
 
 
-
-<div class="viewcode-block" id="TransformerDecoder">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoder">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TransformerDecoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<div class="viewcode-block" id="TransformerDecoder.__init__">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoder.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decoder_layer</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerDecoder"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoder">[docs]</a><span class="k">class</span> <span class="nc">TransformerDecoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerDecoder.__init__"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decoder_layer</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">_get_clones</span><span class="p">(</span><span class="n">decoder_layer</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span></div>
 
-
-<div class="viewcode-block" id="TransformerDecoder.forward">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoder.forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">global_input</span><span class="p">,</span> <span class="n">input_key_padding_mask</span><span class="p">,</span> <span class="n">position_embed</span><span class="p">):</span>
+<div class="viewcode-block" id="TransformerDecoder.forward"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.TransformerDecoder.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">global_input</span><span class="p">,</span> <span class="n">input_key_padding_mask</span><span class="p">,</span> <span class="n">position_embed</span><span class="p">):</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">global_input</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
@@ -229,25 +195,23 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">weights</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="kc">None</span></div>
-</div>
+            <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="kc">None</span></div></div>
 
 
-
-<div class="viewcode-block" id="transformer">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.transformer">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">transformer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Spatial Temporal Transformer</span>
-<span class="sd">    local_attention: spatial encoder</span>
-<span class="sd">    global_attention: temporal decoder</span>
-<span class="sd">    position_embedding: frame encoding (window_size*dim)</span>
-<span class="sd">    mode: both--use the features from both frames in the window</span>
-<span class="sd">          latter--use the features from the latter frame in the window</span>
+<div class="viewcode-block" id="transformer"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.transformer">[docs]</a><span class="k">class</span> <span class="nc">transformer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Spatial Temporal Transformer.</span>
+<span class="sd">    </span>
+<span class="sd">    :param local_attention: spatial encoder</span>
+<span class="sd">    :type local_attention: object</span>
+<span class="sd">    :param global_attention: temporal decoder</span>
+<span class="sd">    :type global_attention: object</span>
+<span class="sd">    :param position_embedding: frame encoding (window_size*dim)</span>
+<span class="sd">    :type position_embedding: object</span>
+<span class="sd">    :param mode: both--use the features from both frames in the window, latter--use the features from the latter frame in the window</span>
+<span class="sd">    :type mode: str</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="transformer.__init__">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.transformer.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="transformer.__init__"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.transformer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">enc_layer_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">dec_layer_num</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
@@ -305,10 +269,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">position_embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">)</span>  <span class="c1"># present and next frame</span>
         <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position_embedding</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="transformer.memory_hallucinator">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.transformer.memory_hallucinator">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">memory_hallucinator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memory</span><span class="p">,</span> <span class="n">feat</span><span class="p">):</span>
+<div class="viewcode-block" id="transformer.memory_hallucinator"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.transformer.memory_hallucinator">[docs]</a>    <span class="k">def</span> <span class="nf">memory_hallucinator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memory</span><span class="p">,</span> <span class="n">feat</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">memory</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mem_selection</span><span class="p">(</span><span class="n">feat</span><span class="p">)</span>
             <span class="n">q</span> <span class="o">=</span> <span class="n">feat</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -335,19 +296,13 @@
 
         <span class="k">return</span> <span class="n">mem_encoded_features</span></div>
 
-
-<div class="viewcode-block" id="transformer.mem_selection">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.transformer.mem_selection">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mem_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feat</span><span class="p">):</span>
+<div class="viewcode-block" id="transformer.mem_selection"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.transformer.mem_selection">[docs]</a>    <span class="k">def</span> <span class="nf">mem_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feat</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">==</span> <span class="s2">&quot;manual&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">selector</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">selector</span><span class="p">(</span><span class="n">feat</span><span class="p">)</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">()</span></div>
 
-
-<div class="viewcode-block" id="transformer.forward">
-<a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.transformer.forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">im_idx</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="transformer.forward"><a class="viewcode-back" href="../../../api/models.html#lib.tempura.transformer_tempura.transformer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">im_idx</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="p">[]):</span>
         <span class="n">rel_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">im_idx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
             <span class="n">features</span><span class="o">.</span><span class="n">device</span>
         <span class="p">)</span>  <span class="c1"># Ensure rel_idx is on the same device</span>
@@ -455,12 +410,10 @@
             <span class="n">mem_encoder_features</span><span class="p">,</span>
             <span class="n">global_attention_weights</span><span class="p">,</span>
             <span class="n">local_attention_weights</span><span class="p">,</span>
-        <span class="p">)</span></div>
-</div>
+        <span class="p">)</span></div></div>
 
 
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_get_clones</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_get_clones</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">module</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)])</span>
 </pre></div>
 

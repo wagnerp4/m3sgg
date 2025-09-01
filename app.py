@@ -9,16 +9,10 @@ import os
 import sys
 from pathlib import Path
 import tempfile
-import time
+from datetime import datetime
 from typing import Dict, Any, List, Tuple
 from streamlit_chat import message
 import uuid
-
-"""
-TODO:
-- add sphinx doc string for each function
-- modularize in ~./app directory
-"""
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "scripts", "core"))
@@ -29,7 +23,7 @@ except ImportError:
     print("Warning: Could not import get_sequence")
 
 st.set_page_config(
-    page_title="VidSgg - Scene Graph Generation",
+    page_title="VidSgg",
     page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -1070,70 +1064,56 @@ def main():
             help="Minimum confidence for object detection"
         )
 
-        # TODO: Use these parameters in processing
-        # processing_mode = st.radio(
-        #     "Processing Mode",
-        #     ["Scene Graph Detection (SGDET)", "Scene Graph Classification (SGCLS)", "Predicate Classification (PREDCLS)"],
-        #     help="SGG processing mode"
-        # )
-
         if st.button("🔄 Reset Settings"):
             st.rerun()
 
-        # Statistics section moved from col2
+        # Statistics section
         st.markdown("---")
         st.header("Statistics")
 
         # Metrics
         if "results" in st.session_state:
             results = st.session_state["results"]
+            avg_objects = (
+                np.mean(results["detections"]) if results["detections"] else 0
+            )
+            avg_relationships = (
+                np.mean(results["relationships"]) if results["relationships"] else 0
+            )
+            avg_confidence = (
+                np.mean(results["confidences"]) if results["confidences"] else 0
+            )
+            error_rate = (
+                len(results.get("errors", [])) / results["processed_frames"] * 100
+                if results["processed_frames"] > 0
+                else 0
+            )
 
-            col_a, col_b = st.columns(2)
-            with col_a:
-                st.metric("Total Frames", results["total_frames"])
-            with col_b:
-                st.metric("Processed", results["processed_frames"])
+            metrics_config = [
+                ("Total Frames", results["total_frames"]),
+                ("Processed", results["processed_frames"]),
+                ("Avg Objects", f"{avg_objects:.1f}"),
+                ("Avg Relations", f"{avg_relationships:.1f}"),
+                ("Avg Confidence", f"{avg_confidence:.2f}"),
+                ("Error Rate", f"{error_rate:.1f}%")
+            ]
 
-            col_c, col_d = st.columns(2)
-            with col_c:
-                avg_objects = (
-                    np.mean(results["detections"]) if results["detections"] else 0
-                )
-                st.metric("Avg Objects", f"{avg_objects:.1f}")
-            with col_d:
-                avg_relationships = (
-                    np.mean(results["relationships"]) if results["relationships"] else 0
-                )
-                st.metric("Avg Relations", f"{avg_relationships:.1f}")
+            for i in range(0, len(metrics_config), 2):
+                cols = st.columns(2)
+                for j, (label, value) in enumerate(metrics_config[i:i+2]):
+                    with cols[j]:
+                        st.metric(label, value)
 
-            # Additional metrics
-            col_e, col_f = st.columns(2)
-            with col_e:
-                avg_confidence = (
-                    np.mean(results["confidences"]) if results["confidences"] else 0
-                )
-                st.metric("Avg Confidence", f"{avg_confidence:.2f}")
-            with col_f:
-                error_rate = (
-                    len(results.get("errors", [])) / results["processed_frames"] * 100
-                    if results["processed_frames"] > 0
-                    else 0
-                )
-                st.metric("Error Rate", f"{error_rate:.1f}%")
-
-            # Video info
             st.markdown("---")
             st.header("Video Info")
             st.write(f"**FPS:** {results['fps']:.1f}")
             st.write(f"**Duration:** {results['total_frames'] / results['fps']:.1f}s")
-        else:
-            # Placeholder metrics
+        else: # Placeholder
             col_a, col_b = st.columns(2)
             with col_a:
                 st.metric("Total Frames", "-")
             with col_b:
                 st.metric("Processed", "-")
-
             col_c, col_d = st.columns(2)
             with col_c:
                 st.metric("Avg Objects", "-")
@@ -1143,7 +1123,6 @@ def main():
         # Model info moved from col2
         st.markdown("---")
         st.header("Model Info")
-
         if model_path and os.path.exists(model_path):
             st.success(" Model loaded")
             st.write(f"**Path:** {os.path.basename(model_path)}")
@@ -1153,17 +1132,135 @@ def main():
         # Export options moved from col2
         st.markdown("---")
         st.header("Export")
-
-        # TODO: Implement export functionality
-        # export_format = st.selectbox(
-        #     "Export Format",
-        #     ["JSON", "CSV", "XML"]
-        # )
-
+        export_format = st.selectbox(
+            "Export Format",
+            ["JSON", "CSV", "XML"]
+        )
         if st.button("Download Results"):
             if "results" in st.session_state:
-                st.info("Export functionality will be available soon")
-                # TODO: Add export functionality
+                results = st.session_state["results"]
+                
+                # Prepare export data
+                export_data = {
+                    "video_metadata": {
+                        "total_frames": results["total_frames"],
+                        "fps": results["fps"],
+                        "duration_seconds": results["total_frames"] / results["fps"] if results["fps"] > 0 else 0,
+                        "processed_frames": results["processed_frames"]
+                    },
+                    "statistics": {
+                        "avg_objects_per_frame": np.mean(results["detections"]) if results["detections"] else 0,
+                        "avg_relationships_per_frame": np.mean(results["relationships"]) if results["relationships"] else 0,
+                        "avg_confidence": np.mean(results["confidences"]) if results["confidences"] else 0,
+                        "error_rate_percent": (len(results.get("errors", [])) / results["processed_frames"] * 100) if results["processed_frames"] > 0 else 0,
+                        "total_processing_time": sum(results["frame_times"]) if results["frame_times"] else 0
+                    },
+                    "frame_details": []
+                }
+                
+                # Add frame-by-frame data
+                for i in range(len(results["detections"])):
+                    frame_data = {
+                        "frame_number": i + 1,
+                        "objects_detected": results["detections"][i] if i < len(results["detections"]) else 0,
+                        "relationships_found": results["relationships"][i] if i < len(results["relationships"]) else 0,
+                        "confidence_score": results["confidences"][i] if i < len(results["confidences"]) else 0,
+                        "processing_time_ms": results["frame_times"][i] * 1000 if i < len(results["frame_times"]) else 0
+                    }
+                    export_data["frame_details"].append(frame_data)
+                
+                # Add errors if any
+                if results.get("errors"):
+                    export_data["errors"] = results["errors"]
+                
+                # Generate export based on format
+                if export_format == "JSON":
+                    import json
+                    json_data = json.dumps(export_data, indent=2)
+                    st.download_button(
+                        label="📥 Download JSON",
+                        data=json_data,
+                        file_name=f"scene_graph_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                        mime="application/json"
+                    )
+                    
+                elif export_format == "CSV":
+                    # Create summary CSV
+                    summary_df = pd.DataFrame([export_data["video_metadata"]])
+                    stats_df = pd.DataFrame([export_data["statistics"]])
+                    frames_df = pd.DataFrame(export_data["frame_details"])
+                    
+                    # Combine into CSV string
+                    csv_buffer = []
+                    csv_buffer.append("# Video Metadata")
+                    csv_buffer.append(summary_df.to_csv(index=False))
+                    csv_buffer.append("\n# Statistics Summary")
+                    csv_buffer.append(stats_df.to_csv(index=False))
+                    csv_buffer.append("\n# Frame-by-Frame Results")
+                    csv_buffer.append(frames_df.to_csv(index=False))
+                    
+                    if export_data.get("errors"):
+                        errors_df = pd.DataFrame({"errors": export_data["errors"]})
+                        csv_buffer.append("\n# Processing Errors")
+                        csv_buffer.append(errors_df.to_csv(index=False))
+                    
+                    csv_data = "\n".join(csv_buffer)
+                    st.download_button(
+                        label="📥 Download CSV",
+                        data=csv_data,
+                        file_name=f"scene_graph_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                        mime="text/csv"
+                    )
+                    
+                elif export_format == "XML":
+                    import xml.etree.ElementTree as ET
+                    
+                    # Create XML structure
+                    root = ET.Element("scene_graph_results")
+                    root.set("export_date", datetime.now().isoformat())
+                    
+                    # Video metadata
+                    metadata_elem = ET.SubElement(root, "video_metadata")
+                    for key, value in export_data["video_metadata"].items():
+                        elem = ET.SubElement(metadata_elem, key)
+                        elem.text = str(value)
+                    
+                    # Statistics
+                    stats_elem = ET.SubElement(root, "statistics")
+                    for key, value in export_data["statistics"].items():
+                        elem = ET.SubElement(stats_elem, key)
+                        elem.text = str(value)
+                    
+                    # Frame details
+                    frames_elem = ET.SubElement(root, "frame_details")
+                    for frame in export_data["frame_details"]:
+                        frame_elem = ET.SubElement(frames_elem, "frame")
+                        for key, value in frame.items():
+                            elem = ET.SubElement(frame_elem, key)
+                            elem.text = str(value)
+                    
+                    # Errors if any
+                    if export_data.get("errors"):
+                        errors_elem = ET.SubElement(root, "errors")
+                        for error in export_data["errors"]:
+                            error_elem = ET.SubElement(errors_elem, "error")
+                            error_elem.text = str(error)
+                    
+                    # Convert to string
+                    xml_data = ET.tostring(root, encoding="unicode", method="xml")
+                    # Pretty format
+                    import xml.dom.minidom
+                    dom = xml.dom.minidom.parseString(xml_data)
+                    pretty_xml = dom.toprettyxml(indent="  ")
+                    
+                    st.download_button(
+                        label="📥 Download XML",
+                        data=pretty_xml,
+                        file_name=f"scene_graph_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xml",
+                        mime="application/xml"
+                    )
+                    
+                st.success(f"✅ {export_format} export ready for download!")
             else:
                 st.warning("No results to export")
 
@@ -1762,7 +1859,6 @@ def main():
         """,
         unsafe_allow_html=True,
     )
-
 
 if __name__ == "__main__":
     main()

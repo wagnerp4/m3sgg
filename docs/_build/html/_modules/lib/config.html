@@ -1,12 +1,12 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lib.config &mdash; DLHM VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+  <title>lib.config &mdash; VidSGG 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0a84b5b7" />
@@ -14,9 +14,9 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=30646c52"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -33,7 +33,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            DLHM VidSGG
+            VidSGG
               <img src="../../_static/tum-logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -70,7 +70,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">DLHM VidSGG</a>
+          <a href="../../index.html">VidSGG</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -89,14 +89,12 @@
            <div itemprop="articleBody">
              
   <h1>Source code for lib.config</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
 
 <span class="n">BATCHNORM_MOMENTUM</span> <span class="o">=</span> <span class="mf">0.01</span>
 
-<div class="viewcode-block" id="Config">
-<a class="viewcode-back" href="../../api/lib.html#lib.config.Config">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../api/lib.html#lib.config.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuration class for scene graph generation model training and evaluation.</span>
 <span class="sd">    </span>
 <span class="sd">    This class manages all configuration parameters for different model architectures</span>
@@ -108,9 +106,7 @@
 <span class="sd">    :type object: class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-<div class="viewcode-block" id="Config.__init__">
-<a class="viewcode-back" href="../../api/lib.html#lib.config.Config.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Config.__init__"><a class="viewcode-back" href="../../api/lib.html#lib.config.Config.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the configuration object with default parameters and command-line argument parsing.</span>
 <span class="sd">        </span>
 <span class="sd">        Sets up all default model parameters, dataset paths, training hyperparameters,</span>
@@ -205,6 +201,39 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha_obj</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># test [1.0, 1.5, 2.0, 2.5, 3.0]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha_rel</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># test [1.0, 1.5, 2.0, 2.5, 3.0]</span>
 
+        <span class="c1"># OED specific defaults</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_queries</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dec_layers_hopd</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dec_layers_interaction</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_attn_classes</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_spatial_classes</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_contacting_classes</span> <span class="o">=</span> <span class="mi">17</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oed_use_matching</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bbox_loss_coef</span> <span class="o">=</span> <span class="mf">2.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">giou_loss_coef</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obj_loss_coef</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rel_loss_coef</span> <span class="o">=</span> <span class="mf">2.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oed_eos_coef</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval1</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval2</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_ref_frames</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oed_variant</span> <span class="o">=</span> <span class="s2">&quot;multi&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuse_semantic_pos</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_temporal_interaction</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="c1"># OED loss weights and configuration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oed_weight_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;loss_obj_ce&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_loss_coef</span><span class="p">,</span>
+            <span class="s1">&#39;loss_bbox&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bbox_loss_coef</span><span class="p">,</span>
+            <span class="s1">&#39;loss_giou&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">giou_loss_coef</span><span class="p">,</span>
+            <span class="s1">&#39;loss_attn_ce&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_loss_coef</span><span class="p">,</span>
+            <span class="s1">&#39;loss_spatial_ce&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_loss_coef</span><span class="p">,</span>
+            <span class="s1">&#39;loss_contacting_ce&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rel_loss_coef</span><span class="p">,</span>
+        <span class="p">}</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">oed_losses</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;obj_labels&#39;</span><span class="p">,</span> <span class="s1">&#39;boxes&#39;</span><span class="p">,</span> <span class="s1">&#39;attn_labels&#39;</span><span class="p">,</span> <span class="s1">&#39;spatial_labels&#39;</span><span class="p">,</span> <span class="s1">&#39;contacting_labels&#39;</span><span class="p">]</span>
+
         <span class="c1"># Matcher logic TODO: remove this</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;dsg-detr&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">use_matcher</span> <span class="o">=</span> <span class="kc">True</span>
@@ -218,12 +247,11 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;EASG&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">use_matcher</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;scenellm&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">use_matcher</span> <span class="o">=</span> <span class="kc">False</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">use_matcher</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;oed&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">use_matcher</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oed_use_matching</span></div>
 
-
-<div class="viewcode-block" id="Config.setup_parser">
-<a class="viewcode-back" href="../../api/lib.html#lib.config.Config.setup_parser">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">setup_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Config.setup_parser"><a class="viewcode-back" href="../../api/lib.html#lib.config.Config.setup_parser">[docs]</a>    <span class="k">def</span> <span class="nf">setup_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up command-line argument parser for training configuration.</span>
 <span class="sd">        </span>
 <span class="sd">        Creates and configures an ArgumentParser with all available command-line</span>
@@ -290,8 +318,8 @@
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-model&quot;</span><span class="p">,</span>
             <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;model_type&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Model type: sttran (default), dsg-detr (uses Hungarian matcher), stket, tempura, or scenellm&quot;</span><span class="p">,</span>
-            <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sttran&quot;</span><span class="p">,</span> <span class="s2">&quot;dsg-detr&quot;</span><span class="p">,</span> <span class="s2">&quot;stket&quot;</span><span class="p">,</span> <span class="s2">&quot;easg&quot;</span><span class="p">,</span> <span class="s2">&quot;tempura&quot;</span><span class="p">,</span> <span class="s2">&quot;scenellm&quot;</span><span class="p">],</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Model type: sttran (default), dsg-detr (uses Hungarian matcher), stket, tempura, scenellm, or oed&quot;</span><span class="p">,</span>
+            <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sttran&quot;</span><span class="p">,</span> <span class="s2">&quot;dsg-detr&quot;</span><span class="p">,</span> <span class="s2">&quot;stket&quot;</span><span class="p">,</span> <span class="s2">&quot;easg&quot;</span><span class="p">,</span> <span class="s2">&quot;tempura&quot;</span><span class="p">,</span> <span class="s2">&quot;scenellm&quot;</span><span class="p">,</span> <span class="s2">&quot;oed&quot;</span><span class="p">],</span>
             <span class="n">default</span><span class="o">=</span><span class="s2">&quot;sttran&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="p">)</span>
@@ -439,9 +467,85 @@
             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;disable all checkpoint saving to save local storage space&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">parser</span></div>
-</div>
+        <span class="c1"># OED specific arguments</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-num_queries&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of query slots for OED&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-dec_layers_hopd&quot;</span><span class="p">,</span> 
+            <span class="n">default</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> 
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> 
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of hopd decoding layers in OED transformer&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-dec_layers_interaction&quot;</span><span class="p">,</span> 
+            <span class="n">default</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> 
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> 
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of interaction decoding layers in OED transformer&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-num_attn_classes&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of attention classes&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-num_spatial_classes&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of spatial classes&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-num_contacting_classes&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of contacting classes&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-alpha&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Focal loss alpha for OED&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-oed_use_matching&quot;</span><span class="p">,</span> 
+            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> 
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Use obj/sub matching 2class loss in OED decoder&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-bbox_loss_coef&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;L1 box coefficient&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-giou_loss_coef&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;GIoU box coefficient&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-obj_loss_coef&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Object classification coefficient&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-rel_loss_coef&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Relation classification coefficient&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-oed_eos_coef&quot;</span><span class="p">,</span> 
+            <span class="n">default</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> 
+            <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> 
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Relative classification weight of no-object class for OED&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-interval1&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Interval for training frame selection&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-interval2&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Interval for test frame selection&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-num_ref_frames&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of reference frames&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-oed_variant&quot;</span><span class="p">,</span> 
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span> 
+            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> 
+            <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;multi&quot;</span><span class="p">],</span> 
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;OED variant: single frame or multi frame&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-fuse_semantic_pos&quot;</span><span class="p">,</span> 
+            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> 
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Fuse semantic and positional embeddings&quot;</span>
+        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;-query_temporal_interaction&quot;</span><span class="p">,</span> 
+            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> 
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable query temporal interaction&quot;</span>
+        <span class="p">)</span>
 
+        <span class="k">return</span> <span class="n">parser</span></div></div>
 </pre></div>
 
            </div>

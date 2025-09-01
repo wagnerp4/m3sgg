@@ -1,11 +1,44 @@
-# DLHM VidSGG
+# VidSGG
 
 # Overview
 Our code uses the [Spatial-Temporal Transformer for Dynamic Scene Graph Generation, ICCV 2021] repository (https://github.com/yrcong/STTran) as a baseline. On top of that, new models, datasets, and processing functionality were added, as explained in the respective sections below.
 
+## Installation
+
+### Prerequisites
+- Python 3.10+ (tested with Python 3.10.0)
+- CUDA-compatible GPU (recommended)
+
+### Manual Installation (Required)
+Before installing the main dependencies, you need to manually install PyTorch and DGL with the correct CUDA version for your system:
+
+**PyTorch Installation:**
+```bash
+# For CUDA 11.8
+pip install torch>=1.12.0 torchvision>=0.13.0 --index-url https://download.pytorch.org/whl/cu118
+
+# For CUDA 12.1
+pip install torch>=1.12.0 torchvision>=0.13.0 --index-url https://download.pytorch.org/whl/cu121
+
+# For CPU-only (not recommended for training)
+pip install torch>=1.12.0 torchvision>=0.13.0 --index-url https://download.pytorch.org/whl/cpu
+```
+
+**DGL Installation:**
+Visit https://www.dgl.ai/pages/start.html and choose the DGL version with CUDA support that matches your PyTorch installation.
+
+### Main Dependencies
+Install the remaining dependencies using uv:
+```bash
+uv sync
+```
+
+Or using pip:
+```bash
+pip install -e .
+```
+
 ## General Usage
-- Versions: python=3.10.0, torch>=1.9.0 and torchvision>=0.10.0.
-- https://www.dgl.ai/pages/start.html chose dgl version with cuda
 - Certain C module dependencies and related functionality which was outdated
 in STTran-like repositories was replaced with python alternatives.
 - For the original setup please refer to https://github.com/yrcong/STTran.
@@ -25,7 +58,10 @@ fasterRCNN/models/faster_rcnn_ag.pth
 - OED
 - SceneLLM (new)
 
-We provide a [checkpoint-link] for the best performing SGG model. Please put it under 'data/checkpoints/best_model.pth'.
+We provide a [checkpoint-link] for the best performing SGG model to try with the streamlit app.
+Please put it under 'data/checkpoints/best_model.pth'. 
+If you want to try a different model to assess it's performance, follow the below training guide and
+place the checkpoint at 'data/checkpoints'.
 
 ## NLP Models
 - T5/Pegasus (summarization)
@@ -108,22 +144,7 @@ Start the modern web-based interface:
 ```powershell
 streamlit run app.py
 ```
-The application will open at `http://localhost:8501` and features:
-- **Video Upload**: Support for MP4, AVI, MOV, and MKV formats
-- **Real-time Processing**: Live scene graph generation with progress tracking
-- **Interactive Visualizations**: Dynamic charts showing objects and relationships over time
-- **Model Selection**: Choose from available trained checkpoints
-- **Export Options**: Download results in multiple formats
-
-### Getting Started with Streamlit App
-1. Ensure you have a trained model checkpoint in the `output/` directory
-2. Run `streamlit run app.py` 
-   - The app uses pre-configured settings (port 8501, 200MB upload limit)
-   - Modify `.streamlit/config.toml` if you need different settings (see `.streamlit/config.toml.template` for all options)
-3. Select your model from the sidebar dropdown
-4. Upload a video file (MP4, AVI, MOV, MKV)
-5. Click "Generate Scene Graph" to start processing
-6. View real-time results and interactive visualizations
+The application will open at `http://localhost:8501`.
 
 ## PyQt5 GUI (Legacy)
 ```
@@ -135,15 +156,22 @@ The following dependencies are automatically handled via `pyproject.toml`:
 ```
 streamlit>=1.29.0
 plotly>=5.17.0
-PyQt5>=5.15.0
 opencv-python>=4.5.0
-matplotlib>=3.5.0
+matplotlib>=3.4.0
 numpy>=1.21.0
-torch>=1.9.0
-torchvision>=0.10.0
-Pillow>=8.3.0
-tqdm>=4.62.0 
+scipy>=1.9.0
+pillow>=8.3.0
+tqdm>=4.62.0
+transformers>=4.20.0
+peft>=0.4.0
+pot>=0.9.0
+cython
+cffi
+msgpack
+tensorboardX
 ```
+
+**Note:** PyTorch and DGL must be installed manually with the correct CUDA version (see Installation section above).
 
 ## Hardware
 Training was run on a single  NVIDIA RTX 3090 TI GPU for both training and testing.

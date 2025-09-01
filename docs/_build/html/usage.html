@@ -1,13 +1,13 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Usage Guide &mdash; VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0a84b5b7" />
@@ -15,9 +15,9 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=30646c52"></script>
     <script src="_static/js/theme.js"></script>
@@ -140,12 +140,12 @@
            <div itemprop="articleBody">
              
   <section id="usage-guide">
-<h1>Usage Guide<a class="headerlink" href="#usage-guide" title="Link to this heading"></a></h1>
+<h1>Usage Guide<a class="headerlink" href="#usage-guide" title="Permalink to this heading"></a></h1>
 <p>This guide covers the basic usage patterns for DLHM VidSGG, including training, evaluation, and running the demo application.</p>
 <section id="quick-start">
-<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading"></a></h2>
 <section id="basic-training-command">
-<h3>Basic Training Command<a class="headerlink" href="#basic-training-command" title="Link to this heading"></a></h3>
+<h3>Basic Training Command<a class="headerlink" href="#basic-training-command" title="Permalink to this heading"></a></h3>
 <p>The simplest way to start training:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="w"> </span>predcls<span class="w"> </span>-datasize<span class="w"> </span>large<span class="w"> </span>-data_path<span class="w"> </span>data/action_genome<span class="w"> </span>-model<span class="w"> </span>sttran
 </pre></div>
@@ -153,7 +153,7 @@
 <p>This command trains the STTran model on Action Genome dataset in PredCLS mode.</p>
 </section>
 <section id="basic-evaluation-command">
-<h3>Basic Evaluation Command<a class="headerlink" href="#basic-evaluation-command" title="Link to this heading"></a></h3>
+<h3>Basic Evaluation Command<a class="headerlink" href="#basic-evaluation-command" title="Permalink to this heading"></a></h3>
 <p>To evaluate a trained model:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>test.py<span class="w"> </span>-m<span class="w"> </span>predcls<span class="w"> </span>-datasize<span class="w"> </span>large<span class="w"> </span>-data_path<span class="w"> </span>data/action_genome<span class="w"> </span>-model_path<span class="w"> </span>output/model.pth
 </pre></div>
@@ -161,9 +161,9 @@
 </section>
 </section>
 <section id="command-line-interface">
-<h2>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h2>
+<h2>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this heading"></a></h2>
 <section id="training-script-train-py">
-<h3>Training Script (train.py)<a class="headerlink" href="#training-script-train-py" title="Link to this heading"></a></h3>
+<h3>Training Script (train.py)<a class="headerlink" href="#training-script-train-py" title="Permalink to this heading"></a></h3>
 <p>The main training script supports various arguments:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </pre></div>
@@ -191,7 +191,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </div>
 </section>
 <section id="test-script-test-py">
-<h3>Test Script (test.py)<a class="headerlink" href="#test-script-test-py" title="Link to this heading"></a></h3>
+<h3>Test Script (test.py)<a class="headerlink" href="#test-script-test-py" title="Permalink to this heading"></a></h3>
 <p>For model evaluation:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>test.py<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </pre></div>
@@ -206,9 +206,9 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </section>
 </section>
 <section id="demo-application">
-<h2>Demo Application<a class="headerlink" href="#demo-application" title="Link to this heading"></a></h2>
+<h2>Demo Application<a class="headerlink" href="#demo-application" title="Permalink to this heading"></a></h2>
 <section id="gui-application">
-<h3>GUI Application<a class="headerlink" href="#gui-application" title="Link to this heading"></a></h3>
+<h3>GUI Application<a class="headerlink" href="#gui-application" title="Permalink to this heading"></a></h3>
 <p>Launch the interactive demo:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/core/gui.py
 </pre></div>
@@ -230,10 +230,10 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </section>
 </section>
 <section id="scene-graph-generation-modes">
-<h2>Scene Graph Generation Modes<a class="headerlink" href="#scene-graph-generation-modes" title="Link to this heading"></a></h2>
+<h2>Scene Graph Generation Modes<a class="headerlink" href="#scene-graph-generation-modes" title="Permalink to this heading"></a></h2>
 <p>The framework supports three main evaluation modes:</p>
 <section id="predcls-predicate-classification">
-<h3>PredCLS (Predicate Classification)<a class="headerlink" href="#predcls-predicate-classification" title="Link to this heading"></a></h3>
+<h3>PredCLS (Predicate Classification)<a class="headerlink" href="#predcls-predicate-classification" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>Input</strong>: Ground truth object bounding boxes and labels</p></li>
 <li><p><strong>Task</strong>: Predict relationships between objects</p></li>
@@ -244,7 +244,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </div>
 </section>
 <section id="sgcls-scene-graph-classification">
-<h3>SGCLS (Scene Graph Classification)<a class="headerlink" href="#sgcls-scene-graph-classification" title="Link to this heading"></a></h3>
+<h3>SGCLS (Scene Graph Classification)<a class="headerlink" href="#sgcls-scene-graph-classification" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>Input</strong>: Ground truth object bounding boxes</p></li>
 <li><p><strong>Task</strong>: Predict both object labels and relationships</p></li>
@@ -255,7 +255,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </div>
 </section>
 <section id="sgdet-scene-graph-detection">
-<h3>SGDET (Scene Graph Detection)<a class="headerlink" href="#sgdet-scene-graph-detection" title="Link to this heading"></a></h3>
+<h3>SGDET (Scene Graph Detection)<a class="headerlink" href="#sgdet-scene-graph-detection" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>Input</strong>: Raw video frames</p></li>
 <li><p><strong>Task</strong>: Detect objects and predict relationships end-to-end</p></li>
@@ -267,32 +267,32 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </section>
 </section>
 <section id="model-selection">
-<h2>Model Selection<a class="headerlink" href="#model-selection" title="Link to this heading"></a></h2>
+<h2>Model Selection<a class="headerlink" href="#model-selection" title="Permalink to this heading"></a></h2>
 <section id="available-models">
-<h3>Available Models<a class="headerlink" href="#available-models" title="Link to this heading"></a></h3>
+<h3>Available Models<a class="headerlink" href="#available-models" title="Permalink to this heading"></a></h3>
 <section id="sttran-spatial-temporal-transformer">
-<h4>STTran (Spatial-Temporal Transformer)<a class="headerlink" href="#sttran-spatial-temporal-transformer" title="Link to this heading"></a></h4>
+<h4>STTran (Spatial-Temporal Transformer)<a class="headerlink" href="#sttran-spatial-temporal-transformer" title="Permalink to this heading"></a></h4>
 <p>The baseline model for video scene graph generation:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span>-model<span class="w"> </span>sttran<span class="w"> </span>-mode<span class="w"> </span>predcls
 </pre></div>
 </div>
 </section>
 <section id="tempura">
-<h4>Tempura<a class="headerlink" href="#tempura" title="Link to this heading"></a></h4>
+<h4>Tempura<a class="headerlink" href="#tempura" title="Permalink to this heading"></a></h4>
 <p>Temporal relationship modeling with uncertainty:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span>-model<span class="w"> </span>tempura<span class="w"> </span>-mode<span class="w"> </span>predcls
 </pre></div>
 </div>
 </section>
 <section id="scenellm">
-<h4>SceneLLM<a class="headerlink" href="#scenellm" title="Link to this heading"></a></h4>
+<h4>SceneLLM<a class="headerlink" href="#scenellm" title="Permalink to this heading"></a></h4>
 <p>Large language model integration for scene understanding:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span>-model<span class="w"> </span>scenellm<span class="w"> </span>-mode<span class="w"> </span>predcls
 </pre></div>
 </div>
 </section>
 <section id="stket">
-<h4>STKET<a class="headerlink" href="#stket" title="Link to this heading"></a></h4>
+<h4>STKET<a class="headerlink" href="#stket" title="Permalink to this heading"></a></h4>
 <p>Spatial-temporal knowledge-enhanced transformer:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span>-model<span class="w"> </span>stket<span class="w"> </span>-mode<span class="w"> </span>predcls
 </pre></div>
@@ -301,9 +301,9 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </section>
 </section>
 <section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
 <section id="model-configuration">
-<h3>Model Configuration<a class="headerlink" href="#model-configuration" title="Link to this heading"></a></h3>
+<h3>Model Configuration<a class="headerlink" href="#model-configuration" title="Permalink to this heading"></a></h3>
 <p>Models can be configured through configuration files or command-line arguments:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example configuration</span>
 <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
@@ -316,7 +316,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </div>
 </section>
 <section id="dataset-configuration">
-<h3>Dataset Configuration<a class="headerlink" href="#dataset-configuration" title="Link to this heading"></a></h3>
+<h3>Dataset Configuration<a class="headerlink" href="#dataset-configuration" title="Permalink to this heading"></a></h3>
 <p>Configure dataset paths and preprocessing options:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DATA_PATH</span><span class="o">=</span>/path/to/datasets
 <span class="nb">export</span><span class="w"> </span><span class="nv">MODEL_PATH</span><span class="o">=</span>/path/to/models
@@ -325,7 +325,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </section>
 </section>
 <section id="output-structure">
-<h2>Output Structure<a class="headerlink" href="#output-structure" title="Link to this heading"></a></h2>
+<h2>Output Structure<a class="headerlink" href="#output-structure" title="Permalink to this heading"></a></h2>
 <p>Training outputs are organized as follows:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>output/
 ├── action_genome/
@@ -347,9 +347,9 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 <p>Log files contain training progress, checkpoint files store model states, and prediction files contain evaluation results.</p>
 </section>
 <section id="performance-tips">
-<h2>Performance Tips<a class="headerlink" href="#performance-tips" title="Link to this heading"></a></h2>
+<h2>Performance Tips<a class="headerlink" href="#performance-tips" title="Permalink to this heading"></a></h2>
 <section id="training-optimization">
-<h3>Training Optimization<a class="headerlink" href="#training-optimization" title="Link to this heading"></a></h3>
+<h3>Training Optimization<a class="headerlink" href="#training-optimization" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>GPU Memory</strong>: Reduce batch size if encountering CUDA out of memory errors</p></li>
 <li><p><strong>Mixed Precision</strong>: Use automatic mixed precision for faster training</p></li>
@@ -361,7 +361,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </div>
 </section>
 <section id="evaluation-optimization">
-<h3>Evaluation Optimization<a class="headerlink" href="#evaluation-optimization" title="Link to this heading"></a></h3>
+<h3>Evaluation Optimization<a class="headerlink" href="#evaluation-optimization" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>Checkpoint Selection</strong>: Use the best validation checkpoint for evaluation</p></li>
 <li><p><strong>Batch Processing</strong>: Process multiple samples simultaneously when possible</p></li>
@@ -369,9 +369,9 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </section>
 </section>
 <section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
 <section id="common-issues">
-<h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading"></a></h3>
+<h3>Common Issues<a class="headerlink" href="#common-issues" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt><strong>Training Loss Not Decreasing</strong></dt><dd><ul class="simple">
 <li><p>Check learning rate (try 1e-5 for fine-tuning)</p></li>
@@ -395,7 +395,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-model<span class=
 </section>
 </section>
 <section id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="training.html"><span class="doc">Training Guide</span></a> - Detailed training procedures and best practices</p></li>
 <li><p><a class="reference internal" href="evaluation.html"><span class="doc">Evaluation Guide</span></a> - Comprehensive evaluation metrics and analysis</p></li>

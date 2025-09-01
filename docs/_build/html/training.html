@@ -1,13 +1,13 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Training Guide &mdash; VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0a84b5b7" />
@@ -15,9 +15,9 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=30646c52"></script>
     <script src="_static/js/theme.js"></script>
@@ -153,10 +153,10 @@
            <div itemprop="articleBody">
              
   <section id="training-guide">
-<h1>Training Guide<a class="headerlink" href="#training-guide" title="Link to this heading"></a></h1>
+<h1>Training Guide<a class="headerlink" href="#training-guide" title="Permalink to this heading"></a></h1>
 <p>This guide provides comprehensive information about training models in DLHM VidSGG.</p>
 <section id="training-overview">
-<h2>Training Overview<a class="headerlink" href="#training-overview" title="Link to this heading"></a></h2>
+<h2>Training Overview<a class="headerlink" href="#training-overview" title="Permalink to this heading"></a></h2>
 <p>DLHM VidSGG supports training various scene graph generation models on multiple datasets with different evaluation modes.</p>
 <p><strong>Supported Training Modes</strong></p>
 <ul class="simple">
@@ -166,16 +166,16 @@
 </ul>
 </section>
 <section id="basic-training">
-<h2>Basic Training<a class="headerlink" href="#basic-training" title="Link to this heading"></a></h2>
+<h2>Basic Training<a class="headerlink" href="#basic-training" title="Permalink to this heading"></a></h2>
 <section id="simple-training-command">
-<h3>Simple Training Command<a class="headerlink" href="#simple-training-command" title="Link to this heading"></a></h3>
+<h3>Simple Training Command<a class="headerlink" href="#simple-training-command" title="Permalink to this heading"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="w"> </span>predcls<span class="w"> </span>-datasize<span class="w"> </span>large<span class="w"> </span>-data_path<span class="w"> </span>data/action_genome<span class="w"> </span>-model<span class="w"> </span>sttran
 </pre></div>
 </div>
 <p>This command trains STTran model on Action Genome dataset in PredCLS mode.</p>
 </section>
 <section id="complete-training-command">
-<h3>Complete Training Command<a class="headerlink" href="#complete-training-command" title="Link to this heading"></a></h3>
+<h3>Complete Training Command<a class="headerlink" href="#complete-training-command" title="Permalink to this heading"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-mode<span class="w"> </span>predcls<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-datasize<span class="w"> </span>large<span class="w"> </span><span class="se">\</span>
@@ -190,11 +190,11 @@
 </section>
 </section>
 <section id="training-parameters">
-<h2>Training Parameters<a class="headerlink" href="#training-parameters" title="Link to this heading"></a></h2>
+<h2>Training Parameters<a class="headerlink" href="#training-parameters" title="Permalink to this heading"></a></h2>
 <section id="core-parameters">
-<h3>Core Parameters<a class="headerlink" href="#core-parameters" title="Link to this heading"></a></h3>
+<h3>Core Parameters<a class="headerlink" href="#core-parameters" title="Permalink to this heading"></a></h3>
 <table class="docutils align-default" id="id1">
-<caption><span class="caption-text">Essential Training Parameters</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<caption><span class="caption-text">Essential Training Parameters</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 25.0%" />
 <col style="width: 20.0%" />
@@ -239,9 +239,9 @@
 </table>
 </section>
 <section id="advanced-parameters">
-<h3>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Link to this heading"></a></h3>
+<h3>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading"></a></h3>
 <table class="docutils align-default" id="id2">
-<caption><span class="caption-text">Advanced Training Parameters</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<caption><span class="caption-text">Advanced Training Parameters</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 25.0%" />
 <col style="width: 20.0%" />
@@ -283,9 +283,9 @@
 </section>
 </section>
 <section id="model-specific-training">
-<h2>Model-Specific Training<a class="headerlink" href="#model-specific-training" title="Link to this heading"></a></h2>
+<h2>Model-Specific Training<a class="headerlink" href="#model-specific-training" title="Permalink to this heading"></a></h2>
 <section id="sttran-training">
-<h3>STTran Training<a class="headerlink" href="#sttran-training" title="Link to this heading"></a></h3>
+<h3>STTran Training<a class="headerlink" href="#sttran-training" title="Permalink to this heading"></a></h3>
 <p><strong>Standard Configuration</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-mode<span class="w"> </span>predcls<span class="w"> </span><span class="se">\</span>
@@ -310,7 +310,7 @@
 </div>
 </section>
 <section id="tempura-training">
-<h3>Tempura Training<a class="headerlink" href="#tempura-training" title="Link to this heading"></a></h3>
+<h3>Tempura Training<a class="headerlink" href="#tempura-training" title="Permalink to this heading"></a></h3>
 <p><strong>Basic Configuration</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-mode<span class="w"> </span>predcls<span class="w"> </span><span class="se">\</span>
@@ -333,7 +333,7 @@
 </div>
 </section>
 <section id="scenellm-training">
-<h3>SceneLLM Training<a class="headerlink" href="#scenellm-training" title="Link to this heading"></a></h3>
+<h3>SceneLLM Training<a class="headerlink" href="#scenellm-training" title="Permalink to this heading"></a></h3>
 <p><strong>Basic Configuration</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-mode<span class="w"> </span>predcls<span class="w"> </span><span class="se">\</span>
@@ -356,9 +356,9 @@
 </section>
 </section>
 <section id="training-strategies">
-<h2>Training Strategies<a class="headerlink" href="#training-strategies" title="Link to this heading"></a></h2>
+<h2>Training Strategies<a class="headerlink" href="#training-strategies" title="Permalink to this heading"></a></h2>
 <section id="progressive-training">
-<h3>Progressive Training<a class="headerlink" href="#progressive-training" title="Link to this heading"></a></h3>
+<h3>Progressive Training<a class="headerlink" href="#progressive-training" title="Permalink to this heading"></a></h3>
 <p>Train models progressively from easier to harder modes:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1: Train PredCLS (easiest)</span>
 python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="w"> </span>predcls<span class="w"> </span>-model<span class="w"> </span>sttran<span class="w"> </span>-epochs<span class="w"> </span><span class="m">50</span>
@@ -372,7 +372,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </div>
 </section>
 <section id="multi-dataset-training">
-<h3>Multi-Dataset Training<a class="headerlink" href="#multi-dataset-training" title="Link to this heading"></a></h3>
+<h3>Multi-Dataset Training<a class="headerlink" href="#multi-dataset-training" title="Permalink to this heading"></a></h3>
 <p>Train on multiple datasets for better generalization:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Train on Action Genome</span>
 python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="w"> </span>predcls<span class="w"> </span>-data_path<span class="w"> </span>data/action_genome<span class="w"> </span>-epochs<span class="w"> </span><span class="m">80</span>
@@ -383,7 +383,7 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </div>
 </section>
 <section id="curriculum-learning">
-<h3>Curriculum Learning<a class="headerlink" href="#curriculum-learning" title="Link to this heading"></a></h3>
+<h3>Curriculum Learning<a class="headerlink" href="#curriculum-learning" title="Permalink to this heading"></a></h3>
 <p>Implement curriculum learning for better convergence:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example curriculum learning script</span>
 <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
@@ -403,9 +403,9 @@ python<span class="w"> </span>train.py<span class="w"> </span>-mode<span class="
 </section>
 </section>
 <section id="monitoring-training">
-<h2>Monitoring Training<a class="headerlink" href="#monitoring-training" title="Link to this heading"></a></h2>
+<h2>Monitoring Training<a class="headerlink" href="#monitoring-training" title="Permalink to this heading"></a></h2>
 <section id="training-logs">
-<h3>Training Logs<a class="headerlink" href="#training-logs" title="Link to this heading"></a></h3>
+<h3>Training Logs<a class="headerlink" href="#training-logs" title="Permalink to this heading"></a></h3>
 <p>Monitor training progress through log files:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>output/action_genome/sttran_predcls_20241201_143022/logfile.txt
 </pre></div>
@@ -419,7 +419,7 @@ Epoch 5/100 - Eval - Recall@10: 8.2 - Recall@20: 12.1
 </div>
 </section>
 <section id="visualization">
-<h3>Visualization<a class="headerlink" href="#visualization" title="Link to this heading"></a></h3>
+<h3>Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading"></a></h3>
 <p>Use tensorboard for visual monitoring:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Launch tensorboard</span>
 tensorboard<span class="w"> </span>--logdir<span class="w"> </span>output/
@@ -435,7 +435,7 @@ tensorboard<span class="w"> </span>--logdir<span class="w"> </span>output/
 </ul>
 </section>
 <section id="early-stopping">
-<h3>Early Stopping<a class="headerlink" href="#early-stopping" title="Link to this heading"></a></h3>
+<h3>Early Stopping<a class="headerlink" href="#early-stopping" title="Permalink to this heading"></a></h3>
 <p>Implement early stopping to prevent overfitting:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">early_stopping</span> <span class="o">=</span> <span class="n">EarlyStopping</span><span class="p">(</span>
     <span class="n">patience</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
@@ -447,9 +447,9 @@ tensorboard<span class="w"> </span>--logdir<span class="w"> </span>output/
 </section>
 </section>
 <section id="optimization-techniques">
-<h2>Optimization Techniques<a class="headerlink" href="#optimization-techniques" title="Link to this heading"></a></h2>
+<h2>Optimization Techniques<a class="headerlink" href="#optimization-techniques" title="Permalink to this heading"></a></h2>
 <section id="mixed-precision-training">
-<h3>Mixed Precision Training<a class="headerlink" href="#mixed-precision-training" title="Link to this heading"></a></h3>
+<h3>Mixed Precision Training<a class="headerlink" href="#mixed-precision-training" title="Permalink to this heading"></a></h3>
 <p>Use automatic mixed precision for faster training:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-mode<span class="w"> </span>predcls<span class="w"> </span><span class="se">\</span>
@@ -460,7 +460,7 @@ tensorboard<span class="w"> </span>--logdir<span class="w"> </span>output/
 </div>
 </section>
 <section id="gradient-accumulation">
-<h3>Gradient Accumulation<a class="headerlink" href="#gradient-accumulation" title="Link to this heading"></a></h3>
+<h3>Gradient Accumulation<a class="headerlink" href="#gradient-accumulation" title="Permalink to this heading"></a></h3>
 <p>Simulate larger batch sizes with gradient accumulation:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-mode<span class="w"> </span>predcls<span class="w"> </span><span class="se">\</span>
@@ -471,7 +471,7 @@ tensorboard<span class="w"> </span>--logdir<span class="w"> </span>output/
 </div>
 </section>
 <section id="data-parallel-training">
-<h3>Data Parallel Training<a class="headerlink" href="#data-parallel-training" title="Link to this heading"></a></h3>
+<h3>Data Parallel Training<a class="headerlink" href="#data-parallel-training" title="Permalink to this heading"></a></h3>
 <p>Use multiple GPUs for faster training:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Single node, multiple GPUs</span>
 python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch<span class="w"> </span>--nproc_per_node<span class="o">=</span><span class="m">4</span><span class="w"> </span>train.py<span class="w"> </span><span class="se">\</span>
@@ -483,9 +483,9 @@ python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch
 </section>
 </section>
 <section id="hyperparameter-tuning">
-<h2>Hyperparameter Tuning<a class="headerlink" href="#hyperparameter-tuning" title="Link to this heading"></a></h2>
+<h2>Hyperparameter Tuning<a class="headerlink" href="#hyperparameter-tuning" title="Permalink to this heading"></a></h2>
 <section id="grid-search">
-<h3>Grid Search<a class="headerlink" href="#grid-search" title="Link to this heading"></a></h3>
+<h3>Grid Search<a class="headerlink" href="#grid-search" title="Permalink to this heading"></a></h3>
 <p>Systematic hyperparameter exploration:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Grid search script</span>
 <span class="k">for</span><span class="w"> </span>lr<span class="w"> </span><span class="k">in</span><span class="w"> </span>1e-5<span class="w"> </span>1e-4<span class="w"> </span>5e-4<span class="p">;</span><span class="w"> </span><span class="k">do</span>
@@ -497,9 +497,9 @@ python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch
 </div>
 </section>
 <section id="random-search">
-<h3>Random Search<a class="headerlink" href="#random-search" title="Link to this heading"></a></h3>
+<h3>Random Search<a class="headerlink" href="#random-search" title="Permalink to this heading"></a></h3>
 <p>More efficient hyperparameter exploration:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
 
 <span class="c1"># Random hyperparameter sampling</span>
 <span class="n">lr</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">)</span>
@@ -509,11 +509,11 @@ python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch
 </div>
 </section>
 <section id="bayesian-optimization">
-<h3>Bayesian Optimization<a class="headerlink" href="#bayesian-optimization" title="Link to this heading"></a></h3>
+<h3>Bayesian Optimization<a class="headerlink" href="#bayesian-optimization" title="Permalink to this heading"></a></h3>
 <p>Use Optuna for advanced hyperparameter optimization:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">optuna</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">optuna</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">objective</span><span class="p">(</span><span class="n">trial</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">objective</span><span class="p">(</span><span class="n">trial</span><span class="p">):</span>
     <span class="n">lr</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_loguniform</span><span class="p">(</span><span class="s1">&#39;lr&#39;</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">)</span>
     <span class="n">batch_size</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_categorical</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 
@@ -528,9 +528,9 @@ python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch
 </section>
 </section>
 <section id="checkpointing">
-<h2>Checkpointing<a class="headerlink" href="#checkpointing" title="Link to this heading"></a></h2>
+<h2>Checkpointing<a class="headerlink" href="#checkpointing" title="Permalink to this heading"></a></h2>
 <section id="automatic-checkpointing">
-<h3>Automatic Checkpointing<a class="headerlink" href="#automatic-checkpointing" title="Link to this heading"></a></h3>
+<h3>Automatic Checkpointing<a class="headerlink" href="#automatic-checkpointing" title="Permalink to this heading"></a></h3>
 <p>Models are automatically saved during training:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>output/action_genome/sttran_predcls_20241201_143022/
 ├── checkpoint_epoch_10.tar
@@ -541,7 +541,7 @@ python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch
 </div>
 </section>
 <section id="manual-checkpointing">
-<h3>Manual Checkpointing<a class="headerlink" href="#manual-checkpointing" title="Link to this heading"></a></h3>
+<h3>Manual Checkpointing<a class="headerlink" href="#manual-checkpointing" title="Permalink to this heading"></a></h3>
 <p>Save checkpoints at specific points:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Save checkpoint</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">({</span>
@@ -555,7 +555,7 @@ python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch
 </div>
 </section>
 <section id="resume-training">
-<h3>Resume Training<a class="headerlink" href="#resume-training" title="Link to this heading"></a></h3>
+<h3>Resume Training<a class="headerlink" href="#resume-training" title="Permalink to this heading"></a></h3>
 <p>Resume from saved checkpoints:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>train.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-mode<span class="w"> </span>predcls<span class="w"> </span><span class="se">\</span>
@@ -566,9 +566,9 @@ python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch
 </section>
 </section>
 <section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
 <section id="common-training-issues">
-<h3>Common Training Issues<a class="headerlink" href="#common-training-issues" title="Link to this heading"></a></h3>
+<h3>Common Training Issues<a class="headerlink" href="#common-training-issues" title="Permalink to this heading"></a></h3>
 <p><strong>Loss Not Decreasing</strong></p>
 <ul class="simple">
 <li><p>Check learning rate (try lower values: 1e-5, 5e-5)</p></li>
@@ -599,7 +599,7 @@ python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch
 </ul>
 </section>
 <section id="performance-optimization">
-<h3>Performance Optimization<a class="headerlink" href="#performance-optimization" title="Link to this heading"></a></h3>
+<h3>Performance Optimization<a class="headerlink" href="#performance-optimization" title="Permalink to this heading"></a></h3>
 <p><strong>GPU Utilization</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Monitor GPU usage</span>
 nvidia-smi<span class="w"> </span>-l<span class="w"> </span><span class="m">1</span>
@@ -607,7 +607,7 @@ nvidia-smi<span class="w"> </span>-l<span class="w"> </span><span class="m">1</s
 </div>
 <p><strong>Memory Profiling</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Profile memory usage</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch.profiler</span>
+<span class="kn">import</span> <span class="nn">torch.profiler</span>
 
 <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">profile</span><span class="p">(</span>
     <span class="n">activities</span><span class="o">=</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">ProfilerActivity</span><span class="o">.</span><span class="n">CUDA</span><span class="p">],</span>
@@ -621,9 +621,9 @@ nvidia-smi<span class="w"> </span>-l<span class="w"> </span><span class="m">1</s
 </section>
 </section>
 <section id="best-practices">
-<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h2>
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Permalink to this heading"></a></h2>
 <section id="training-workflow">
-<h3>Training Workflow<a class="headerlink" href="#training-workflow" title="Link to this heading"></a></h3>
+<h3>Training Workflow<a class="headerlink" href="#training-workflow" title="Permalink to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p><strong>Data Preparation</strong>: Verify dataset integrity and preprocessing</p></li>
 <li><p><strong>Baseline Training</strong>: Start with known good configurations</p></li>
@@ -633,7 +633,7 @@ nvidia-smi<span class="w"> </span>-l<span class="w"> </span><span class="m">1</s
 </ol>
 </section>
 <section id="reproducibility">
-<h3>Reproducibility<a class="headerlink" href="#reproducibility" title="Link to this heading"></a></h3>
+<h3>Reproducibility<a class="headerlink" href="#reproducibility" title="Permalink to this heading"></a></h3>
 <p>Ensure reproducible results:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set random seeds</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
@@ -647,7 +647,7 @@ nvidia-smi<span class="w"> </span>-l<span class="w"> </span><span class="m">1</s
 </div>
 </section>
 <section id="documentation">
-<h3>Documentation<a class="headerlink" href="#documentation" title="Link to this heading"></a></h3>
+<h3>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading"></a></h3>
 <p>Document training experiments:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Training Log - STTran PredCLS
 =============================
@@ -670,7 +670,7 @@ Results:
 </section>
 </section>
 <section id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="evaluation.html"><span class="doc">Evaluation Guide</span></a> - Learn about model evaluation and metrics</p></li>
 <li><p><a class="reference internal" href="usage.html"><span class="doc">Usage Guide</span></a> - Understanding basic usage patterns</p></li>

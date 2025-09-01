@@ -24,10 +24,10 @@ from lib.infoNCE import EucNormLoss, SupConLoss
 from lib.matcher import HungarianMatcher
 from lib.memory import memory_computation
 from lib.object_detector import detector
-from lib.object_detector_EASG import detector as detector_EASG
+from lib.easg.object_detector_EASG import detector as detector_EASG
 from lib.scenellm.scenellm import SceneLLM
 from lib.sttran import STKET, STTran
-from lib.sttran_EASG import STTran as STTran_EASG
+from lib.easg.sttran_EASG import STTran as STTran_EASG
 from lib.tempura.tempura import TEMPURA
 from lib.track import get_sequence
 from lib.uncertainty import uncertainty_computation, uncertainty_values
@@ -231,6 +231,14 @@ if __name__ == "__main__":
             logger.info(
                 f"SceneLLM initialized with training stage: {conf.scenellm_training_stage}"
             )
+        elif conf.model_type == "oed":
+            from lib.oed import OEDMulti, OEDSingle
+            if conf.oed_variant == "multi":
+                model = OEDMulti(conf, dataset_train).to(device=gpu_device)
+                logger.info("Initialized OED Multi-frame model")
+            else:
+                model = OEDSingle(conf, dataset_train).to(device=gpu_device)
+                logger.info("Initialized OED Single-frame model")
         else:
             raise ValueError(
                 f"Model type '{conf.model_type}' not supported for Action Genome dataset"
@@ -497,6 +505,9 @@ if __name__ == "__main__":
                         .to(device=attention_distribution.device)
                         .squeeze()
                     )
+                    # Ensure attention_label is 1D for CrossEntropyLoss
+                    if attention_label.dim() > 1:
+                        attention_label = attention_label.flatten()
                     if not conf.bce_loss:
                         # multi-label margin loss or adaptive loss
                         spatial_label = -torch.ones(
@@ -553,6 +564,9 @@ if __name__ == "__main__":
                         .to(device=im_data.device)
                         .squeeze()
                     )
+                    # Ensure attention_label is 1D for CrossEntropyLoss
+                    if attention_label.dim() > 1:
+                        attention_label = attention_label.flatten()
                     if not conf.bce_loss:
                         # multi-label margin loss or adaptive loss
                         spatial_label = -torch.ones(
@@ -712,6 +726,9 @@ if __name__ == "__main__":
                         .to(device=attention_distribution.device)
                         .squeeze()
                     )
+                    # Ensure attention_label is 1D for CrossEntropyLoss
+                    if attention_label.dim() > 1:
+                        attention_label = attention_label.flatten()
                     if conf.mlm:
                         # multi-label margin loss or adaptive loss
                         spatial_label = -torch.ones(
@@ -808,6 +825,9 @@ if __name__ == "__main__":
                         .to(device=attention_distribution.device)
                         .squeeze()
                     )
+                    # Ensure attention_label is 1D for CrossEntropyLoss
+                    if attention_label.dim() > 1:
+                        attention_label = attention_label.flatten()
 
                     # Handle spatial and contact labels
                     if not conf.bce_loss:
@@ -870,10 +890,123 @@ if __name__ == "__main__":
                             losses["contact_relation_loss"] = conf.alpha_rel * bce_loss(
                                 contact_distribution, contact_label
                             )
-
-                        # Add VQ-VAE regularization loss (smaller weight)
-                        if "vq_loss" in pred:
-                            losses["vq_regularization"] = 0.1 * pred["vq_loss"]
+                elif conf.model_type == "oed":
+                    # OED loss computation using the existing matcher
+                    if conf.use_matcher:
+                        from lib.oed.criterion import SetCriterionOED
+                        from lib.matcher import HungarianMatcher
+                        
+                        # Initialize OED criterion if not already done
+                        if not hasattr(model, 'criterion'):
+                            matcher = HungarianMatcher(0.5, 1, 1, 0.5)
+                            weight_dict = {
+                                'loss_obj_ce': conf.obj_loss_coef,
+                                'loss_attn_ce': conf.rel_loss_coef,
+                                'loss_spatial_ce': conf.rel_loss_coef,
+                                'loss_contacting_ce': conf.rel_loss_coef,
+                                'loss_sub_bbox': conf.bbox_loss_coef,
+                                'loss_obj_bbox': conf.bbox_loss_coef,
+                                'loss_sub_giou': conf.giou_loss_coef,
+                                'loss_obj_giou': conf.giou_loss_coef,
+                            }
+                            
+                            model.criterion = SetCriterionOED(
+                                num_obj_classes=len(dataset_train.object_classes),
+                                num_queries=conf.num_queries,
+                                matcher=matcher,
+                                weight_dict=weight_dict,
+                                eos_coef=conf.oed_eos_coef,
+                                losses=['obj_labels', 'relation_labels', 'sub_obj_boxes'],
+                                conf=conf
+                            )
+                        
+                        # Convert predictions to OED format
+                        oed_pred = {
+                            'pred_obj_logits': pred['distribution'].unsqueeze(0),
+                            'pred_sub_boxes': torch.zeros(1, len(pred['labels']), 4, device=pred['distribution'].device),
+                            'pred_obj_boxes': torch.zeros(1, len(pred['labels']), 4, device=pred['distribution'].device),
+                            'pred_attn_logits': pred['attention_distribution'].unsqueeze(0),
+                            'pred_spatial_logits': pred['spatial_distribution'].unsqueeze(0),
+                            'pred_contacting_logits': pred['contact_distribution'].unsqueeze(0),
+                        }
+                        
+                        # Convert targets to OED format
+                        oed_targets = [{
+                            'obj_labels': pred['labels'],
+                            'sub_boxes': torch.zeros(len(pred['labels']), 4, device=pred['labels'].device),
+                            'obj_boxes': torch.zeros(len(pred['labels']), 4, device=pred['labels'].device),
+                            'attn_labels': pred['attention_gt'],
+                            'spatial_labels': pred['spatial_gt'],
+                            'contacting_labels': pred['contact_gt'],
+                        }]
+                        
+                        # Compute OED losses
+                        losses = model.criterion(oed_pred, oed_targets)
+                    else:
+                        # Fallback to standard loss computation
+                        losses = {}
+                        if conf.mode == "sgcls" or conf.mode == "sgdet":
+                            losses["object_loss"] = ce_loss(pred["distribution"], pred["labels"])
+                        
+                        # Handle attention_gt which might be a list or tensor
+                        attention_gt = pred["attention_gt"]
+                        if isinstance(attention_gt, list):
+                            attention_label = torch.tensor(attention_gt, dtype=torch.long, device=pred["attention_distribution"].device)
+                        else:
+                            attention_label = attention_gt.clone().detach().to(device=pred["attention_distribution"].device).squeeze()
+                        
+                        # Ensure attention_label is 1D for CrossEntropyLoss
+                        if attention_label.dim() > 1:
+                            attention_label = attention_label.flatten()
+                            
+                        losses["attention_relation_loss"] = ce_loss(pred["attention_distribution"], attention_label)
+                        
+                        if not conf.bce_loss:
+                            spatial_label = -torch.ones([len(pred["spatial_gt"]), 6], dtype=torch.long).to(device=pred["attention_distribution"].device)
+                            contact_label = -torch.ones([len(pred["contact_gt"]), 17], dtype=torch.long).to(device=pred["attention_distribution"].device)
+                            for i in range(len(pred["spatial_gt"])):
+                                # Handle spatial_gt and contact_gt which might be lists or tensors
+                                spatial_gt_item = pred["spatial_gt"][i]
+                                contact_gt_item = pred["contact_gt"][i]
+                                
+                                if isinstance(spatial_gt_item, list):
+                                    spatial_gt_tensor = torch.tensor(spatial_gt_item, dtype=torch.long, device=pred["attention_distribution"].device)
+                                else:
+                                    spatial_gt_tensor = spatial_gt_item.clone().detach()
+                                    
+                                if isinstance(contact_gt_item, list):
+                                    contact_gt_tensor = torch.tensor(contact_gt_item, dtype=torch.long, device=pred["attention_distribution"].device)
+                                else:
+                                    contact_gt_tensor = contact_gt_item.clone().detach()
+                                
+                                spatial_label[i, : len(spatial_gt_tensor)] = spatial_gt_tensor
+                                contact_label[i, : len(contact_gt_tensor)] = contact_gt_tensor
+                            
+                            losses["spatial_relation_loss"] = mlm_loss(pred["spatial_distribution"], spatial_label)
+                            losses["contact_relation_loss"] = mlm_loss(pred["contact_distribution"], contact_label)
+                        else:
+                            spatial_label = torch.zeros([len(pred["spatial_gt"]), 6], dtype=torch.float32).to(device=pred["attention_distribution"].device)
+                            contact_label = torch.zeros([len(pred["contact_gt"]), 17], dtype=torch.float32).to(device=pred["attention_distribution"].device)
+                            for i in range(len(pred["spatial_gt"])):
+                                # Handle spatial_gt and contact_gt which might be lists or tensors
+                                spatial_gt_item = pred["spatial_gt"][i]
+                                contact_gt_item = pred["contact_gt"][i]
+                                
+                                if isinstance(spatial_gt_item, list):
+                                    spatial_indices = spatial_gt_item
+                                else:
+                                    spatial_indices = spatial_gt_item.tolist()
+                                    
+                                if isinstance(contact_gt_item, list):
+                                    contact_indices = contact_gt_item
+                                else:
+                                    contact_indices = contact_gt_item.tolist()
+                                
+                                spatial_label[i, spatial_indices] = 1
+                                contact_label[i, contact_indices] = 1
+                            
+                            losses["spatial_relation_loss"] = bce_loss(pred["spatial_distribution"], spatial_label)
+                            losses["contact_relation_loss"] = bce_loss(pred["contact_distribution"], contact_label)
                 else:
                     raise ValueError(f"Model type '{conf.model_type}' not supported")
             else:
@@ -937,7 +1070,7 @@ if __name__ == "__main__":
         val_losses = []
         val_loss_components = []
 
-        # Initialize predictions collection (only for the best epoch)
+
         predictions_data = []
 
         if conf.dataset == "EASG":
@@ -1097,6 +1230,7 @@ if __name__ == "__main__":
                     gt_boxes = copy.deepcopy(data[2].cuda(0))
                     num_boxes = copy.deepcopy(data[3].cuda(0))
                     gt_annotation = dataset_test.gt_annotations[data[4]]
+                    
                     entry = object_detector(
                         im_data,
                         im_info,
@@ -1126,11 +1260,16 @@ if __name__ == "__main__":
                         attention_distribution = pred["attention_distribution"]
                         spatial_distribution = pred["spatial_distribution"]
                         contact_distribution = pred["contact_distribution"]
-                        attention_label = (
-                            torch.tensor(pred["attention_gt"], dtype=torch.long)
-                            .to(device=attention_distribution.device)
-                            .squeeze()
-                        )
+                        # Handle attention_gt which might be a list or tensor
+                        attention_gt = pred["attention_gt"]
+                        if isinstance(attention_gt, list):
+                            attention_label = torch.tensor(attention_gt, dtype=torch.long, device=attention_distribution.device)
+                        else:
+                            attention_label = attention_gt.clone().detach().to(device=attention_distribution.device).squeeze()
+                        
+                        # Ensure attention_label is 1D for CrossEntropyLoss
+                        if attention_label.dim() > 1:
+                            attention_label = attention_label.flatten()
 
                         # Check if batch sizes match before computing loss
                         if attention_distribution.size(0) != attention_label.size(0):
@@ -1171,8 +1310,22 @@ if __name__ == "__main__":
                                 [len(pred["contact_gt"]), 17], dtype=torch.float32
                             ).to(device=attention_distribution.device)
                             for i in range(len(pred["spatial_gt"])):
-                                spatial_label[i, pred["spatial_gt"][i]] = 1
-                                contact_label[i, pred["contact_gt"][i]] = 1
+                                # Handle spatial_gt and contact_gt which might be lists or tensors
+                                spatial_gt_item = pred["spatial_gt"][i]
+                                contact_gt_item = pred["contact_gt"][i]
+                                
+                                if isinstance(spatial_gt_item, list):
+                                    spatial_indices = spatial_gt_item
+                                else:
+                                    spatial_indices = spatial_gt_item.tolist()
+                                    
+                                if isinstance(contact_gt_item, list):
+                                    contact_indices = contact_gt_item
+                                else:
+                                    contact_indices = contact_gt_item.tolist()
+                                
+                                spatial_label[i, spatial_indices] = 1
+                                contact_label[i, contact_indices] = 1
 
                         # Additional batch size checks for spatial and contact labels
                         if spatial_distribution.size(0) != spatial_label.size(0):
@@ -1271,6 +1424,11 @@ if __name__ == "__main__":
                             )
                             continue
 
+                    # Skip evaluation for OED models since they're relation prediction models, not object detection models
+                    if conf.model_type == "oed" and pred.get("skip_evaluation", False):
+                        logger.info("Skipping evaluation for OED model (relation prediction only)")
+                        continue
+                    
                     evaluator.evaluate_scene_graph(gt_annotation, pred)
 
                     # Collect Action Genome predictions with per-sample metrics (only for the best epoch)

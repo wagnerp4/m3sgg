@@ -1,13 +1,13 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Evaluation Guide &mdash; VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0a84b5b7" />
@@ -15,9 +15,9 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=30646c52"></script>
     <script src="_static/js/theme.js"></script>
@@ -158,10 +158,10 @@
            <div itemprop="articleBody">
              
   <section id="evaluation-guide">
-<h1>Evaluation Guide<a class="headerlink" href="#evaluation-guide" title="Link to this heading"></a></h1>
+<h1>Evaluation Guide<a class="headerlink" href="#evaluation-guide" title="Permalink to this heading"></a></h1>
 <p>This guide covers evaluation metrics, procedures, and analysis for DLHM VidSGG models.</p>
 <section id="evaluation-overview">
-<h2>Evaluation Overview<a class="headerlink" href="#evaluation-overview" title="Link to this heading"></a></h2>
+<h2>Evaluation Overview<a class="headerlink" href="#evaluation-overview" title="Permalink to this heading"></a></h2>
 <p>DLHM VidSGG provides comprehensive evaluation capabilities for video scene graph generation models across different modes and datasets.</p>
 <p><strong>Evaluation Modes</strong></p>
 <ul class="simple">
@@ -171,16 +171,16 @@
 </ul>
 </section>
 <section id="basic-evaluation">
-<h2>Basic Evaluation<a class="headerlink" href="#basic-evaluation" title="Link to this heading"></a></h2>
+<h2>Basic Evaluation<a class="headerlink" href="#basic-evaluation" title="Permalink to this heading"></a></h2>
 <section id="simple-evaluation-command">
-<h3>Simple Evaluation Command<a class="headerlink" href="#simple-evaluation-command" title="Link to this heading"></a></h3>
+<h3>Simple Evaluation Command<a class="headerlink" href="#simple-evaluation-command" title="Permalink to this heading"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>test.py<span class="w"> </span>-m<span class="w"> </span>predcls<span class="w"> </span>-datasize<span class="w"> </span>large<span class="w"> </span>-data_path<span class="w"> </span>data/action_genome<span class="w"> </span>-model_path<span class="w"> </span>output/model.pth
 </pre></div>
 </div>
 <p>This evaluates a trained model on the Action Genome test set.</p>
 </section>
 <section id="complete-evaluation-command">
-<h3>Complete Evaluation Command<a class="headerlink" href="#complete-evaluation-command" title="Link to this heading"></a></h3>
+<h3>Complete Evaluation Command<a class="headerlink" href="#complete-evaluation-command" title="Permalink to this heading"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>test.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-m<span class="w"> </span>predcls<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-datasize<span class="w"> </span>large<span class="w"> </span><span class="se">\</span>
@@ -192,9 +192,9 @@
 </section>
 </section>
 <section id="evaluation-metrics">
-<h2>Evaluation Metrics<a class="headerlink" href="#evaluation-metrics" title="Link to this heading"></a></h2>
+<h2>Evaluation Metrics<a class="headerlink" href="#evaluation-metrics" title="Permalink to this heading"></a></h2>
 <section id="recall-metrics">
-<h3>Recall Metrics<a class="headerlink" href="#recall-metrics" title="Link to this heading"></a></h3>
+<h3>Recall Metrics<a class="headerlink" href="#recall-metrics" title="Permalink to this heading"></a></h3>
 <p>The primary evaluation metrics for scene graph generation:</p>
 <dl class="simple">
 <dt><strong>Recall&#64;K</strong></dt><dd><p>Percentage of ground truth relationships that appear in top-K predictions</p>
@@ -203,7 +203,7 @@
 </dd>
 </dl>
 <table class="docutils align-default" id="id1">
-<caption><span class="caption-text">Standard Evaluation Metrics</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<caption><span class="caption-text">Standard Evaluation Metrics</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 25.0%" />
 <col style="width: 75.0%" />
@@ -236,7 +236,7 @@
 </table>
 </section>
 <section id="zero-shot-metrics">
-<h3>Zero-Shot Metrics<a class="headerlink" href="#zero-shot-metrics" title="Link to this heading"></a></h3>
+<h3>Zero-Shot Metrics<a class="headerlink" href="#zero-shot-metrics" title="Permalink to this heading"></a></h3>
 <p>For unseen relationship combinations:</p>
 <ul class="simple">
 <li><p><strong>Zero-Shot Recall&#64;K</strong>: Performance on novel object-relationship-object triplets</p></li>
@@ -244,7 +244,7 @@
 </ul>
 </section>
 <section id="per-category-analysis">
-<h3>Per-Category Analysis<a class="headerlink" href="#per-category-analysis" title="Link to this heading"></a></h3>
+<h3>Per-Category Analysis<a class="headerlink" href="#per-category-analysis" title="Permalink to this heading"></a></h3>
 <p>Detailed analysis for each relationship category:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example per-category results</span>
 <span class="n">per_category_results</span> <span class="o">=</span> <span class="p">{</span>
@@ -257,9 +257,9 @@
 </section>
 </section>
 <section id="evaluation-procedures">
-<h2>Evaluation Procedures<a class="headerlink" href="#evaluation-procedures" title="Link to this heading"></a></h2>
+<h2>Evaluation Procedures<a class="headerlink" href="#evaluation-procedures" title="Permalink to this heading"></a></h2>
 <section id="standard-evaluation">
-<h3>Standard Evaluation<a class="headerlink" href="#standard-evaluation" title="Link to this heading"></a></h3>
+<h3>Standard Evaluation<a class="headerlink" href="#standard-evaluation" title="Permalink to this heading"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Evaluate all models on test set</span>
 <span class="k">for</span><span class="w"> </span>model<span class="w"> </span><span class="k">in</span><span class="w"> </span>sttran<span class="w"> </span>tempura<span class="w"> </span>scenellm<span class="w"> </span>stket<span class="p">;</span><span class="w"> </span><span class="k">do</span>
 <span class="w">  </span>python<span class="w"> </span>test.py<span class="w"> </span><span class="se">\</span>
@@ -271,7 +271,7 @@
 </div>
 </section>
 <section id="cross-dataset-evaluation">
-<h3>Cross-Dataset Evaluation<a class="headerlink" href="#cross-dataset-evaluation" title="Link to this heading"></a></h3>
+<h3>Cross-Dataset Evaluation<a class="headerlink" href="#cross-dataset-evaluation" title="Permalink to this heading"></a></h3>
 <p>Evaluate model generalization across datasets:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Train on Action Genome, test on EASG</span>
 python<span class="w"> </span>test.py<span class="w"> </span><span class="se">\</span>
@@ -283,7 +283,7 @@ python<span class="w"> </span>test.py<span class="w"> </span><span class="se">\<
 </div>
 </section>
 <section id="temporal-evaluation">
-<h3>Temporal Evaluation<a class="headerlink" href="#temporal-evaluation" title="Link to this heading"></a></h3>
+<h3>Temporal Evaluation<a class="headerlink" href="#temporal-evaluation" title="Permalink to this heading"></a></h3>
 <p>Analyze performance across different temporal windows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Evaluate with different temporal window sizes</span>
 <span class="k">for</span><span class="w"> </span>window<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="m">10</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
@@ -297,9 +297,9 @@ python<span class="w"> </span>test.py<span class="w"> </span><span class="se">\<
 </section>
 </section>
 <section id="mode-specific-evaluation">
-<h2>Mode-Specific Evaluation<a class="headerlink" href="#mode-specific-evaluation" title="Link to this heading"></a></h2>
+<h2>Mode-Specific Evaluation<a class="headerlink" href="#mode-specific-evaluation" title="Permalink to this heading"></a></h2>
 <section id="predcls-evaluation">
-<h3>PredCLS Evaluation<a class="headerlink" href="#predcls-evaluation" title="Link to this heading"></a></h3>
+<h3>PredCLS Evaluation<a class="headerlink" href="#predcls-evaluation" title="Permalink to this heading"></a></h3>
 <p><strong>Input</strong>: Ground truth object bounding boxes and labels
 <strong>Task</strong>: Predict relationships between objects</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>test.py<span class="w"> </span>-m<span class="w"> </span>predcls<span class="w"> </span>-model_path<span class="w"> </span>output/sttran_predcls.pth
@@ -311,7 +311,7 @@ python<span class="w"> </span>test.py<span class="w"> </span><span class="se">\<
 * Temporal consistency</p>
 </section>
 <section id="sgcls-evaluation">
-<h3>SGCLS Evaluation<a class="headerlink" href="#sgcls-evaluation" title="Link to this heading"></a></h3>
+<h3>SGCLS Evaluation<a class="headerlink" href="#sgcls-evaluation" title="Permalink to this heading"></a></h3>
 <p><strong>Input</strong>: Ground truth object bounding boxes
 <strong>Task</strong>: Predict object labels and relationships</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>test.py<span class="w"> </span>-m<span class="w"> </span>sgcls<span class="w"> </span>-model_path<span class="w"> </span>output/sttran_sgcls.pth
@@ -323,7 +323,7 @@ python<span class="w"> </span>test.py<span class="w"> </span><span class="se">\<
 * Joint object-relationship accuracy</p>
 </section>
 <section id="sgdet-evaluation">
-<h3>SGDET Evaluation<a class="headerlink" href="#sgdet-evaluation" title="Link to this heading"></a></h3>
+<h3>SGDET Evaluation<a class="headerlink" href="#sgdet-evaluation" title="Permalink to this heading"></a></h3>
 <p><strong>Input</strong>: Raw video frames
 <strong>Task</strong>: Detect objects and predict relationships end-to-end</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>test.py<span class="w"> </span>-m<span class="w"> </span>sgdet<span class="w"> </span>-model_path<span class="w"> </span>output/sttran_sgdet.pth
@@ -336,9 +336,9 @@ python<span class="w"> </span>test.py<span class="w"> </span><span class="se">\<
 </section>
 </section>
 <section id="advanced-evaluation">
-<h2>Advanced Evaluation<a class="headerlink" href="#advanced-evaluation" title="Link to this heading"></a></h2>
+<h2>Advanced Evaluation<a class="headerlink" href="#advanced-evaluation" title="Permalink to this heading"></a></h2>
 <section id="uncertainty-evaluation">
-<h3>Uncertainty Evaluation<a class="headerlink" href="#uncertainty-evaluation" title="Link to this heading"></a></h3>
+<h3>Uncertainty Evaluation<a class="headerlink" href="#uncertainty-evaluation" title="Permalink to this heading"></a></h3>
 <p>For models with uncertainty estimation (e.g., Tempura):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Evaluate uncertainty calibration</span>
 <span class="n">python</span> <span class="n">evaluate_uncertainty</span><span class="o">.</span><span class="n">py</span> \
@@ -352,7 +352,7 @@ python<span class="w"> </span>test.py<span class="w"> </span><span class="se">\<
 * Uncertainty-accuracy correlation</p>
 </section>
 <section id="robustness-evaluation">
-<h3>Robustness Evaluation<a class="headerlink" href="#robustness-evaluation" title="Link to this heading"></a></h3>
+<h3>Robustness Evaluation<a class="headerlink" href="#robustness-evaluation" title="Permalink to this heading"></a></h3>
 <p>Test model robustness to various perturbations:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Evaluate with noise</span>
 python<span class="w"> </span>test_robustness.py<span class="w"> </span><span class="se">\</span>
@@ -368,7 +368,7 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 * Lighting changes</p>
 </section>
 <section id="efficiency-evaluation">
-<h3>Efficiency Evaluation<a class="headerlink" href="#efficiency-evaluation" title="Link to this heading"></a></h3>
+<h3>Efficiency Evaluation<a class="headerlink" href="#efficiency-evaluation" title="Permalink to this heading"></a></h3>
 <p>Measure computational efficiency:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Profile model inference</span>
 <span class="n">python</span> <span class="n">profile_model</span><span class="o">.</span><span class="n">py</span> \
@@ -385,11 +385,11 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </section>
 </section>
 <section id="evaluation-analysis">
-<h2>Evaluation Analysis<a class="headerlink" href="#evaluation-analysis" title="Link to this heading"></a></h2>
+<h2>Evaluation Analysis<a class="headerlink" href="#evaluation-analysis" title="Permalink to this heading"></a></h2>
 <section id="statistical-significance">
-<h3>Statistical Significance<a class="headerlink" href="#statistical-significance" title="Link to this heading"></a></h3>
+<h3>Statistical Significance<a class="headerlink" href="#statistical-significance" title="Permalink to this heading"></a></h3>
 <p>Test statistical significance of results:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 
 <span class="c1"># Compare two models</span>
 <span class="n">model1_scores</span> <span class="o">=</span> <span class="p">[</span><span class="mf">19.2</span><span class="p">,</span> <span class="mf">18.8</span><span class="p">,</span> <span class="mf">19.5</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
@@ -401,7 +401,7 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </div>
 </section>
 <section id="error-analysis">
-<h3>Error Analysis<a class="headerlink" href="#error-analysis" title="Link to this heading"></a></h3>
+<h3>Error Analysis<a class="headerlink" href="#error-analysis" title="Permalink to this heading"></a></h3>
 <p>Analyze common failure modes:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Analyze prediction errors</span>
 <span class="n">python</span> <span class="n">analyze_errors</span><span class="o">.</span><span class="n">py</span> \
@@ -417,7 +417,7 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 * Temporal inconsistencies</p>
 </section>
 <section id="visualization">
-<h3>Visualization<a class="headerlink" href="#visualization" title="Link to this heading"></a></h3>
+<h3>Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading"></a></h3>
 <p>Generate evaluation visualizations:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create evaluation plots</span>
 <span class="n">python</span> <span class="n">visualize_results</span><span class="o">.</span><span class="n">py</span> \
@@ -433,12 +433,12 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </section>
 </section>
 <section id="benchmark-comparison">
-<h2>Benchmark Comparison<a class="headerlink" href="#benchmark-comparison" title="Link to this heading"></a></h2>
+<h2>Benchmark Comparison<a class="headerlink" href="#benchmark-comparison" title="Permalink to this heading"></a></h2>
 <section id="standard-benchmarks">
-<h3>Standard Benchmarks<a class="headerlink" href="#standard-benchmarks" title="Link to this heading"></a></h3>
+<h3>Standard Benchmarks<a class="headerlink" href="#standard-benchmarks" title="Permalink to this heading"></a></h3>
 <p>Compare against established benchmarks:</p>
 <table class="docutils align-default" id="id2">
-<caption><span class="caption-text">Action Genome Benchmark Results</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<caption><span class="caption-text">Action Genome Benchmark Results</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 15.0%" />
@@ -489,7 +489,7 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </table>
 </section>
 <section id="leaderboard-submission">
-<h3>Leaderboard Submission<a class="headerlink" href="#leaderboard-submission" title="Link to this heading"></a></h3>
+<h3>Leaderboard Submission<a class="headerlink" href="#leaderboard-submission" title="Permalink to this heading"></a></h3>
 <p>Prepare results for benchmark submission:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Format results for submission</span>
 <span class="n">python</span> <span class="n">format_submission</span><span class="o">.</span><span class="n">py</span> \
@@ -500,11 +500,11 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </section>
 </section>
 <section id="custom-evaluation">
-<h2>Custom Evaluation<a class="headerlink" href="#custom-evaluation" title="Link to this heading"></a></h2>
+<h2>Custom Evaluation<a class="headerlink" href="#custom-evaluation" title="Permalink to this heading"></a></h2>
 <section id="domain-specific-metrics">
-<h3>Domain-Specific Metrics<a class="headerlink" href="#domain-specific-metrics" title="Link to this heading"></a></h3>
+<h3>Domain-Specific Metrics<a class="headerlink" href="#domain-specific-metrics" title="Permalink to this heading"></a></h3>
 <p>Implement custom metrics for specific domains:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">custom_metric</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">custom_metric</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">):</span>
     <span class="c1"># Custom evaluation logic</span>
     <span class="n">score</span> <span class="o">=</span> <span class="n">compute_domain_specific_score</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">score</span>
@@ -512,9 +512,9 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </div>
 </section>
 <section id="temporal-metrics">
-<h3>Temporal Metrics<a class="headerlink" href="#temporal-metrics" title="Link to this heading"></a></h3>
+<h3>Temporal Metrics<a class="headerlink" href="#temporal-metrics" title="Permalink to this heading"></a></h3>
 <p>Evaluate temporal consistency:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">temporal_consistency</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">temporal_consistency</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span>
     <span class="c1"># Measure consistency across time</span>
     <span class="n">consistency_score</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)):</span>
@@ -524,9 +524,9 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </div>
 </section>
 <section id="quality-assessment">
-<h3>Quality Assessment<a class="headerlink" href="#quality-assessment" title="Link to this heading"></a></h3>
+<h3>Quality Assessment<a class="headerlink" href="#quality-assessment" title="Permalink to this heading"></a></h3>
 <p>Assess overall scene graph quality:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">scene_graph_quality</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">scene_graph_quality</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">):</span>
     <span class="c1"># Graph-level similarity metrics</span>
     <span class="n">node_similarity</span> <span class="o">=</span> <span class="n">compute_node_similarity</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">)</span>
     <span class="n">edge_similarity</span> <span class="o">=</span> <span class="n">compute_edge_similarity</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">)</span>
@@ -538,9 +538,9 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </section>
 </section>
 <section id="evaluation-best-practices">
-<h2>Evaluation Best Practices<a class="headerlink" href="#evaluation-best-practices" title="Link to this heading"></a></h2>
+<h2>Evaluation Best Practices<a class="headerlink" href="#evaluation-best-practices" title="Permalink to this heading"></a></h2>
 <section id="reproducibility">
-<h3>Reproducibility<a class="headerlink" href="#reproducibility" title="Link to this heading"></a></h3>
+<h3>Reproducibility<a class="headerlink" href="#reproducibility" title="Permalink to this heading"></a></h3>
 <p>Ensure reproducible evaluation results:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set random seeds for consistent evaluation</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
@@ -556,7 +556,7 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </div>
 </section>
 <section id="multiple-runs">
-<h3>Multiple Runs<a class="headerlink" href="#multiple-runs" title="Link to this heading"></a></h3>
+<h3>Multiple Runs<a class="headerlink" href="#multiple-runs" title="Permalink to this heading"></a></h3>
 <p>Perform multiple evaluation runs:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run evaluation multiple times with different seeds</span>
 <span class="k">for</span><span class="w"> </span>seed<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">42</span><span class="w"> </span><span class="m">123</span><span class="w"> </span><span class="m">456</span><span class="w"> </span><span class="m">789</span><span class="w"> </span><span class="m">999</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
@@ -570,10 +570,10 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </div>
 </section>
 <section id="statistical-reporting">
-<h3>Statistical Reporting<a class="headerlink" href="#statistical-reporting" title="Link to this heading"></a></h3>
+<h3>Statistical Reporting<a class="headerlink" href="#statistical-reporting" title="Permalink to this heading"></a></h3>
 <p>Report results with confidence intervals:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 
 <span class="c1"># Calculate mean and confidence interval</span>
 <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="mf">19.2</span><span class="p">,</span> <span class="mf">18.8</span><span class="p">,</span> <span class="mf">19.5</span><span class="p">,</span> <span class="mf">19.1</span><span class="p">,</span> <span class="mf">19.3</span><span class="p">]</span>
@@ -587,9 +587,9 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </section>
 </section>
 <section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
 <section id="common-issues">
-<h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading"></a></h3>
+<h3>Common Issues<a class="headerlink" href="#common-issues" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt><strong>Low Evaluation Scores</strong></dt><dd><ul class="simple">
 <li><p>Verify ground truth data format</p></li>
@@ -612,7 +612,7 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </dl>
 </section>
 <section id="performance-debugging">
-<h3>Performance Debugging<a class="headerlink" href="#performance-debugging" title="Link to this heading"></a></h3>
+<h3>Performance Debugging<a class="headerlink" href="#performance-debugging" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt><strong>Slow Evaluation</strong></dt><dd><ul class="simple">
 <li><p>Profile bottlenecks in evaluation code</p></li>
@@ -630,9 +630,9 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </section>
 </section>
 <section id="evaluation-reports">
-<h2>Evaluation Reports<a class="headerlink" href="#evaluation-reports" title="Link to this heading"></a></h2>
+<h2>Evaluation Reports<a class="headerlink" href="#evaluation-reports" title="Permalink to this heading"></a></h2>
 <section id="automated-reports">
-<h3>Automated Reports<a class="headerlink" href="#automated-reports" title="Link to this heading"></a></h3>
+<h3>Automated Reports<a class="headerlink" href="#automated-reports" title="Permalink to this heading"></a></h3>
 <p>Generate comprehensive evaluation reports:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate evaluation report</span>
 <span class="n">python</span> <span class="n">generate_report</span><span class="o">.</span><span class="n">py</span> \
@@ -643,7 +643,7 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </div>
 </section>
 <section id="report-contents">
-<h3>Report Contents<a class="headerlink" href="#report-contents" title="Link to this heading"></a></h3>
+<h3>Report Contents<a class="headerlink" href="#report-contents" title="Permalink to this heading"></a></h3>
 <p>Standard evaluation reports include:</p>
 <ul class="simple">
 <li><p><strong>Model Information</strong>: Architecture, parameters, training details</p></li>
@@ -655,7 +655,7 @@ python<span class="w"> </span>test_robustness.py<span class="w"> </span><span cl
 </section>
 </section>
 <section id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="training.html"><span class="doc">Training Guide</span></a> - Return to training with evaluation insights</p></li>
 <li><p><a class="reference internal" href="models.html"><span class="doc">Models</span></a> - Understand model architectures and their evaluation characteristics</p></li>

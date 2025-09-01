@@ -1,4 +1,3 @@
-import os
 from argparse import ArgumentParser
 
 BATCHNORM_MOMENTUM = 0.01
@@ -110,6 +109,39 @@ class Config(object):
         self.alpha_obj = 1.0 # test [1.0, 1.5, 2.0, 2.5, 3.0]
         self.alpha_rel = 1.0 # test [1.0, 1.5, 2.0, 2.5, 3.0]
 
+        # OED specific defaults
+        self.num_queries = 100
+        self.dec_layers_hopd = 6
+        self.dec_layers_interaction = 6
+        self.num_attn_classes = 3
+        self.num_spatial_classes = 6
+        self.num_contacting_classes = 17
+        self.alpha = 0.5
+        self.oed_use_matching = False
+        self.bbox_loss_coef = 2.5
+        self.giou_loss_coef = 1.0
+        self.obj_loss_coef = 1.0
+        self.rel_loss_coef = 2.0
+        self.oed_eos_coef = 0.1
+        self.interval1 = 4
+        self.interval2 = 4
+        self.num_ref_frames = 2
+        self.oed_variant = "multi"
+        self.fuse_semantic_pos = False
+        self.query_temporal_interaction = False
+        
+        # OED loss weights and configuration
+        self.oed_weight_dict = {
+            'loss_obj_ce': self.obj_loss_coef,
+            'loss_bbox': self.bbox_loss_coef,
+            'loss_giou': self.giou_loss_coef,
+            'loss_attn_ce': self.rel_loss_coef,
+            'loss_spatial_ce': self.rel_loss_coef,
+            'loss_contacting_ce': self.rel_loss_coef,
+        }
+        
+        self.oed_losses = ['obj_labels', 'boxes', 'attn_labels', 'spatial_labels', 'contacting_labels']
+
         # Matcher logic TODO: remove this
         if self.model_type == "dsg-detr":
             self.use_matcher = True
@@ -124,6 +156,8 @@ class Config(object):
             self.use_matcher = False
         elif self.model_type == "scenellm":
             self.use_matcher = False
+        elif self.model_type == "oed":
+            self.use_matcher = self.oed_use_matching
 
     def setup_parser(self):
         """Set up command-line argument parser for training configuration.
@@ -192,8 +226,8 @@ class Config(object):
         parser.add_argument(
             "-model",
             dest="model_type",
-            help="Model type: sttran (default), dsg-detr (uses Hungarian matcher), stket, tempura, or scenellm",
-            choices=["sttran", "dsg-detr", "stket", "easg", "tempura", "scenellm"],
+            help="Model type: sttran (default), dsg-detr (uses Hungarian matcher), stket, tempura, scenellm, or oed",
+            choices=["sttran", "dsg-detr", "stket", "easg", "tempura", "scenellm", "oed"],
             default="sttran",
             type=str,
         )
@@ -339,6 +373,84 @@ class Config(object):
             "-disable_checkpoint_saving",
             action="store_true",
             help="disable all checkpoint saving to save local storage space",
+        )
+
+        # OED specific arguments
+        parser.add_argument(
+            "-num_queries", default=100, type=int, help="Number of query slots for OED"
+        )
+        parser.add_argument(
+            "-dec_layers_hopd", 
+            default=6, 
+            type=int, 
+            help="Number of hopd decoding layers in OED transformer"
+        )
+        parser.add_argument(
+            "-dec_layers_interaction", 
+            default=6, 
+            type=int, 
+            help="Number of interaction decoding layers in OED transformer"
+        )
+        parser.add_argument(
+            "-num_attn_classes", default=3, type=int, help="Number of attention classes"
+        )
+        parser.add_argument(
+            "-num_spatial_classes", default=6, type=int, help="Number of spatial classes"
+        )
+        parser.add_argument(
+            "-num_contacting_classes", default=17, type=int, help="Number of contacting classes"
+        )
+        parser.add_argument(
+            "-alpha", default=0.5, type=float, help="Focal loss alpha for OED"
+        )
+        parser.add_argument(
+            "-oed_use_matching", 
+            action="store_true", 
+            help="Use obj/sub matching 2class loss in OED decoder"
+        )
+        parser.add_argument(
+            "-bbox_loss_coef", default=2.5, type=float, help="L1 box coefficient"
+        )
+        parser.add_argument(
+            "-giou_loss_coef", default=1, type=float, help="GIoU box coefficient"
+        )
+        parser.add_argument(
+            "-obj_loss_coef", default=1, type=float, help="Object classification coefficient"
+        )
+        parser.add_argument(
+            "-rel_loss_coef", default=2, type=float, help="Relation classification coefficient"
+        )
+        parser.add_argument(
+            "-oed_eos_coef", 
+            default=0.1, 
+            type=float, 
+            help="Relative classification weight of no-object class for OED"
+        )
+        parser.add_argument(
+            "-interval1", default=4, type=int, help="Interval for training frame selection"
+        )
+        parser.add_argument(
+            "-interval2", default=4, type=int, help="Interval for test frame selection"
+        )
+        parser.add_argument(
+            "-num_ref_frames", default=2, type=int, help="Number of reference frames"
+        )
+        parser.add_argument(
+            "-oed_variant", 
+            default="multi", 
+            type=str, 
+            choices=["single", "multi"], 
+            help="OED variant: single frame or multi frame"
+        )
+        parser.add_argument(
+            "-fuse_semantic_pos", 
+            action="store_true", 
+            help="Fuse semantic and positional embeddings"
+        )
+        parser.add_argument(
+            "-query_temporal_interaction", 
+            action="store_true", 
+            help="Enable query temporal interaction"
         )
 
         return parser

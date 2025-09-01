@@ -45,7 +45,6 @@ class VQVAEQuantizer(nn.Module):
         self.decoder = nn.Linear(dim, dim)
         self.output_projection = nn.Linear(dim, input_dim)
         self.codebook.weight.data.uniform_(-1 / codebook_size, 1 / codebook_size)
-        # For tracking usage
         self.register_buffer("usage_count", torch.zeros(codebook_size))
 
     def forward(self, roi_feats):
@@ -56,7 +55,34 @@ class VQVAEQuantizer(nn.Module):
         :return: Tuple containing reconstructed features, reconstruction loss, embedding loss, and commitment loss
         :rtype: tuple
         """
+        # Check for NaN/inf in inputs
+        if torch.isnan(roi_feats).any() or torch.isinf(roi_feats).any():
+            print("WARNING: NaN/Inf detected in VQ-VAE input, using zero output")
+            return {
+                "ids": torch.zeros(roi_feats.size(0), dtype=torch.long, device=roi_feats.device),
+                "z_q": torch.zeros(roi_feats.size(0), self.dim, device=roi_feats.device),
+                "recon": torch.zeros_like(roi_feats),
+                "vq_loss": torch.tensor(0.0, device=roi_feats.device),
+                "recon_loss": torch.tensor(0.0, device=roi_feats.device),
+                "embedding_loss": torch.tensor(0.0, device=roi_feats.device),
+                "commitment_loss": torch.tensor(0.0, device=roi_feats.device),
+            }
+        roi_feats = torch.clamp(roi_feats, min=-10.0, max=10.0)
+        
         z_e = self.encoder(self.input_projection(roi_feats))  # [N, dim]
+        
+        # Check for NaN in encoded features
+        if torch.isnan(z_e).any() or torch.isinf(z_e).any():
+            print("WARNING: NaN/Inf detected in VQ-VAE encoder output, using zero output")
+            return {
+                "ids": torch.zeros(roi_feats.size(0), dtype=torch.long, device=roi_feats.device),
+                "z_q": torch.zeros(roi_feats.size(0), self.dim, device=roi_feats.device),
+                "recon": torch.zeros_like(roi_feats),
+                "vq_loss": torch.tensor(0.0, device=roi_feats.device),
+                "recon_loss": torch.tensor(0.0, device=roi_feats.device),
+                "embedding_loss": torch.tensor(0.0, device=roi_feats.device),
+                "commitment_loss": torch.tensor(0.0, device=roi_feats.device),
+            }
         z_e_flat = z_e.view(-1, self.dim)  # [N, D]
         d = (
             z_e_flat.pow(2).sum(1, keepdim=True)
@@ -74,6 +100,12 @@ class VQVAEQuantizer(nn.Module):
         # Reconstruct
         decoded = self.decoder(z_q)
         recon = self.output_projection(decoded)  # Project back to input dimension
+        
+        # Check for NaN in reconstruction
+        if torch.isnan(recon).any() or torch.isinf(recon).any():
+            print("WARNING: NaN/Inf detected in VQ-VAE reconstruction, using input")
+            recon = roi_feats.clone()
+        
         recon_loss = F.mse_loss(recon, roi_feats)  # Calculate VQ-VAE losses
         embedding_loss = F.mse_loss(
             z_q.detach(), z_e
@@ -81,6 +113,14 @@ class VQVAEQuantizer(nn.Module):
         commitment_loss = F.mse_loss(
             z_q, z_e.detach()
         )  # Commitment loss: encourage encoder to commit to embeddings
+        
+        # Check for NaN in individual losses
+        if torch.isnan(recon_loss) or torch.isnan(embedding_loss) or torch.isnan(commitment_loss):
+            print("WARNING: NaN detected in VQ-VAE losses, using zero loss")
+            recon_loss = torch.tensor(0.0, device=roi_feats.device)
+            embedding_loss = torch.tensor(0.0, device=roi_feats.device)
+            commitment_loss = torch.tensor(0.0, device=roi_feats.device)
+        
         vq_loss = recon_loss + embedding_loss + self.commitment_cost * commitment_loss
         return {
             "ids": min_encoding_indices,

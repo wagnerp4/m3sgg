@@ -1,13 +1,13 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Library Module &mdash; VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0a84b5b7" />
@@ -15,9 +15,9 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=30646c52"></script>
     <script src="../_static/js/theme.js"></script>
@@ -69,19 +69,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-lib.evaluation_recall">Evaluation</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-lib.nlp_module.summarization_wrapper">NLP Module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper"><code class="docutils literal notranslate"><span class="pre">BaseSummarizationWrapper</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#lib.nlp_module.summarization_wrapper.T5SummarizationWrapper"><code class="docutils literal notranslate"><span class="pre">T5SummarizationWrapper</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#lib.nlp_module.summarization_wrapper.PegasusSummarizationWrapper"><code class="docutils literal notranslate"><span class="pre">PegasusSummarizationWrapper</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#lib.nlp_module.summarization_wrapper.PegasusSeparateLoader"><code class="docutils literal notranslate"><span class="pre">PegasusSeparateLoader</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#lib.nlp_module.summarization_wrapper.PegasusCustomConfig"><code class="docutils literal notranslate"><span class="pre">PegasusCustomConfig</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#lib.nlp_module.summarize.linearize_triples"><code class="docutils literal notranslate"><span class="pre">linearize_triples()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#lib.nlp_module.summarize.summarize_sentences"><code class="docutils literal notranslate"><span class="pre">summarize_sentences()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#lib.nlp_module.summarize.summarize_with_pegasus_separate"><code class="docutils literal notranslate"><span class="pre">summarize_with_pegasus_separate()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#lib.nlp_module.summarize.summarize_with_pegasus_custom"><code class="docutils literal notranslate"><span class="pre">summarize_with_pegasus_custom()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#lib.nlp_module.summarize.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="#nlp-module">NLP Module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-lib.fpn.box_utils">FPN Module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#lib.fpn.box_utils.bbox_loss"><code class="docutils literal notranslate"><span class="pre">bbox_loss()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#lib.fpn.box_utils.bbox_preds"><code class="docutils literal notranslate"><span class="pre">bbox_preds()</span></code></a></li>
@@ -132,15 +120,15 @@
            <div itemprop="articleBody">
              
   <section id="library-module">
-<h1>Library Module<a class="headerlink" href="#library-module" title="Link to this heading"></a></h1>
+<h1>Library Module<a class="headerlink" href="#library-module" title="Permalink to this heading"></a></h1>
 <p>The lib module contains core functionality including models, utilities, and processing components.</p>
 <section id="core-components">
-<h2>Core Components<a class="headerlink" href="#core-components" title="Link to this heading"></a></h2>
+<h2>Core Components<a class="headerlink" href="#core-components" title="Permalink to this heading"></a></h2>
 <section id="module-lib.config">
-<span id="configuration"></span><h3>Configuration<a class="headerlink" href="#module-lib.config" title="Link to this heading"></a></h3>
+<span id="configuration"></span><h3>Configuration<a class="headerlink" href="#module-lib.config" title="Permalink to this heading"></a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="lib.config.Config">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><a class="reference internal" href="../_modules/lib/config.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.config.Config" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><a class="reference internal" href="../_modules/lib/config.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.config.Config" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Configuration class for scene graph generation model training and evaluation.</p>
 <p>This class manages all configuration parameters for different model architectures
@@ -154,7 +142,7 @@ inference modes.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.config.Config.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/config.html#Config.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.config.Config.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/config.html#Config.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.config.Config.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the configuration object with default parameters and command-line argument parsing.</p>
 <p>Sets up all default model parameters, dataset paths, training hyperparameters,
 and model-specific configurations for different architectures including STTRAN,
@@ -171,7 +159,7 @@ STKET, Tempura, EASG, and SceneLLM.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.config.Config.setup_parser">
-<span class="sig-name descname"><span class="pre">setup_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/config.html#Config.setup_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.config.Config.setup_parser" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setup_parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/config.html#Config.setup_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.config.Config.setup_parser" title="Permalink to this definition"></a></dt>
 <dd><p>Set up command-line argument parser for training configuration.</p>
 <p>Creates and configures an ArgumentParser with all available command-line
 options for model training, including dataset selection, model type,
@@ -190,10 +178,10 @@ hyperparameters, and architecture-specific settings.</p>
 
 </section>
 <section id="module-lib.object_detector">
-<span id="object-detection"></span><h3>Object Detection<a class="headerlink" href="#module-lib.object_detector" title="Link to this heading"></a></h3>
+<span id="object-detection"></span><h3>Object Detection<a class="headerlink" href="#module-lib.object_detector" title="Permalink to this heading"></a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="lib.object_detector.detector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.object_detector.</span></span><span class="sig-name descname"><span class="pre">detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_SUPPLY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'predcls'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector.html#detector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector.detector" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.object_detector.</span></span><span class="sig-name descname"><span class="pre">detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_SUPPLY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'predcls'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector.html#detector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector.detector" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
 <p>Object detector module for scene graph generation.</p>
 <p>Implements object detection functionality using Faster R-CNN backbone
@@ -205,7 +193,7 @@ for scene graph generation tasks including predcls, sgcls, and sgdet modes.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.object_detector.detector.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_SUPPLY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'predcls'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector.html#detector.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector.detector.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_SUPPLY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'predcls'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector.html#detector.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector.detector.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the object detector.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -227,8 +215,8 @@ for scene graph generation tasks including predcls, sgcls, and sgdet modes.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.object_detector.detector.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">im_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_annotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_all</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector.html#detector.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector.detector.forward" title="Link to this definition"></a></dt>
-<dd><p>Define the computation performed at every call.</p>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">im_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_annotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_all</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector.html#detector.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector.detector.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Defines the computation performed at every call.</p>
 <p>Should be overridden by all subclasses.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -239,11 +227,16 @@ registered hooks while the latter silently ignores them.</p>
 </div>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lib.object_detector.detector.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#lib.object_detector.detector.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-<dl class="py class" id="module-lib.object_detector_EASG">
+<span class="target" id="module-lib.object_detector_EASG"></span><dl class="py class">
 <dt class="sig sig-object py" id="lib.object_detector_EASG.detector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.object_detector_EASG.</span></span><span class="sig-name descname"><span class="pre">detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_SUPPLY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edgecls'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector_EASG.html#detector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector_EASG.detector" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.object_detector_EASG.</span></span><span class="sig-name descname"><span class="pre">detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_SUPPLY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edgecls'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector_EASG.html#detector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector_EASG.detector" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
 <p>Object detector module for EASG (Efficient and Accurate Scene Graph) generation.</p>
 <p>Implements object detection functionality specifically designed for EASG
@@ -255,7 +248,7 @@ scene graph generation with video-based detection capabilities.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.object_detector_EASG.detector.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_SUPPLY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edgecls'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector_EASG.html#detector.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector_EASG.detector.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_SUPPLY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edgecls'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector_EASG.html#detector.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector_EASG.detector.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the EASG object detector.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -277,8 +270,8 @@ scene graph generation with video-based detection capabilities.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.object_detector_EASG.detector.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">im_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_grounding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_all</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector_EASG.html#detector.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector_EASG.detector.forward" title="Link to this definition"></a></dt>
-<dd><p>Define the computation performed at every call.</p>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">im_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_grounding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_all</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/object_detector_EASG.html#detector.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.object_detector_EASG.detector.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Defines the computation performed at every call.</p>
 <p>Should be overridden by all subclasses.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -289,14 +282,19 @@ registered hooks while the latter silently ignores them.</p>
 </div>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lib.object_detector_EASG.detector.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#lib.object_detector_EASG.detector.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </section>
 <section id="module-lib.funcs">
-<span id="utility-functions"></span><h3>Utility Functions<a class="headerlink" href="#module-lib.funcs" title="Link to this heading"></a></h3>
+<span id="utility-functions"></span><h3>Utility Functions<a class="headerlink" href="#module-lib.funcs" title="Permalink to this heading"></a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.funcs.assign_relations">
-<span class="sig-prename descclassname"><span class="pre">lib.funcs.</span></span><span class="sig-name descname"><span class="pre">assign_relations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_annotations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assign_IOU_threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/funcs.html#assign_relations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.funcs.assign_relations" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.funcs.</span></span><span class="sig-name descname"><span class="pre">assign_relations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_annotations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assign_IOU_threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/funcs.html#assign_relations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.funcs.assign_relations" title="Permalink to this definition"></a></dt>
 <dd><p>Assign relations between predicted detections and ground truth annotations.</p>
 <p>Matches predicted bounding boxes with ground truth annotations based on IoU threshold
 and prepares relation data for scene graph generation training.</p>
@@ -319,19 +317,19 @@ and prepares relation data for scene graph generation training.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.funcs.im_list_to_blob">
-<span class="sig-prename descclassname"><span class="pre">lib.funcs.</span></span><span class="sig-name descname"><span class="pre">im_list_to_blob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ims</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/funcs.html#im_list_to_blob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.funcs.im_list_to_blob" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.funcs.</span></span><span class="sig-name descname"><span class="pre">im_list_to_blob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ims</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/funcs.html#im_list_to_blob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.funcs.im_list_to_blob" title="Permalink to this definition"></a></dt>
 <dd><p>Convert a list of images into a network input.</p>
 <p>Assumes images are already prepared (means subtracted, BGR order, …).</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.funcs.enumerate_by_image">
-<span class="sig-prename descclassname"><span class="pre">lib.funcs.</span></span><span class="sig-name descname"><span class="pre">enumerate_by_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">im_inds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/funcs.html#enumerate_by_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.funcs.enumerate_by_image" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.funcs.</span></span><span class="sig-name descname"><span class="pre">enumerate_by_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">im_inds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/funcs.html#enumerate_by_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.funcs.enumerate_by_image" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.funcs.transpose_packed_sequence_inds">
-<span class="sig-prename descclassname"><span class="pre">lib.funcs.</span></span><span class="sig-name descname"><span class="pre">transpose_packed_sequence_inds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lengths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/funcs.html#transpose_packed_sequence_inds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.funcs.transpose_packed_sequence_inds" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.funcs.</span></span><span class="sig-name descname"><span class="pre">transpose_packed_sequence_inds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lengths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/funcs.html#transpose_packed_sequence_inds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.funcs.transpose_packed_sequence_inds" title="Permalink to this definition"></a></dt>
 <dd><p>Goes from a TxB packed sequence to a BxT or vice versa. Assumes that nothing is a variable
 :param ps: PackedSequence
 :return:</p>
@@ -339,346 +337,15 @@ and prepares relation data for scene graph generation training.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.funcs.pad_sequence">
-<span class="sig-prename descclassname"><span class="pre">lib.funcs.</span></span><span class="sig-name descname"><span class="pre">pad_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/funcs.html#pad_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.funcs.pad_sequence" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<p id="module-lib.pytorch_misc">Miscellaneous functions that might be useful for pytorch</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.optimistic_restore">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">optimistic_restore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#optimistic_restore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.optimistic_restore" title="Link to this definition"></a></dt>
-<dd><p>Optimistically restore network weights from state dictionary.</p>
-<p>Attempts to load weights from state_dict into network, handling size mismatches
-gracefully by skipping incompatible parameters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>network</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><em>torch.nn.Module</em></a>) – Neural network to restore weights to</p></li>
-<li><p><strong>state_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – State dictionary containing weights</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Whether any mismatches were found</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.pairwise">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">pairwise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#pairwise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.pairwise" title="Link to this definition"></a></dt>
-<dd><p>s -&gt; (s0,s1), (s1,s2), (s2, s3), …</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.get_ranking">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">get_ranking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_guesses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#get_ranking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.get_ranking" title="Link to this definition"></a></dt>
-<dd><p>Given a matrix of predictions and labels for the correct ones, get the number of guesses
-required to get the prediction right per example.
-:param predictions: [batch_size, range_size] predictions
-:param labels: [batch_size] array of labels
-:param num_guesses: Number of guesses to return
-:return:</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.cache">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.cache" title="Link to this definition"></a></dt>
-<dd><p>Caches a computation</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="lib.pytorch_misc.Flattener">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">Flattener</span></span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#Flattener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.Flattener" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.pytorch_misc.Flattener.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#Flattener.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.Flattener.__init__" title="Link to this definition"></a></dt>
-<dd><p>Flattens last 3 dimensions to make it only batch size, -ĺeftright</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.pytorch_misc.Flattener.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#Flattener.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.Flattener.forward" title="Link to this definition"></a></dt>
-<dd><p>Define the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Although the recipe for forward pass needs to be defined within
-this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.to_variable">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">to_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#to_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.to_variable" title="Link to this definition"></a></dt>
-<dd><p>Decorator that pushes all the outputs to a variable
-:param f:
-:return:</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.arange">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">arange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#arange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.arange" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.to_onehot">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">to_onehot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#to_onehot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.to_onehot" title="Link to this definition"></a></dt>
-<dd><p>Creates a [size, num_classes] torch FloatTensor where
-one_hot[i, vec[i]] = fill</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vec</strong> – 1d torch tensor</p></li>
-<li><p><strong>num_classes</strong> – int</p></li>
-<li><p><strong>fill</strong> – value that we want + and - things to be.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.save_net">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">save_net</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#save_net"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.save_net" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.load_net">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">load_net</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#load_net"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.load_net" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.batch_index_iterator">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">batch_index_iterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">len_l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#batch_index_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.batch_index_iterator" title="Link to this definition"></a></dt>
-<dd><p>Provides indices that iterate over a list in batches.</p>
-<p>Creates a generator that yields (start, end) tuples for batch processing.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>len_l</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Size of the list to iterate over</p></li>
-<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Size of each batch</p></li>
-<li><p><strong>skip_end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to skip the last incomplete batch, defaults to True</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Generator yielding (start, end) tuples for each batch</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Generator[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a>, None, None]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.batch_map">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">batch_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#batch_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.batch_map" title="Link to this definition"></a></dt>
-<dd><p>Maps a function over an array in chunks of specified batch size.</p>
-<p>Applies function f to array a in batches to manage memory usage.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>f</strong> (<em>callable</em>) – Function to apply, must take (batch_size, dim_a) and return (batch_size, something)</p></li>
-<li><p><strong>a</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)"><em>torch.Tensor</em></a>) – Array to process of shape (num_rows, dim_a)</p></li>
-<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Size of each processing batch</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Processed array of shape (num_rows, something)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)">torch.Tensor</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.const_row">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">const_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fill</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">volatile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#const_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.const_row" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.print_para">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">print_para</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#print_para"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.print_para" title="Link to this definition"></a></dt>
-<dd><p>Prints parameters of a model
-:param opt:
-:return:</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.accuracy">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">accuracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#accuracy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.accuracy" title="Link to this definition"></a></dt>
-<dd><p>Computes the precision&#64;k for the specified values of k</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.nonintersecting_2d_inds">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">nonintersecting_2d_inds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#nonintersecting_2d_inds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.nonintersecting_2d_inds" title="Link to this definition"></a></dt>
-<dd><p>Returns np.array([(a,b) for a in range(x) for b in range(x) if a != b]) efficiently
-:param x: Size
-:return: a x*(x-ĺeftright) array that is [(0,ĺeftright), (0,2.0)… (0, x-ĺeftright), (ĺeftright,0), (ĺeftright,2.0), …, (x-ĺeftright, x-2.0)]</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.intersect_2d">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">intersect_2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#intersect_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.intersect_2d" title="Link to this definition"></a></dt>
-<dd><p>Given two arrays [m1, n], [m2,n], returns a [m1, m2] array where each entry is True if those
-rows match.
-:param x1: [m1, n] numpy array
-:param x2: [m2, n] numpy array
-:return: [m1, m2] bool array of the intersections</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.np_to_variable">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">np_to_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_cuda=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'torch.FloatTensor'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#np_to_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.np_to_variable" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.gather_nd">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">gather_nd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#gather_nd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.gather_nd" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – n dimensional tensor [x0, x1, x2, … x{n-ĺeftright}, dim]</p></li>
-<li><p><strong>index</strong> – [num, n-ĺeftright] where each row contains the indices we’ll use</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>[num, dim]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.enumerate_by_image">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">enumerate_by_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">im_inds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#enumerate_by_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.enumerate_by_image" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.diagonal_inds">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">diagonal_inds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#diagonal_inds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.diagonal_inds" title="Link to this definition"></a></dt>
-<dd><p>Returns the indices required to go along first 2.0 dims of tensor in diag fashion
-:param tensor: thing
-:return:</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.enumerate_imsize">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">enumerate_imsize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">im_sizes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#enumerate_imsize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.enumerate_imsize" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.argsort_desc">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">argsort_desc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scores</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#argsort_desc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.argsort_desc" title="Link to this definition"></a></dt>
-<dd><p>Returns indices that sort scores in descending order.</p>
-<p>Computes indices for descending sort across arbitrary dimensional arrays.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>scores</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – Array of arbitrary size to sort</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Array of indices for descending sort, shape [numel(scores), dim(scores)]</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.unravel_index">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">unravel_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#unravel_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.unravel_index" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.de_chunkize">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">de_chunkize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunks</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#de_chunkize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.de_chunkize" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.random_choose">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">random_choose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#random_choose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.random_choose" title="Link to this definition"></a></dt>
-<dd><p>randomly choose indices</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.transpose_packed_sequence_inds">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">transpose_packed_sequence_inds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lengths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#transpose_packed_sequence_inds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.transpose_packed_sequence_inds" title="Link to this definition"></a></dt>
-<dd><p>Goes from a TxB packed sequence to a BxT or vice versa. Assumes that nothing is a variable
-:param ps: PackedSequence
-:return:</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.right_shift_packed_sequence_inds">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">right_shift_packed_sequence_inds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lengths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#right_shift_packed_sequence_inds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.right_shift_packed_sequence_inds" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>lengths</strong> – e.g. [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, ĺeftright, ĺeftright, ĺeftright, ĺeftright, ĺeftright]</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><p>perm indices for the old stuff (TxB) to shift it right ĺeftright slot so as to accomodate
-BOS toks</p>
-<p>visual example: of lengths = [4,3,ĺeftright,ĺeftright]</p>
-</p>
-</dd>
-</dl>
-<p>before:</p>
-<blockquote>
-<div><p>a (0)  b (4)  c (7) d (8)
-a (ĺeftright)  b (5)
-a (2.0)  b (6)
-a (3)</p>
-</div></blockquote>
-<p>after:</p>
-<blockquote>
-<div><p>bos a (0)  b (4)  c (7)
-bos a (ĺeftright)
-bos a (2.0)
-bos</p>
-</div></blockquote>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.clip_grad_norm">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">clip_grad_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">named_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#clip_grad_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.clip_grad_norm" title="Link to this definition"></a></dt>
-<dd><p>Clips gradient norm of an iterable of parameters.</p>
-<p>The norm is computed over all gradients together, as if they were
-concatenated into a single vector. Gradients are modified in-place.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>Iterable</em><em>[</em><em>Variable</em><em>]</em>) – an iterable of Variables that will have
-gradients normalized</p></li>
-<li><p><strong>max_norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – max norm of the gradients</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Total norm of the parameters (viewed as a single vector).</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.pytorch_misc.update_lr">
-<span class="sig-prename descclassname"><span class="pre">lib.pytorch_misc.</span></span><span class="sig-name descname"><span class="pre">update_lr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/pytorch_misc.html#update_lr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.pytorch_misc.update_lr" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.funcs.</span></span><span class="sig-name descname"><span class="pre">pad_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/funcs.html#pad_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.funcs.pad_sequence" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="module-lib.word_vectors">
-<span id="word-vectors"></span><h3>Word Vectors<a class="headerlink" href="#module-lib.word_vectors" title="Link to this heading"></a></h3>
+<span id="word-vectors"></span><h3>Word Vectors<a class="headerlink" href="#module-lib.word_vectors" title="Permalink to this heading"></a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.word_vectors.create_ssl_context">
-<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">create_ssl_context</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#create_ssl_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.create_ssl_context" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">create_ssl_context</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#create_ssl_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.create_ssl_context" title="Permalink to this definition"></a></dt>
 <dd><p>Create an unverified SSL context to bypass certificate verification.</p>
 <p>Creates an SSL context with disabled hostname and certificate verification
 to handle SSL certificate issues when downloading word vectors from external sources.</p>
@@ -694,7 +361,7 @@ to handle SSL certificate issues when downloading word vectors from external sou
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.word_vectors.download_word_vectors">
-<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">download_word_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wv_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#download_word_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.download_word_vectors" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">download_word_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wv_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#download_word_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.download_word_vectors" title="Permalink to this definition"></a></dt>
 <dd><p>Download word vectors if they don’t exist.</p>
 <p>Downloads pre-trained word vectors from Stanford NLP resources and extracts
 the specific dimension file needed for the model.</p>
@@ -717,7 +384,7 @@ the specific dimension file needed for the model.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.word_vectors.get_cache_path">
-<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">get_cache_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wv_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#get_cache_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.get_cache_path" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">get_cache_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wv_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#get_cache_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.get_cache_path" title="Permalink to this definition"></a></dt>
 <dd><p>Get the path for the cached word vectors.</p>
 <p>Constructs the file path for cached word vector pickle files.</p>
 <dl class="field-list simple">
@@ -739,7 +406,7 @@ the specific dimension file needed for the model.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.word_vectors.get_cache_status">
-<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">get_cache_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#get_cache_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.get_cache_status" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">get_cache_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#get_cache_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.get_cache_status" title="Permalink to this definition"></a></dt>
 <dd><p>Get the status of word vector caches.</p>
 <p>Returns information about both memory and disk caches for word vectors,
 including cache sizes and available cached files.</p>
@@ -755,7 +422,7 @@ including cache sizes and available cached files.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.word_vectors.clear_word_vector_cache">
-<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">clear_word_vector_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wv_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#clear_word_vector_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.clear_word_vector_cache" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">clear_word_vector_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wv_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#clear_word_vector_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.clear_word_vector_cache" title="Permalink to this definition"></a></dt>
 <dd><p>Clear word vector cache (both memory and disk cache).</p>
 <p>Clears cached word vectors from memory and optionally from disk.
 Can target specific word vector types and dimensions or clear all caches.</p>
@@ -778,7 +445,7 @@ Can target specific word vector types and dimensions or clear all caches.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.word_vectors.load_word_vectors">
-<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">load_word_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wv_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'glove.6B'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#load_word_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.load_word_vectors" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">load_word_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wv_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'glove.6B'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#load_word_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.load_word_vectors" title="Permalink to this definition"></a></dt>
 <dd><p>Load word vectors from file or download if not present.</p>
 <p>Loads pre-trained word vectors with caching support. Checks memory cache first,
 then disk cache, and finally downloads from external source if needed.</p>
@@ -801,7 +468,7 @@ then disk cache, and finally downloads from external source if needed.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.word_vectors.obj_edge_vectors">
-<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">obj_edge_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'glove.6B'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#obj_edge_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.obj_edge_vectors" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">obj_edge_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'glove.6B'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#obj_edge_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.obj_edge_vectors" title="Permalink to this definition"></a></dt>
 <dd><p>Create word vectors for object classes.</p>
 <p>Generates word vector embeddings for a list of object class names using
 pre-trained word vectors. Returns zero vectors for unknown words.</p>
@@ -825,7 +492,7 @@ pre-trained word vectors. Returns zero vectors for unknown words.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.word_vectors.verb_edge_vectors">
-<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">verb_edge_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'glove.6B'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#verb_edge_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.verb_edge_vectors" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">verb_edge_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'glove.6B'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wv_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#verb_edge_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.verb_edge_vectors" title="Permalink to this definition"></a></dt>
 <dd><p>Create word vectors for verb classes.</p>
 <p>Generates word vector embeddings for a list of verb class names using
 pre-trained word vectors. Currently uses the same logic as obj_edge_vectors.</p>
@@ -849,16 +516,16 @@ pre-trained word vectors. Currently uses the same logic as obj_edge_vectors.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.word_vectors.reporthook">
-<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">reporthook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#reporthook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.reporthook" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.word_vectors.</span></span><span class="sig-name descname"><span class="pre">reporthook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/word_vectors.html#reporthook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.word_vectors.reporthook" title="Permalink to this definition"></a></dt>
 <dd><p><a class="reference external" href="https://github.com/tqdm/tqdm">https://github.com/tqdm/tqdm</a></p>
 </dd></dl>
 
 </section>
 <section id="module-lib.evaluation_recall">
-<span id="evaluation"></span><h3>Evaluation<a class="headerlink" href="#module-lib.evaluation_recall" title="Link to this heading"></a></h3>
+<span id="evaluation"></span><h3>Evaluation<a class="headerlink" href="#module-lib.evaluation_recall" title="Permalink to this heading"></a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="lib.evaluation_recall.BasicSceneGraphEvaluator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.evaluation_recall.</span></span><span class="sig-name descname"><span class="pre">BasicSceneGraphEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_all_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_attention_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_spatial_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_contacting_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iou_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semithreshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.evaluation_recall.</span></span><span class="sig-name descname"><span class="pre">BasicSceneGraphEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_all_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_attention_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_spatial_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_contacting_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iou_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semithreshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Evaluator for scene graph generation tasks.</p>
 <p>Computes recall metrics for scene graph generation across different tasks
@@ -870,7 +537,7 @@ pre-trained word vectors. Currently uses the same logic as obj_edge_vectors.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.evaluation_recall.BasicSceneGraphEvaluator.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_all_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_attention_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_spatial_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_contacting_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iou_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semithreshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_object_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_all_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_attention_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_spatial_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AG_contacting_predicates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iou_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semithreshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the scene graph evaluator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -898,22 +565,22 @@ pre-trained word vectors. Currently uses the same logic as obj_edge_vectors.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.evaluation_recall.BasicSceneGraphEvaluator.reset_result">
-<span class="sig-name descname"><span class="pre">reset_result</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator.reset_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator.reset_result" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">reset_result</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator.reset_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator.reset_result" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.evaluation_recall.BasicSceneGraphEvaluator.calc_mrecall">
-<span class="sig-name descname"><span class="pre">calc_mrecall</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator.calc_mrecall"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator.calc_mrecall" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">calc_mrecall</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator.calc_mrecall"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator.calc_mrecall" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.evaluation_recall.BasicSceneGraphEvaluator.print_stats">
-<span class="sig-name descname"><span class="pre">print_stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator.print_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator.print_stats" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print_stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator.print_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator.print_stats" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lib.evaluation_recall.BasicSceneGraphEvaluator.evaluate_scene_graph">
-<span class="sig-name descname"><span class="pre">evaluate_scene_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_per_sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator.evaluate_scene_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator.evaluate_scene_graph" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">evaluate_scene_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_per_sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#BasicSceneGraphEvaluator.evaluate_scene_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.BasicSceneGraphEvaluator.evaluate_scene_graph" title="Permalink to this definition"></a></dt>
 <dd><p>collect the groundtruth and prediction</p>
 </dd></dl>
 
@@ -921,7 +588,7 @@ pre-trained word vectors. Currently uses the same logic as obj_edge_vectors.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.evaluation_recall.evaluate_from_dict">
-<span class="sig-prename descclassname"><span class="pre">lib.evaluation_recall.</span></span><span class="sig-name descname"><span class="pre">evaluate_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt_entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#evaluate_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.evaluate_from_dict" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.evaluation_recall.</span></span><span class="sig-name descname"><span class="pre">evaluate_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt_entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#evaluate_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.evaluate_from_dict" title="Permalink to this definition"></a></dt>
 <dd><p>Shortcut to doing evaluate_recall from dict
 :param gt_entry: Dictionary containing gt_relations, gt_boxes, gt_classes
 :param pred_entry: Dictionary containing pred_rels, pred_boxes (if detection), pred_classes
@@ -932,7 +599,7 @@ pre-trained word vectors. Currently uses the same logic as obj_edge_vectors.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.evaluation_recall.evaluate_recall">
-<span class="sig-prename descclassname"><span class="pre">lib.evaluation_recall.</span></span><span class="sig-name descname"><span class="pre">evaluate_recall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt_rels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_rels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_scores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_scores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iou_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phrdet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#evaluate_recall"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.evaluate_recall" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.evaluation_recall.</span></span><span class="sig-name descname"><span class="pre">evaluate_recall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt_rels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_rels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rel_scores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_scores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iou_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phrdet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/evaluation_recall.html#evaluate_recall"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.evaluation_recall.evaluate_recall" title="Permalink to this definition"></a></dt>
 <dd><p>Evaluates recall metrics for scene graph generation.</p>
 <p>Computes recall by matching predicted relations to ground truth relations
 based on object detection IoU and relation class matching.</p>
@@ -962,305 +629,14 @@ based on object detection IoU and relation class matching.</p>
 
 </section>
 </section>
-<section id="module-lib.nlp_module.summarization_wrapper">
-<span id="nlp-module"></span><h2>NLP Module<a class="headerlink" href="#module-lib.nlp_module.summarization_wrapper" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.nlp_module.summarization_wrapper.</span></span><span class="sig-name descname"><span class="pre">BaseSummarizationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#BaseSummarizationWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
-<p>Abstract base class for summarization model wrappers.</p>
-<p>Provides a unified interface for different summarization models including
-T5 and Pegasus variants. Handles model loading, input preparation, and
-text summarization with configurable parameters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ABC</strong> (<em>class</em>) – Abstract Base Class</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#BaseSummarizationWrapper.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper.__init__" title="Link to this definition"></a></dt>
-<dd><p>Initialize the summarization wrapper.</p>
-<p>Sets up the model name and device, then loads the tokenizer and model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the pretrained model</p></li>
-<li><p><strong>device</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Device to load model on (‘cpu’, ‘cuda’, etc.), defaults to None</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper.summarize">
-<span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#BaseSummarizationWrapper.summarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper.summarize" title="Link to this definition"></a></dt>
-<dd><p>Summarize the given text.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Text to summarize</p></li>
-<li><p><strong>**kwargs</strong> – Additional generation parameters</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Generated summary</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper.summarize_batch">
-<span class="sig-name descname"><span class="pre">summarize_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#BaseSummarizationWrapper.summarize_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper.summarize_batch" title="Link to this definition"></a></dt>
-<dd><p>Summarize a batch of texts.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>texts</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – List of texts to summarize</p></li>
-<li><p><strong>**kwargs</strong> – Additional generation parameters</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of generated summaries</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.T5SummarizationWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.nlp_module.summarization_wrapper.</span></span><span class="sig-name descname"><span class="pre">T5SummarizationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#T5SummarizationWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.T5SummarizationWrapper" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper" title="lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseSummarizationWrapper</span></code></a></p>
-<p>Wrapper for T5-based summarization models.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusSummarizationWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.nlp_module.summarization_wrapper.</span></span><span class="sig-name descname"><span class="pre">PegasusSummarizationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusSummarizationWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusSummarizationWrapper" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper" title="lib.nlp_module.summarization_wrapper.BaseSummarizationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseSummarizationWrapper</span></code></a></p>
-<p>Wrapper for Pegasus-based summarization models.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusSeparateLoader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.nlp_module.summarization_wrapper.</span></span><span class="sig-name descname"><span class="pre">PegasusSeparateLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'google/pegasus-xsum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusSeparateLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusSeparateLoader" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Extension class that loads Pegasus tokenizer and model separately.
-Useful for custom loading strategies or when you need more control.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusSeparateLoader.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'google/pegasus-xsum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusSeparateLoader.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusSeparateLoader.__init__" title="Link to this definition"></a></dt>
-<dd><p>Initialize with separate tokenizer and model loading.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the Pegasus model</p></li>
-<li><p><strong>device</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – Device to load model on</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusSeparateLoader.load_tokenizer">
-<span class="sig-name descname"><span class="pre">load_tokenizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PegasusTokenizer</span></span></span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusSeparateLoader.load_tokenizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusSeparateLoader.load_tokenizer" title="Link to this definition"></a></dt>
-<dd><p>Load the Pegasus tokenizer separately.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>**kwargs</strong> – Additional arguments for tokenizer loading</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Loaded tokenizer</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>PegasusTokenizer</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusSeparateLoader.load_model">
-<span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PegasusForConditionalGeneration</span></span></span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusSeparateLoader.load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusSeparateLoader.load_model" title="Link to this definition"></a></dt>
-<dd><p>Load the Pegasus model separately.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>**kwargs</strong> – Additional arguments for model loading</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Loaded model</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>PegasusForConditionalGeneration</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusSeparateLoader.is_loaded">
-<span class="sig-name descname"><span class="pre">is_loaded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusSeparateLoader.is_loaded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusSeparateLoader.is_loaded" title="Link to this definition"></a></dt>
-<dd><p>Check if both tokenizer and model are loaded.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusSeparateLoader.summarize">
-<span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusSeparateLoader.summarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusSeparateLoader.summarize" title="Link to this definition"></a></dt>
-<dd><p>Summarize text using the separately loaded components.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Text to summarize</p></li>
-<li><p><strong>**kwargs</strong> – Generation parameters</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Generated summary</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusCustomConfig">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lib.nlp_module.summarization_wrapper.</span></span><span class="sig-name descname"><span class="pre">PegasusCustomConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'google/pegasus-xsum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusCustomConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusCustomConfig" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Extension class for Pegasus with custom configuration options.
-Allows for more granular control over model behavior.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusCustomConfig.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'google/pegasus-xsum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusCustomConfig.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusCustomConfig.__init__" title="Link to this definition"></a></dt>
-<dd><p>Initialize with custom configuration options.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the Pegasus model</p></li>
-<li><p><strong>device</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – Device to load model on</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusCustomConfig.load_with_config">
-<span class="sig-name descname"><span class="pre">load_with_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusCustomConfig.load_with_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusCustomConfig.load_with_config" title="Link to this definition"></a></dt>
-<dd><p>Load model with custom configuration.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>config_kwargs</strong> (<em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – Configuration parameters</p></li>
-<li><p><strong>model_kwargs</strong> (<em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – Model loading parameters</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusCustomConfig.set_generation_config">
-<span class="sig-name descname"><span class="pre">set_generation_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusCustomConfig.set_generation_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusCustomConfig.set_generation_config" title="Link to this definition"></a></dt>
-<dd><p>Set custom generation configuration.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>**kwargs</strong> – Generation parameters</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Updated generation config</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, Any]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusCustomConfig.summarize">
-<span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusCustomConfig.summarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusCustomConfig.summarize" title="Link to this definition"></a></dt>
-<dd><p>Summarize text with custom configuration.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Text to summarize</p></li>
-<li><p><strong>**kwargs</strong> – Generation parameters</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Generated summary</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lib.nlp_module.summarization_wrapper.PegasusCustomConfig.is_loaded">
-<span class="sig-name descname"><span class="pre">is_loaded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/lib/nlp_module/summarization_wrapper.html#PegasusCustomConfig.is_loaded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarization_wrapper.PegasusCustomConfig.is_loaded" title="Link to this definition"></a></dt>
-<dd><p>Check if model is loaded.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function" id="module-lib.nlp_module.summarize">
-<dt class="sig sig-object py" id="lib.nlp_module.summarize.linearize_triples">
-<span class="sig-prename descclassname"><span class="pre">lib.nlp_module.summarize.</span></span><span class="sig-name descname"><span class="pre">linearize_triples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarize.html#linearize_triples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarize.linearize_triples" title="Link to this definition"></a></dt>
-<dd><p>Convert scene graph triples into natural language sentences.</p>
-<p>Transforms subject-predicate-object triples into human-readable sentences
-using predefined relationship patterns for visual attention, spatial
-relationships, and physical interactions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>triples</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of (subject, predicate, object) tuples</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of natural language sentences</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.nlp_module.summarize.summarize_sentences">
-<span class="sig-prename descclassname"><span class="pre">lib.nlp_module.summarize.</span></span><span class="sig-name descname"><span class="pre">summarize_sentences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sentences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'google-t5/t5-base'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'t5'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarize.html#summarize_sentences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarize.summarize_sentences" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.nlp_module.summarize.summarize_with_pegasus_separate">
-<span class="sig-prename descclassname"><span class="pre">lib.nlp_module.summarize.</span></span><span class="sig-name descname"><span class="pre">summarize_with_pegasus_separate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sentences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'google/pegasus-xsum'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarize.html#summarize_with_pegasus_separate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarize.summarize_with_pegasus_separate" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.nlp_module.summarize.summarize_with_pegasus_custom">
-<span class="sig-prename descclassname"><span class="pre">lib.nlp_module.summarize.</span></span><span class="sig-name descname"><span class="pre">summarize_with_pegasus_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sentences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'google/pegasus-xsum'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarize.html#summarize_with_pegasus_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarize.summarize_with_pegasus_custom" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lib.nlp_module.summarize.main">
-<span class="sig-prename descclassname"><span class="pre">lib.nlp_module.summarize.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/nlp_module/summarize.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.nlp_module.summarize.main" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
+<section id="nlp-module">
+<h2>NLP Module<a class="headerlink" href="#nlp-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-lib.fpn.box_utils">
-<span id="fpn-module"></span><h2>FPN Module<a class="headerlink" href="#module-lib.fpn.box_utils" title="Link to this heading"></a></h2>
+<span id="fpn-module"></span><h2>FPN Module<a class="headerlink" href="#module-lib.fpn.box_utils" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.fpn.box_utils.bbox_loss">
-<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">bbox_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prior_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#bbox_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.bbox_loss" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">bbox_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prior_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#bbox_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.bbox_loss" title="Permalink to this definition"></a></dt>
 <dd><p>Compute bounding box regression loss.</p>
 <p>Computes smooth L1 loss for predicting ground truth boxes from prior boxes
 using delta transformations.</p>
@@ -1285,7 +661,7 @@ using delta transformations.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.fpn.box_utils.bbox_preds">
-<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">bbox_preds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltas</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#bbox_preds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.bbox_preds" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">bbox_preds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltas</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#bbox_preds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.bbox_preds" title="Permalink to this definition"></a></dt>
 <dd><p>Convert predicted deltas to bounding box coordinates.</p>
 <p>Transforms predicted deltas along with prior boxes into
 (x1, y1, x2, y2) coordinate representation.</p>
@@ -1307,7 +683,7 @@ using delta transformations.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.fpn.box_utils.center_size">
-<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">center_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#center_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.center_size" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">center_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#center_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.center_size" title="Permalink to this definition"></a></dt>
 <dd><p>Convert prior_boxes to (cx, cy, w, h)
 representation for comparison to center-size form ground truth data.
 :param boxes: (tensor) point_form boxes</p>
@@ -1323,7 +699,7 @@ representation for comparison to center-size form ground truth data.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.fpn.box_utils.point_form">
-<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">point_form</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#point_form"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.point_form" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">point_form</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#point_form"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.point_form" title="Permalink to this definition"></a></dt>
 <dd><p>Convert prior_boxes to (xmin, ymin, xmax, ymax)
 representation for comparison to point form ground truth data.
 :param boxes: (tensor) center-size default boxes from priorbox layers.</p>
@@ -1339,7 +715,7 @@ representation for comparison to point form ground truth data.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.fpn.box_utils.bbox_intersections">
-<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">bbox_intersections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">box_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#bbox_intersections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.bbox_intersections" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">bbox_intersections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">box_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#bbox_intersections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.bbox_intersections" title="Permalink to this definition"></a></dt>
 <dd><p>We resize both tensors to [A,B,2.0] without new malloc:
 [A,2.0] -&gt; [A,ĺeftright,2.0] -&gt; [A,B,2.0]
 [B,2.0] -&gt; [ĺeftright,B,2.0] -&gt; [A,B,2.0]
@@ -1358,7 +734,7 @@ Then we compute the area of intersect between box_a and box_b.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.fpn.box_utils.bbox_overlaps">
-<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">bbox_overlaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">box_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#bbox_overlaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.bbox_overlaps" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">bbox_overlaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">box_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#bbox_overlaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.bbox_overlaps" title="Permalink to this definition"></a></dt>
 <dd><p>Compute Jaccard overlap (IoU) between two sets of bounding boxes.</p>
 <p>Calculates intersection over union (IoU) for all pairs of boxes between
 two sets. IoU = A ∩ B / A ∪ B = A ∩ B / (area(A) + area(B) - A ∩ B)</p>
@@ -1380,7 +756,7 @@ two sets. IoU = A ∩ B / A ∪ B = A ∩ B / (area(A) + area(B) - A ∩ B)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lib.fpn.box_utils.nms_overlaps">
-<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">nms_overlaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#nms_overlaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.nms_overlaps" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lib.fpn.box_utils.</span></span><span class="sig-name descname"><span class="pre">nms_overlaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boxes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/fpn/box_utils.html#nms_overlaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lib.fpn.box_utils.nms_overlaps" title="Permalink to this definition"></a></dt>
 <dd><p>get overlaps for each channel</p>
 </dd></dl>
 

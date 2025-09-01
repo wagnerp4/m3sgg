@@ -1,13 +1,13 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Datasets &mdash; VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0a84b5b7" />
@@ -15,9 +15,9 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=30646c52"></script>
     <script src="_static/js/theme.js"></script>
@@ -124,12 +124,12 @@
            <div itemprop="articleBody">
              
   <section id="datasets">
-<h1>Datasets<a class="headerlink" href="#datasets" title="Link to this heading"></a></h1>
+<h1>Datasets<a class="headerlink" href="#datasets" title="Permalink to this heading"></a></h1>
 <p>This section provides detailed information about the datasets supported by DLHM VidSGG.</p>
 <section id="supported-datasets">
-<h2>Supported Datasets<a class="headerlink" href="#supported-datasets" title="Link to this heading"></a></h2>
+<h2>Supported Datasets<a class="headerlink" href="#supported-datasets" title="Permalink to this heading"></a></h2>
 <section id="action-genome">
-<h3>Action Genome<a class="headerlink" href="#action-genome" title="Link to this heading"></a></h3>
+<h3>Action Genome<a class="headerlink" href="#action-genome" title="Permalink to this heading"></a></h3>
 <p>The Action Genome dataset is the primary dataset for video scene graph generation.</p>
 <p><strong>Overview</strong></p>
 <ul class="simple">
@@ -190,7 +190,7 @@
 </ol>
 </section>
 <section id="easg-dataset">
-<h3>EASG Dataset<a class="headerlink" href="#easg-dataset" title="Link to this heading"></a></h3>
+<h3>EASG Dataset<a class="headerlink" href="#easg-dataset" title="Permalink to this heading"></a></h3>
 <p>The EASG (Enhanced Action Scene Graph) dataset provides additional annotations and features.</p>
 <p><strong>Overview</strong></p>
 <ul class="simple">
@@ -213,7 +213,7 @@
 <p>TODO: Add detailed EASG setup instructions</p>
 </section>
 <section id="visual-genome-dataset">
-<h3>Visual Genome Dataset<a class="headerlink" href="#visual-genome-dataset" title="Link to this heading"></a></h3>
+<h3>Visual Genome Dataset<a class="headerlink" href="#visual-genome-dataset" title="Permalink to this heading"></a></h3>
 <p>Visual Genome provides static image scene graphs that can be used for pretraining.</p>
 <p><strong>Overview</strong></p>
 <ul class="simple">
@@ -226,12 +226,12 @@
 </section>
 </section>
 <section id="dataset-processing">
-<h2>Dataset Processing<a class="headerlink" href="#dataset-processing" title="Link to this heading"></a></h2>
+<h2>Dataset Processing<a class="headerlink" href="#dataset-processing" title="Permalink to this heading"></a></h2>
 <section id="data-preprocessing">
-<h3>Data Preprocessing<a class="headerlink" href="#data-preprocessing" title="Link to this heading"></a></h3>
+<h3>Data Preprocessing<a class="headerlink" href="#data-preprocessing" title="Permalink to this heading"></a></h3>
 <p>The framework includes several preprocessing utilities:</p>
 <p><strong>Frame Extraction</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataloader.action_genome</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActionGenomeDataset</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataloader.action_genome</span> <span class="kn">import</span> <span class="n">ActionGenomeDataset</span>
 
 <span class="c1"># Initialize dataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">ActionGenomeDataset</span><span class="p">(</span>
@@ -254,10 +254,10 @@
 </div>
 </section>
 <section id="data-loading">
-<h3>Data Loading<a class="headerlink" href="#data-loading" title="Link to this heading"></a></h3>
+<h3>Data Loading<a class="headerlink" href="#data-loading" title="Permalink to this heading"></a></h3>
 <p><strong>Basic Usage</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dataloader.action_genome</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActionGenomeDataset</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">dataloader.action_genome</span> <span class="kn">import</span> <span class="n">ActionGenomeDataset</span>
 
 <span class="c1"># Create dataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">ActionGenomeDataset</span><span class="p">(</span>
@@ -295,11 +295,11 @@
 </section>
 </section>
 <section id="dataset-statistics">
-<h2>Dataset Statistics<a class="headerlink" href="#dataset-statistics" title="Link to this heading"></a></h2>
+<h2>Dataset Statistics<a class="headerlink" href="#dataset-statistics" title="Permalink to this heading"></a></h2>
 <section id="action-genome-statistics">
-<h3>Action Genome Statistics<a class="headerlink" href="#action-genome-statistics" title="Link to this heading"></a></h3>
+<h3>Action Genome Statistics<a class="headerlink" href="#action-genome-statistics" title="Permalink to this heading"></a></h3>
 <table class="docutils align-default" id="id1">
-<caption><span class="caption-text">Action Genome Dataset Statistics</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<caption><span class="caption-text">Action Genome Dataset Statistics</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 25.0%" />
 <col style="width: 25.0%" />
@@ -352,11 +352,11 @@ touching, twisting, wearing, wiping
 </section>
 </section>
 <section id="quality-assurance">
-<h2>Quality Assurance<a class="headerlink" href="#quality-assurance" title="Link to this heading"></a></h2>
+<h2>Quality Assurance<a class="headerlink" href="#quality-assurance" title="Permalink to this heading"></a></h2>
 <section id="data-validation">
-<h3>Data Validation<a class="headerlink" href="#data-validation" title="Link to this heading"></a></h3>
+<h3>Data Validation<a class="headerlink" href="#data-validation" title="Permalink to this heading"></a></h3>
 <p>The framework includes validation utilities:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">utils.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_dataset</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.validation</span> <span class="kn">import</span> <span class="n">validate_dataset</span>
 
 <span class="c1"># Validate dataset integrity</span>
 <span class="n">validation_report</span> <span class="o">=</span> <span class="n">validate_dataset</span><span class="p">(</span><span class="s2">&quot;data/action_genome&quot;</span><span class="p">)</span>
@@ -374,9 +374,9 @@ touching, twisting, wearing, wiping
 </section>
 </section>
 <section id="performance-considerations">
-<h2>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Link to this heading"></a></h2>
+<h2>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Permalink to this heading"></a></h2>
 <section id="loading-optimization">
-<h3>Loading Optimization<a class="headerlink" href="#loading-optimization" title="Link to this heading"></a></h3>
+<h3>Loading Optimization<a class="headerlink" href="#loading-optimization" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>Caching</strong>: Enable feature caching for faster loading</p></li>
 <li><p><strong>Parallel Loading</strong>: Use multiple workers for data loading</p></li>
@@ -395,9 +395,9 @@ touching, twisting, wearing, wiping
 </div>
 </section>
 <section id="storage-requirements">
-<h3>Storage Requirements<a class="headerlink" href="#storage-requirements" title="Link to this heading"></a></h3>
+<h3>Storage Requirements<a class="headerlink" href="#storage-requirements" title="Permalink to this heading"></a></h3>
 <table class="docutils align-default" id="id2">
-<caption><span class="caption-text">Storage Requirements</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<caption><span class="caption-text">Storage Requirements</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 30.0%" />
 <col style="width: 35.0%" />
@@ -427,9 +427,9 @@ touching, twisting, wearing, wiping
 </section>
 </section>
 <section id="custom-datasets">
-<h2>Custom Datasets<a class="headerlink" href="#custom-datasets" title="Link to this heading"></a></h2>
+<h2>Custom Datasets<a class="headerlink" href="#custom-datasets" title="Permalink to this heading"></a></h2>
 <section id="adding-new-datasets">
-<h3>Adding New Datasets<a class="headerlink" href="#adding-new-datasets" title="Link to this heading"></a></h3>
+<h3>Adding New Datasets<a class="headerlink" href="#adding-new-datasets" title="Permalink to this heading"></a></h3>
 <p>To add support for a new dataset:</p>
 <ol class="arabic simple">
 <li><p>Create a new dataloader class inheriting from base dataset</p></li>
@@ -437,25 +437,25 @@ touching, twisting, wearing, wiping
 <li><p>Add dataset-specific preprocessing functions</p></li>
 <li><p>Update configuration files</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataloader.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDataset</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataloader.base</span> <span class="kn">import</span> <span class="n">BaseDataset</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">CustomDataset</span><span class="p">(</span><span class="n">BaseDataset</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CustomDataset</span><span class="p">(</span><span class="n">BaseDataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
         <span class="c1"># Custom initialization</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="c1"># Load and return data sample</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Return dataset size</span>
         <span class="k">pass</span>
 </pre></div>
 </div>
 </section>
 <section id="dataset-conversion">
-<h3>Dataset Conversion<a class="headerlink" href="#dataset-conversion" title="Link to this heading"></a></h3>
+<h3>Dataset Conversion<a class="headerlink" href="#dataset-conversion" title="Permalink to this heading"></a></h3>
 <p>Utilities for converting between dataset formats:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convert from custom format to Action Genome format</span>
 python<span class="w"> </span>scripts/datasets/convert_dataset.py<span class="w"> </span>--input<span class="w"> </span>custom_data<span class="w"> </span>--output<span class="w"> </span>action_genome_format
@@ -464,7 +464,7 @@ python<span class="w"> </span>scripts/datasets/convert_dataset.py<span class="w"
 </section>
 </section>
 <section id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="training.html"><span class="doc">Training Guide</span></a> - Learn how to train models on these datasets</p></li>
 <li><p><a class="reference internal" href="api/dataloader.html"><span class="doc">Dataloader Module</span></a> - Detailed API documentation for data loading</p></li>

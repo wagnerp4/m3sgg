@@ -1,12 +1,12 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../">
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>lib.scenellm.llm &mdash; VidSGG 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=0a84b5b7" />
@@ -14,9 +14,9 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=30646c52"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -94,13 +94,13 @@
 <span class="sd">Credit to the authors of the original code: https://doi.org/10.1016/j.patcog.2025.111992.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 
 <span class="c1"># TODO: Add better LLM</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">peft</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoraConfig</span><span class="p">,</span> <span class="n">get_peft_model</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModel</span><span class="p">,</span> <span class="n">BitsAndBytesConfig</span>
+    <span class="kn">from</span> <span class="nn">peft</span> <span class="kn">import</span> <span class="n">LoraConfig</span><span class="p">,</span> <span class="n">get_peft_model</span>
+    <span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoModel</span><span class="p">,</span> <span class="n">BitsAndBytesConfig</span>
 
     <span class="n">TRANSFORMERS_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -108,9 +108,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: transformers/peft not available. LLM will use placeholder.&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="SceneLLMLoRA">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLMLoRA">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SceneLLMLoRA</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="SceneLLMLoRA"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLMLoRA">[docs]</a><span class="k">class</span> <span class="nc">SceneLLMLoRA</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;SceneLLM with LoRA (Low-Rank Adaptation) for efficient fine-tuning.</span>
 <span class="sd">    </span>
 <span class="sd">    Implements LoRA adaptation on language models for scene graph generation</span>
@@ -120,9 +118,7 @@
 <span class="sd">    :type nn.Module: class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-<div class="viewcode-block" id="SceneLLMLoRA.__init__">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLMLoRA.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="SceneLLMLoRA.__init__"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLMLoRA.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">,</span>
         <span class="n">fallback_dim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -177,7 +173,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">hidden_size</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">use_fallback</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Use fallback linear layer</span>
             <span class="k">if</span> <span class="n">fallback_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;fallback_dim is required when transformers is not available or model_name is None&quot;</span>
@@ -186,10 +181,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span> <span class="o">=</span> <span class="n">fallback_dim</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">use_fallback</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-
-<div class="viewcode-block" id="SceneLLMLoRA.forward">
-<a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLMLoRA.forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_embeds</span><span class="p">):</span>  <span class="c1"># [B, T, D] embeddings</span>
+<div class="viewcode-block" id="SceneLLMLoRA.forward"><a class="viewcode-back" href="../../../api/models.html#lib.scenellm.scenellm.SceneLLMLoRA.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_embeds</span><span class="p">):</span>  <span class="c1"># [B, T, D] embeddings</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_fallback</span><span class="p">:</span>
             <span class="c1"># Simple linear transformation for fallback</span>
             <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">token_embeds</span><span class="p">)</span>
@@ -202,11 +194,19 @@
             <span class="c1"># For embeddings input, use inputs_embeds parameter</span>
             <span class="c1"># Make sure we only pass the expected parameters</span>
             <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Check for NaN/inf in inputs before processing</span>
+                <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">token_embeds</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">token_embeds</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: NaN detected in LLM input, using fallback&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">token_embeds</span><span class="p">)</span>
+                
+                <span class="c1"># Clamp input values to prevent overflow in LLM</span>
+                <span class="n">token_embeds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">token_embeds</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+                
                 <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">inputs_embeds</span><span class="o">=</span><span class="n">token_embeds</span><span class="p">)</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">last_hidden_state</span>  <span class="c1"># [B, T, D]</span>
 
                 <span class="c1"># Check for NaN in output and clamp extreme values</span>
-                <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: NaN detected in LLM output, using zero output&quot;</span><span class="p">)</span>
                     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
@@ -217,9 +217,7 @@
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: Error in LLM forward pass: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, using zero output&quot;</span><span class="p">)</span>
                 <span class="c1"># Return zeros as fallback</span>
-                <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">token_embeds</span><span class="p">)</span></div>
-</div>
-
+                <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">token_embeds</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

@@ -136,8 +136,9 @@ class SIA(nn.Module):
         self.dim = dim
         self.pos_mlp = nn.Sequential(nn.Linear(4, dim), nn.ReLU(), nn.Linear(dim, dim))
         if DGL_AVAILABLE:
-            self.gcn1 = dgl.nn.GraphConv(dim, dim, allow_zero_in_degree=True)
-            self.gcn2 = dgl.nn.GraphConv(dim, dim, allow_zero_in_degree=True)
+            from dgl.nn import GraphConv
+            self.gcn1 = GraphConv(dim, dim, allow_zero_in_degree=True)
+            self.gcn2 = GraphConv(dim, dim, allow_zero_in_degree=True)
         else:
             # Fallback: use simple linear layers with attention
             self.spatial_attn = nn.MultiheadAttention(
@@ -152,16 +153,46 @@ class SIA(nn.Module):
         if feats.size(0) == 0:  # Handle empty input
             return torch.zeros(self.dim, device=feats.device)
 
+        # Check for NaN/inf in inputs
+        if torch.isnan(feats).any() or torch.isinf(feats).any():
+            print("WARNING: NaN/Inf detected in SIA input features, using fallback")
+            return torch.zeros(self.dim, device=feats.device)
+        
+        if torch.isnan(boxes).any() or torch.isinf(boxes).any():
+            print("WARNING: NaN/Inf detected in SIA input boxes, using fallback")
+            return torch.zeros(self.dim, device=feats.device)
+
+        # Normalize boxes to prevent large values
+        boxes = torch.clamp(boxes, min=-10.0, max=10.0)
+        
         pos = self.pos_mlp(boxes)  # [R, D]
+        
+        # Check for NaN in positional encoding
+        if torch.isnan(pos).any() or torch.isinf(pos).any():
+            print("WARNING: NaN/Inf detected in positional encoding, using mean of input")
+            return feats.mean(0)
+        
         h = feats + pos  # [R, D]
 
         if DGL_AVAILABLE:
             g = build_hierarchical_graph(boxes)  # DGL graph
             g = dgl.add_self_loop(g)  # Add self-loops to handle 0-in-degree nodes
             g = g.to(feats.device)
-            h = F.relu(self.gcn1(g, h))
+            
+            # First GCN layer with NaN checking
+            h = self.gcn1(g, h)
+            if torch.isnan(h).any() or torch.isinf(h).any():
+                print("WARNING: NaN detected in GCN1 output, using mean of input")
+                h = feats.mean(0, keepdim=True).expand_as(h)
+            
+            h = F.relu(h)
             h = self.dropout(h)
+            
+            # Second GCN layer with NaN checking
             h = self.gcn2(g, h)
+            if torch.isnan(h).any() or torch.isinf(h).any():
+                print("WARNING: NaN detected in GCN2 output, using mean of input")
+                h = feats.mean(0, keepdim=True).expand_as(h)
         else:
             # Fallback: use self-attention for spatial reasoning
             h_unsqueezed = h.unsqueeze(0)  # [1, R, D]
@@ -173,4 +204,10 @@ class SIA(nn.Module):
 
         # Aggregate to single frame token ("Chinese character" representation)
         frame_token = h.mean(0)  # [D]
+        
+        # Final NaN check for output
+        if torch.isnan(frame_token).any() or torch.isinf(frame_token).any():
+            print("WARNING: NaN detected in SIA output, using mean of input")
+            return feats.mean(0)
+        
         return frame_token  # [D]

@@ -11,11 +11,11 @@ from torch import optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 
-from dataloader.EASG import EASG, cuda_collate_fn
+from dataloader.easg import EASG, cuda_collate_fn
 from lib.AdamW import AdamW
 from lib.config import Config
-from lib.object_detector_EASG import detector
-from lib.sttran_EASG import STTran
+from lib.easg.object_detector_EASG import detector
+from lib.easg.sttran_EASG import STTran
 
 np.set_printoptions(precision=3)
 
