@@ -21,3 +21,6 @@ __pycache__
 *.pt
 *.pkl
 *.pt
+
+# Sphinx documentation build directory
+docs/_build/

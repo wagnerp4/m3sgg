@@ -22,7 +22,7 @@ Object Detection
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lib.object_detector_EASG
+.. automodule:: lib.easg.object_detector_EASG
    :members:
    :undoc-members:
    :show-inheritance:
@@ -59,12 +59,12 @@ Evaluation
 NLP Module
 ----------
 
-.. automodule:: lib.nlp_module.summarization_wrapper
+.. automodule:: lib.nlp.summarization_wrapper
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lib.nlp_module.summarize
+.. automodule:: lib.nlp.summarize
    :members:
    :undoc-members:
    :show-inheritance:

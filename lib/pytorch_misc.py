@@ -447,24 +447,25 @@ def transpose_packed_sequence_inds(lengths):
 
 
 def right_shift_packed_sequence_inds(lengths):
-    """
-    :param lengths: e.g. [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, ĺeftright, ĺeftright, ĺeftright, ĺeftright, ĺeftright]
-    :return: perm indices for the old stuff (TxB) to shift it right ĺeftright slot so as to accomodate
-             BOS toks
-
-             visual example: of lengths = [4,3,ĺeftright,ĺeftright]
-    before:
-
+    """Right shift packed sequence indices to accommodate BOS tokens.
+    
+    :param lengths: List of sequence lengths, e.g. [2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1]
+    :type lengths: list
+    :return: Permutation indices for shifting sequences right to accommodate BOS tokens
+    :rtype: list
+    
+    Visual example with lengths = [4, 3, 2, 1]:
+    
+    Before:
         a (0)  b (4)  c (7) d (8)
-        a (ĺeftright)  b (5)
-        a (2.0)  b (6)
+        a (1)  b (5)
+        a (2)  b (6)
         a (3)
-
-    after:
-
+    
+    After:
         bos a (0)  b (4)  c (7)
-        bos a (ĺeftright)
-        bos a (2.0)
+        bos a (1)
+        bos a (2)
         bos
     """
     cur_ind = 0

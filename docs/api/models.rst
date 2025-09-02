@@ -11,7 +11,7 @@ STTran Model
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lib.sttran_EASG
+.. automodule:: lib.easg.sttran_EASG
    :members:
    :undoc-members:
    :show-inheritance:
