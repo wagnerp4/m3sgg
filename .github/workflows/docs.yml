@@ -1,10 +1,11 @@
-name: Build and Deploy Documentation
+name: Documentation
 
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -47,9 +48,20 @@ jobs:
     - name: Build documentation
       run: |
         cd docs
-        sphinx-build -b html . _build/html
+        sphinx-build -b html -W --keep-going . _build/html
+        
+    - name: Check for broken links (PR only)
+      if: github.event_name == 'pull_request'
+      run: |
+        cd docs
+        sphinx-build -b linkcheck . _build/linkcheck
+        
+    - name: Setup Pages
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      uses: actions/configure-pages@v4
         
     - name: Upload artifact
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
       uses: actions/upload-pages-artifact@v3
       with:
         path: docs/_build/html
