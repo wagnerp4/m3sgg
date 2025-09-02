@@ -1,0 +1,36 @@
+# OED model configuration
+# @package _global_
+
+defaults:
+  - base
+
+model_type: "oed"
+
+# OED specific parameters
+num_queries: 100
+dec_layers_hopd: 6
+dec_layers_interaction: 6
+
+# Class configuration
+num_attn_classes: 3
+num_spatial_classes: 6
+num_contacting_classes: 17
+
+# Loss configuration
+alpha: 0.5
+oed_use_matching: false
+bbox_loss_coef: 2.5
+giou_loss_coef: 1.0
+obj_loss_coef: 1.0
+rel_loss_coef: 2.0
+oed_eos_coef: 0.1
+
+# Temporal configuration
+interval1: 4
+interval2: 4
+num_ref_frames: 2
+oed_variant: "multi"  # single/multi
+
+# Feature configuration
+fuse_semantic_pos: false
+query_temporal_interaction: false

@@ -51,7 +51,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-
 class StreamlitVideoProcessor:
     def __init__(self, model_path: str):
         """Video processor for Streamlit integration with VidSgg pipeline"""
@@ -69,7 +68,7 @@ class StreamlitVideoProcessor:
             from dataloader.action_genome import AG
 
             self.conf = Config()
-            self.conf.mode = "sgdet"  # Use sgdet mode for custom videos
+            self.conf.mode = "sgdet"
             self.conf.data_path = "data/action_genome"
 
             # Dataset
@@ -91,6 +90,7 @@ class StreamlitVideoProcessor:
             self.object_detector.eval()
 
             # SGG
+            # TODO: generalize SGG module to any model
             self.model = STTran(
                 mode=self.conf.mode,
                 attention_class_num=len(self.AG_dataset.attention_relationships),
@@ -133,22 +133,18 @@ class StreamlitVideoProcessor:
     def process_frame(self, frame):
         """Process a single frame and extract scene graph"""
         try:
-            # Preprocess frame
             im_data = self.preprocess_frame(frame)
-            im_info = torch.tensor([[600, 600, 1.0]], dtype=torch.float32).to(
-                self.device
-            )
+            im_info = torch.tensor([[600, 600, 1.0]], dtype=torch.float32).to(self.device)
             gt_boxes = torch.zeros([1, 1, 5]).to(self.device)
             num_boxes = torch.zeros([1], dtype=torch.int64).to(self.device)
 
             with torch.no_grad():
-                # Object detection
+
                 empty_annotation = []
                 entry = self.object_detector(
                     im_data, im_info, gt_boxes, num_boxes, empty_annotation, im_all=None
                 )
 
-                # Debug: Check raw detection outputs
                 if "boxes" in entry and entry["boxes"] is not None:
                     print(f"Raw detections: {entry['boxes'].shape[0]} boxes")
                     if "pred_scores" in entry:
@@ -159,38 +155,30 @@ class StreamlitVideoProcessor:
                         print(f"Scores above 0.1: {(raw_scores > 0.1).sum()}")
                         print(f"Scores above 0.3: {(raw_scores > 0.3).sum()}")
 
-                # Process sequence for sgdet mode
                 if self.conf.mode == "sgdet":
                     # Store original format
-                    original_scores = (
-                        entry["scores"].clone() if "scores" in entry else None
-                    )
+                    original_scores = (entry["scores"].clone() if "scores" in entry else None)
                     original_boxes = entry["boxes"].clone()
-
-                    # Prepare entry for get_sequence (like test_bbox_prediction.py does)
+      
                     if "distribution" in entry:
                         entry["scores"] = entry["distribution"]  # Use 2D distribution
-
-                    # Fix boxes format: remove batch index column for get_sequence
                     if len(entry["boxes"].shape) > 1 and entry["boxes"].shape[1] > 4:
                         entry["boxes"] = entry["boxes"][
                             :, 1:
                         ]  # Remove first column (batch index)
 
-                    # Get sequence information (like test_bbox_prediction.py does)
                     get_sequence(
                         entry,
                         [],  # empty annotation for sgdet mode
-                        self.matcher,  # CRITICAL: This was missing!
-                        torch.tensor([600, 600]).to(self.device),  # Image dimensions
+                        self.matcher,
+                        torch.tensor([600, 600]).to(self.device), # TODO: generalize image dimensions
                         "sgdet",
                     )
 
-                    # Restore original format after get_sequence
+                    # Restore original format
                     if original_scores is not None:
                         entry["scores"] = original_scores
                     entry["boxes"] = original_boxes
-
                     print(f"After get_sequence: boxes shape = {entry['boxes'].shape}")
 
                 # Scene graph generation
@@ -469,6 +457,94 @@ class StreamlitVideoProcessor:
 
         return centers
 
+    def extract_bbox_info(self, entry, confidence_threshold=0.1) -> List[Dict[str, Any]]:
+        """Extract bounding box information for table display
+
+        :param entry: Model entry containing detection data
+        :type entry: dict
+        :param confidence_threshold: Minimum confidence for inclusion, defaults to 0.1
+        :type confidence_threshold: float, optional
+        :return: List of bbox dictionaries with object names and confidence scores
+        :rtype: List[Dict[str, Any]]
+        """
+        bbox_info = []
+
+        if entry is None or "boxes" not in entry:
+            return bbox_info
+
+        boxes = entry["boxes"]
+        if isinstance(boxes, torch.Tensor):
+            boxes = boxes.cpu().numpy()
+
+        # Get labels and scores
+        labels = None
+        scores = None
+
+        if "pred_labels" in entry:
+            labels = entry["pred_labels"]
+            if isinstance(labels, torch.Tensor):
+                labels = labels.cpu().numpy()
+        elif "labels" in entry:
+            labels = entry["labels"]
+            if isinstance(labels, torch.Tensor):
+                labels = labels.cpu().numpy()
+
+        if "pred_scores" in entry:
+            scores = entry["pred_scores"]
+            if isinstance(scores, torch.Tensor):
+                scores = scores.cpu().numpy()
+        elif "scores" in entry:
+            scores = entry["scores"]
+            if isinstance(scores, torch.Tensor):
+                scores = scores.cpu().numpy()
+
+        # Handle distribution case
+        if "distribution" in entry and scores is None:
+            distribution = entry["distribution"]
+            if isinstance(distribution, torch.Tensor):
+                scores = torch.max(distribution, dim=1)[0].cpu().numpy()
+
+        # Create dummy data if missing
+        if scores is None and boxes is not None:
+            scores = np.ones(len(boxes))
+        if labels is None and boxes is not None:
+            labels = np.ones(len(boxes), dtype=int)
+
+        # Filter by confidence threshold
+        if scores is not None and len(scores) > 0:
+            high_conf_mask = scores > confidence_threshold
+            boxes = boxes[high_conf_mask] if boxes is not None else boxes
+            labels = labels[high_conf_mask] if labels is not None else labels
+            scores = scores[high_conf_mask]
+
+        # Extract bbox information
+        for i, box in enumerate(boxes):
+            if len(box) >= 4:
+                # Handle batch dimension if present
+                if len(box) == 5:
+                    x1, y1, x2, y2 = box[1:5]
+                else:
+                    x1, y1, x2, y2 = box[:4]
+
+                # Get object class name
+                object_name = "unknown"
+                if labels is not None and i < len(labels):
+                    if hasattr(self, "AG_dataset") and labels[i] < len(self.AG_dataset.object_classes):
+                        object_name = self.AG_dataset.object_classes[labels[i]]
+                    else:
+                        object_name = f"class_{labels[i]}"
+
+                # Get confidence score
+                confidence = scores[i] if scores is not None and i < len(scores) else 0.0
+
+                bbox_info.append({
+                    "object_name": object_name,
+                    "confidence": confidence,
+                    "bbox": [float(x1), float(y1), float(x2), float(y2)]
+                })
+
+        return bbox_info
+
     def extract_relationships(self, entry, pred) -> List[Dict[str, Any]]:
         """Extract relationship information for scene graph edges
 
@@ -558,6 +634,31 @@ class StreamlitVideoProcessor:
 
         return relationships
 
+    def get_relationship_name(self, rel_type: int, rel_category: str) -> str:
+        """Get human-readable relationship name from type and category
+
+        :param rel_type: Relationship type index
+        :type rel_type: int
+        :param rel_category: Relationship category ('attention', 'spatial', 'contacting')
+        :type rel_category: str
+        :return: Human-readable relationship name
+        :rtype: str
+        """
+        if not hasattr(self, "AG_dataset"):
+            return f"rel_{rel_type}"
+
+        try:
+            if rel_category == "attention" and rel_type < len(self.AG_dataset.attention_relationships):
+                return self.AG_dataset.attention_relationships[rel_type]
+            elif rel_category == "spatial" and rel_type < len(self.AG_dataset.spatial_relationships):
+                return self.AG_dataset.spatial_relationships[rel_type]
+            elif rel_category == "contacting" and rel_type < len(self.AG_dataset.contacting_relationships):
+                return self.AG_dataset.contacting_relationships[rel_type]
+            else:
+                return f"rel_{rel_type}"
+        except (IndexError, AttributeError):
+            return f"rel_{rel_type}"
+
     def create_scene_graph_frame(self, frame, entry, pred, frame_scale_factor=1.0):
         """Create a frame with 2D scene graph overlay
 
@@ -622,8 +723,19 @@ class StreamlitVideoProcessor:
                 mid_x = (subj_pos[0] + obj_pos[0]) // 2
                 mid_y = (subj_pos[1] + obj_pos[1]) // 2
 
-                # Create simple relationship label
-                rel_label = f"rel_{rel.get('attention_type', 0)}"
+                # Create relationship label with decoded name
+                rel_label = "interacts_with"  # Default
+                if "attention_type" in rel:
+                    rel_label = self.get_relationship_name(rel["attention_type"], "attention")
+                elif "spatial_type" in rel:
+                    rel_label = self.get_relationship_name(rel["spatial_type"], "spatial")
+                elif "contacting_type" in rel:
+                    rel_label = self.get_relationship_name(rel["contacting_type"], "contacting")
+                
+                # Shorten long relationship names for display
+                if len(rel_label) > 12:
+                    rel_label = rel_label[:9] + "..."
+                
                 if confidence > 0.3:  # Only show labels for decent confidence
                     # Background for text
                     (text_w, text_h), baseline = cv2.getTextSize(
@@ -716,7 +828,6 @@ class StreamlitVideoProcessor:
 
         return frame_with_sg
 
-
 def create_processed_video_with_bboxes(
     video_path: str, model_path: str, output_path: str, max_frames: int = 30
 ) -> bool:
@@ -736,12 +847,10 @@ def create_processed_video_with_bboxes(
         out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
         if not out.isOpened():
-            st.warning("H264 codec not available, trying alternative...")
             fourcc = cv2.VideoWriter_fourcc(*"XVID")
             out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
         if not out.isOpened():
-            st.warning("XVID codec not available, trying mp4v...")
             fourcc = cv2.VideoWriter_fourcc(*"mp4v")
             out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
@@ -749,59 +858,34 @@ def create_processed_video_with_bboxes(
             raise ValueError("Could not initialize video writer with any codec")
 
         frame_count = 0
-        progress_placeholder = st.empty()
-        st.info(
-            f"Creating video with codec {fourcc} at {fps} FPS, size {width}x{height}"
-        )
 
         while frame_count < max_frames and cap.isOpened():
             if not (ret := cap.read())[0]: 
                 break
             frame = ret[1]
 
-            progress_placeholder.text(
-                f"Processing frame {frame_count + 1}/{max_frames} for bbox video"
-            )
-
             # Process frame with SGG
             frame_results, entry, pred = processor.process_frame(frame)
 
-            # TODO: remove the st.write's later
             if entry is not None:
                 frame_with_boxes = processor.draw_bounding_boxes(frame, entry)
-                if "boxes" in entry:
-                    num_boxes = len(entry["boxes"]) if entry["boxes"] is not None else 0
-                    if frame_count == 0:  # Log for first frame only
-                        st.write(f"Frame {frame_count}: Detected {num_boxes} boxes")
             else:
                 frame_with_boxes = frame
-                if frame_count == 0:  # Log for first frame only
-                    st.write(f"Frame {frame_count}: No detection entry")
 
             out.write(frame_with_boxes)
             frame_count += 1
 
         cap.release()
         out.release()
-        progress_placeholder.empty()
 
         if os.path.exists(output_path):
             file_size = os.path.getsize(output_path)
-
-            if file_size > 1000:
-                st.success(f"Video written successfully: {file_size} bytes")
-                return True
-            else:
-                st.error(f"Video file too small: {file_size} bytes")
-                return False
+            return file_size > 1000
         else:
-            st.error("Output video file was not created")
             return False
         
-    except Exception as e:
-        st.error(f"Error creating processed video: {e}")
+    except Exception:
         return False
-
 
 def create_processed_video_with_scene_graph(
     video_path: str, model_path: str, output_path: str, max_frames: int = 30
@@ -839,12 +923,10 @@ def create_processed_video_with_scene_graph(
 
         # Check if video writer was opened successfully
         if not out.isOpened():
-            st.warning("H264 codec not available, trying alternative...")
             fourcc = cv2.VideoWriter_fourcc(*"XVID")
             out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
         if not out.isOpened():
-            st.warning("XVID codec not available, trying mp4v...")
             fourcc = cv2.VideoWriter_fourcc(*"mp4v")
             out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
@@ -852,20 +934,11 @@ def create_processed_video_with_scene_graph(
             raise ValueError("Could not initialize video writer with any codec")
 
         frame_count = 0
-        progress_placeholder = st.empty()
-
-        st.info(
-            f"Creating scene graph video with codec {fourcc} at {fps} FPS, size {width}x{height}"
-        )
 
         while frame_count < max_frames and cap.isOpened():
             ret, frame = cap.read()
             if not ret:
                 break
-
-            progress_placeholder.text(
-                f"Processing frame {frame_count + 1}/{max_frames} for scene graph video"
-            )
 
             # Process frame with SGG
             frame_results, entry, pred = processor.process_frame(frame)
@@ -873,16 +946,8 @@ def create_processed_video_with_scene_graph(
             # Create scene graph overlay if detection was successful
             if entry is not None and pred is not None:
                 frame_with_sg = processor.create_scene_graph_frame(frame, entry, pred)
-                # Debug: Check if any relationships were detected
-                relationships = processor.extract_relationships(entry, pred)
-                if frame_count == 0:  # Log for first frame only
-                    st.write(
-                        f"Frame {frame_count}: {len(relationships)} relationships detected"
-                    )
             else:
                 frame_with_sg = frame
-                if frame_count == 0:  # Log for first frame only
-                    st.write(f"Frame {frame_count}: No scene graph data available")
 
             # Write frame to output video
             out.write(frame_with_sg)
@@ -891,25 +956,16 @@ def create_processed_video_with_scene_graph(
         # Release resources
         cap.release()
         out.release()
-        progress_placeholder.empty()
 
         # Verify the output file was created successfully
         if os.path.exists(output_path):
             file_size = os.path.getsize(output_path)
-            if file_size > 1000:  # At least 1KB
-                st.success(f"Scene graph video written successfully: {file_size} bytes")
-                return True
-            else:
-                st.error(f"Scene graph video file too small: {file_size} bytes")
-                return False
+            return file_size > 1000
         else:
-            st.error("Output scene graph video file was not created")
             return False
 
-    except Exception as e:
-        st.error(f"Error creating scene graph video: {e}")
+    except Exception:
         return False
-
 
 def find_available_checkpoints() -> Dict[str, str]:
     """Find available model checkpoints"""
@@ -932,7 +988,6 @@ def find_available_checkpoints() -> Dict[str, str]:
         })
 
     return checkpoints
-
 
 def process_video_with_sgg(
     video_path: str, model_path: str, max_frames: int = 30
@@ -959,20 +1014,17 @@ def process_video_with_sgg(
             "confidences": [],
             "frame_times": [],
             "errors": [],
+            "frame_objects": [],  # Store object info for each frame
         }
 
         frame_count = 0
-        progress_bar = st.progress(0)
-        status_text = st.empty()
 
         while frame_count < max_frames and cap.isOpened():
             ret, frame = cap.read()
             if not ret:
                 break
 
-            status_text.text(
-                f"Processing frame {frame_count + 1}/{min(max_frames, total_frames)}"
-            )
+
 
             # Process frame with SGG
             frame_results, entry, pred = processor.process_frame(frame)
@@ -981,6 +1033,17 @@ def process_video_with_sgg(
             results["relationships"].append(frame_results.get("relationships", 0))
             results["confidences"].append(frame_results.get("confidence", 0.0))
             results["frame_times"].append(frame_count / fps)
+            
+            # Extract bbox info for each frame
+            if entry is not None:
+                bbox_info = processor.extract_bbox_info(entry, confidence_threshold=0.1)
+                results["frame_objects"].append(bbox_info)
+                
+                # Store first frame bbox info in session state for backward compatibility
+                if frame_count == 0:
+                    st.session_state["bbox_info"] = bbox_info
+            else:
+                results["frame_objects"].append([])
 
             if "error" in frame_results:
                 results["errors"].append(
@@ -988,14 +1051,9 @@ def process_video_with_sgg(
                 )
 
             frame_count += 1
-            progress_bar.progress(frame_count / min(max_frames, total_frames))
 
         cap.release()
         results["processed_frames"] = frame_count
-
-        # Clear progress indicators
-        progress_bar.empty()
-        status_text.empty()
 
         return results
 
@@ -1003,11 +1061,10 @@ def process_video_with_sgg(
         st.error(f"Error processing video: {e}")
         return None
 
-
 def main():
     # Header
     st.markdown(
-        '<h1 class="main-header"> VidSgg - Scene Graph Generation</h1>',
+        '<h1 class="main-header"> VidSgg</h1>',
         unsafe_allow_html=True,
     )
     st.markdown("Video Scene Graph Generation with Deep Learning Models")
@@ -1041,7 +1098,6 @@ def main():
 
         st.markdown("---")
         st.header("Processing Settings")
-
         max_slider_value = 1000
         total_frames_info = ""
 
@@ -1120,7 +1176,7 @@ def main():
             with col_d:
                 st.metric("Avg Relations", "-")
 
-        # Model info moved from col2
+        # Model info
         st.markdown("---")
         st.header("Model Info")
         if model_path and os.path.exists(model_path):
@@ -1129,7 +1185,7 @@ def main():
         else:
             st.warning(" No model loaded")
 
-        # Export options moved from col2
+        # Export options
         st.markdown("---")
         st.header("Export")
         export_format = st.selectbox(
@@ -1292,144 +1348,187 @@ def main():
     # Graph Processing Button
     if uploaded_file is not None and st.button("Generate Scene Graph", type="primary"):
 
-        # TODO: Add a progress bar
-        # TODO: Time the main button
-
         if not model_path:
             st.error(" No model checkpoint specified. Please select or provide a model path in the sidebar.")
         elif not os.path.exists(model_path):
             st.error(f" Model checkpoint not found at: `{model_path}`")
-            st.info("Make sure the checkpoint file exists or select a different model from the sidebar.")
+
         else:
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_file:
-                tmp_file.write(uploaded_file.getvalue())
-                tmp_path = tmp_file.name
+            # Initialize progress tracking
+            import time
+            start_time = time.time()
+            
+            # Create combined progress and log container
+            progress_container = st.container()
+            
+            with progress_container:
+                # Create columns for layout
+                col1, col2, col3 = st.columns([1, 2, 1])
+                
+                with col2:
+                    st.markdown("### Processing Progress")
+                    # Large centered timer
+                    timer_display = st.empty()
+                    timer_display.markdown("<div style='text-align: center; font-size: 24px; font-weight: bold; color: #1f77b4; margin: 10px 0;'>0.0s</div>", unsafe_allow_html=True)
+                
+                # Progress bar
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+                
+                # Log section
+                st.markdown("#### Processing Log")
+                log_display = st.empty()
+            
+            # Initialize log list
+            log_entries = []
+            
+            def update_progress(step, total_steps, message, log_message=None):
+                """Update progress bar and log display"""
+                progress = step / total_steps
+                progress_bar.progress(progress)
+                status_text.text(message)
+                
+                # Update timer
+                current_time = time.time()
+                elapsed = current_time - start_time
+                timer_display.markdown(f"<div style='text-align: center; font-size: 24px; font-weight: bold; color: #1f77b4; margin: 10px 0;'>{elapsed:.1f}s</div>", unsafe_allow_html=True)
+                
+                if log_message:
+                    timestamp = time.strftime("%H:%M:%S", time.localtime())
+                    log_entries.append(f"[{timestamp}] {log_message}")
+                    # Display log as simple text to avoid key conflicts
+                    log_text = "\n".join(log_entries[-15:])  # Show last 15 entries
+                    log_display.text(log_text)
+            
+            def update_timer():
+                """Update the timer display"""
+                current_time = time.time()
+                elapsed = current_time - start_time
+                timer_display.markdown(f"<div style='text-align: center; font-size: 24px; font-weight: bold; color: #1f77b4; margin: 10px 0;'>{elapsed:.1f}s</div>", unsafe_allow_html=True)
+                return elapsed
             
             try:
-                with st.spinner("Processing video..."):
-                    results = process_video_with_sgg(tmp_path, model_path, max_frames)
-
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_file:
+                    tmp_file.write(uploaded_file.getvalue())
+                    tmp_path = tmp_file.name
+                
+                # Step 1: Process video with SGG
+                update_progress(1, 5, "Processing video with scene graph generation...", 
+                              "Starting video processing with scene graph generation")
+                
+                results = process_video_with_sgg(tmp_path, model_path, max_frames)
+                
                 if results:
-                    st.success(f"Video processed successfully! Analyzed {results['processed_frames']} frames.")
-                    # Create processed video with bounding boxes
-                    # Use a properly named temporary file
+                    update_progress(2, 5, "Video processing completed", 
+                                  f"Video processed successfully! Analyzed {results['processed_frames']} frames")
+                    
+                    # Prepare file paths
                     bbox_video_path = tmp_path.replace(".mp4", "_with_bboxes.mp4")
-                    scene_graph_video_path = tmp_path.replace(
-                        ".mp4", "_with_scene_graph.mp4"
+                    scene_graph_video_path = tmp_path.replace(".mp4", "_with_scene_graph.mp4")
+                    
+                    # Step 2: Create bounding box video
+                    update_progress(3, 5, "Creating video with bounding boxes...", 
+                                  f"Creating bounding box video at: {bbox_video_path}")
+                    
+                    bbox_success = create_processed_video_with_bboxes(
+                        tmp_path, model_path, bbox_video_path, max_frames
                     )
-
-                    st.info(f"Creating bounding box video at: {bbox_video_path}")
-
-                    with st.spinner("Creating video with bounding boxes..."):
-                        bbox_success = create_processed_video_with_bboxes(
-                            tmp_path, model_path, bbox_video_path, max_frames
-                        )
-
+                    
                     if bbox_success and os.path.exists(bbox_video_path):
-                        # Check if the video file has content
                         file_size = os.path.getsize(bbox_video_path)
                         st.session_state["bbox_video_path"] = bbox_video_path
-                        st.success(
-                            f" Bounding box video created successfully! Size: {file_size} bytes"
-                        )
-
-                        # Also create a sample frame for debugging
+                        update_progress(4, 5, "Bounding box video created", 
+                                      f"Bounding box video created successfully! Size: {file_size} bytes")
+                        
+                        # Verify bbox video
                         try:
                             test_cap = cv2.VideoCapture(bbox_video_path)
                             ret, test_frame = test_cap.read()
                             if ret:
-                                st.write(
-                                    " Bounding box video file is readable by OpenCV"
-                                )
-                                # Show the first frame as an image for verification
-                                with st.expander(
-                                    "First frame with bboxes (verification)"
-                                ):
-                                    st.image(
-                                        cv2.cvtColor(test_frame, cv2.COLOR_BGR2RGB),
-                                        caption="First frame from bbox video",
-                                    )
+                                log_entries.append(f"[{time.strftime('%H:%M:%S')}] Bounding box video file is readable by OpenCV")
+                                log_text = "\n".join(log_entries[-15:])
+                                log_display.text(log_text)
                             else:
-                                st.error(
-                                    " Bounding box video file created but not readable by OpenCV"
-                                )
+                                log_entries.append(f"[{time.strftime('%H:%M:%S')}] ERROR: Bounding box video file created but not readable by OpenCV")
+                                log_text = "\n".join(log_entries[-15:])
+                                log_display.text(log_text)
                             test_cap.release()
                         except Exception as e:
-                            st.error(f"Error verifying bbox video: {e}")
+                            log_entries.append(f"[{time.strftime('%H:%M:%S')}] ERROR: Error verifying bbox video: {e}")
+                            log_text = "\n".join(log_entries[-15:])
+                            log_display.text(log_text)
                     else:
-                        st.warning(
-                            f" Failed to create bounding box video. File exists: {os.path.exists(bbox_video_path) if 'bbox_video_path' in locals() else 'N/A'}"
-                        )
-
-                    # Create scene graph video
-                    st.info(f"Creating scene graph video at: {scene_graph_video_path}")
-
-                    with st.spinner("Creating video with scene graph overlay..."):
-                        sg_success = create_processed_video_with_scene_graph(
-                            tmp_path, model_path, scene_graph_video_path, max_frames
-                        )
-
+                        log_entries.append(f"[{time.strftime('%H:%M:%S')}] WARNING: Failed to create bounding box video")
+                        log_text = "\n".join(log_entries[-15:])
+                        log_display.text(log_text)
+                    
+                    # Step 3: Create scene graph video
+                    update_progress(5, 5, "Creating video with scene graph overlay...", 
+                                  f"Creating scene graph video at: {scene_graph_video_path}")
+                    
+                    sg_success = create_processed_video_with_scene_graph(
+                        tmp_path, model_path, scene_graph_video_path, max_frames
+                    )
+                    
                     if sg_success and os.path.exists(scene_graph_video_path):
-                        # Check if the video file has content
                         file_size = os.path.getsize(scene_graph_video_path)
-                        st.session_state["scene_graph_video_path"] = (
-                            scene_graph_video_path
-                        )
-                        st.success(
-                            f"Scene graph video created successfully! Size: {file_size} bytes"
-                        )
-
-                        # Also create a sample frame for debugging
+                        st.session_state["scene_graph_video_path"] = scene_graph_video_path
+                        
+                        # Final progress update
+                        progress_bar.progress(1.0)
+                        status_text.text("Processing completed successfully!")
+                        final_elapsed = update_timer()
+                        
+                        log_entries.append(f"[{time.strftime('%H:%M:%S')}] Scene graph video created successfully! Size: {file_size} bytes")
+                        log_entries.append(f"[{time.strftime('%H:%M:%S')}] All processing steps completed in {final_elapsed:.1f} seconds")
+                        log_text = "\n".join(log_entries[-15:])
+                        log_display.text(log_text)
+                        
+                        # Verify scene graph video
                         try:
                             test_cap = cv2.VideoCapture(scene_graph_video_path)
                             ret, test_frame = test_cap.read()
                             if ret:
-                                st.write(
-                                    "Scene graph video file is readable by OpenCV"
-                                )
-                                # Show the first frame as an image for verification
-                                with st.expander(
-                                    "First frame with scene graph (verification)"
-                                ):
-                                    st.image(
-                                        cv2.cvtColor(test_frame, cv2.COLOR_BGR2RGB),
-                                        caption="First frame from scene graph video",
-                                    )
+                                log_entries.append(f"[{time.strftime('%H:%M:%S')}] Scene graph video file is readable by OpenCV")
+                                log_text = "\n".join(log_entries[-15:])
+                                log_display.text(log_text)
                             else:
-                                st.error(
-                                    "Scene graph video file created but not readable by OpenCV"
-                                )
+                                log_entries.append(f"[{time.strftime('%H:%M:%S')}] ERROR: Scene graph video file created but not readable by OpenCV")
+                                log_text = "\n".join(log_entries[-15:])
+                                log_display.text(log_text)
                             test_cap.release()
                         except Exception as e:
-                            st.error(f"Error verifying scene graph video: {e}")
+                            log_entries.append(f"[{time.strftime('%H:%M:%S')}] ERROR: Error verifying scene graph video: {e}")
+                            log_text = "\n".join(log_entries[-15:])
+                            log_display.text(log_text)
                     else:
-                        st.warning(
-                            f" Failed to create scene graph video. File exists: {os.path.exists(scene_graph_video_path) if 'scene_graph_video_path' in locals() else 'N/A'}"
-                        )
-
+                        log_entries.append(f"[{time.strftime('%H:%M:%S')}] WARNING: Failed to create scene graph video")
+                        log_text = "\n".join(log_entries[-15:])
+                        log_display.text(log_text)
+                    
+                    # Show processing warnings if any
                     if results.get("errors"):
+                        log_entries.append(f"[{time.strftime('%H:%M:%S')}] WARNING: {len(results['errors'])} processing warnings occurred")
+                        log_text = "\n".join(log_entries[-15:])
+                        log_display.text(log_text)
                         with st.expander("Processing Warnings", expanded=False):
                             for error in results["errors"][:5]:  # Show first 5 errors
                                 st.warning(error)
-
+                    
                     st.session_state["results"] = results
-
             finally:
                 os.unlink(tmp_path) # Clean up temporary file
 
-    main_tab1, main_tab2 = st.tabs([" SGG View", " NLP View"])
+    main_tab1, main_tab2 = st.tabs(["SGG View", "NLP View"])
     with main_tab1:
-
         st.header(" Video Players")
-        if st.session_state.uploaded_video_file is not None:
-            
-            vid_col1, vid_col2, vid_col3 = st.columns(3)
 
+        if st.session_state.uploaded_video_file is not None:
+            vid_col1, vid_col2, vid_col3 = st.columns(3)
             # Unprocessed Video
             with vid_col1:
                 st.subheader("Original Video")
                 st.video(st.session_state.uploaded_video_file)
-
             # Bounding Box Video
             with vid_col2:
                 st.subheader("Object Detection")
@@ -1443,7 +1542,6 @@ def main():
                             video_bytes = video_file.read()
                             if len(video_bytes) > 0:
                                 st.video(video_bytes)
-                                st.caption("Video with bounding box overlays")
                             else:
                                 st.error("Video file is empty")
 
@@ -1452,14 +1550,31 @@ def main():
                         st.video(st.session_state.uploaded_video_file)
                 else:
                     st.video(st.session_state.uploaded_video_file)
-                    bbox_path = st.session_state.get("bbox_video_path", "None")
-                    bbox_exists = (
-                        os.path.exists(bbox_path) if bbox_path != "None" else False
-                    )
 
+                
+                # Add bbox table if we have detection results
+                if "results" in st.session_state and "bbox_info" in st.session_state:
+                    st.markdown("---")
+                    st.subheader("Detected Objects")
+                    bbox_info = st.session_state["bbox_info"]
+                    if bbox_info:
+                        # Create DataFrame for the table
+                        bbox_df = pd.DataFrame([
+                            {
+                                "Object": bbox["object_name"],
+                                "Confidence": f"{bbox['confidence']:.3f}",
+                                "BBox": f"[{bbox['bbox'][0]:.0f}, {bbox['bbox'][1]:.0f}, {bbox['bbox'][2]:.0f}, {bbox['bbox'][3]:.0f}]"
+                            }
+                            for bbox in bbox_info
+                        ])
+                        st.dataframe(bbox_df, use_container_width=True, hide_index=True)
+                    else:
+                        st.info("No objects detected above confidence threshold")
+                else:
+                    st.caption("Video with bounding box overlays")
             # Scene Graph Video
             with vid_col3:
-                st.subheader(" Scene Graph Analysis")
+                st.subheader("Scene Graph Analysis")
                 if "scene_graph_video_path" in st.session_state and os.path.exists(
                     st.session_state["scene_graph_video_path"]
                 ):
@@ -1470,7 +1585,6 @@ def main():
                             video_bytes = video_file.read()
                             if len(video_bytes) > 0:
                                 st.video(video_bytes)
-                                st.caption("Video with 2D scene graph overlays")
                             else:
                                 st.error("Scene graph video file is empty")
 
@@ -1480,8 +1594,7 @@ def main():
                         st.caption(" Scene graph overlay failed to load")
                 else:
                     st.video(st.session_state.uploaded_video_file)
-                    sg_path = st.session_state.get("scene_graph_video_path", "None")
-                    sg_exists = os.path.exists(sg_path) if sg_path != "None" else False
+
 
             # Chat
             st.markdown("---")
@@ -1588,32 +1701,11 @@ def main():
 
             # Sub-tabs for Frame view and Temporal view
             st.markdown("---")
-            sgg_tab1, sgg_tab2 = st.tabs([" Frame View", " Temporal View"])
+            sgg_tab1 = st.tabs(["Temporal View"])
 
-            with sgg_tab1:
-                st.header("Frame-based Scene Graph Analysis")
-                st.info(" Frame view implementation will be added here")
-
-                # Placeholder for frame-based scene graph visualization
-                if "results" in st.session_state:
-                    results = st.session_state["results"]
-                    if results["detections"]:
-                        st.subheader(" Detection Statistics")
-                        col_a, col_b, col_c = st.columns(3)
-                        with col_a:
-                            avg_objects = np.mean(results["detections"])
-                            st.metric("Avg Objects/Frame", f"{avg_objects:.1f}")
-                        with col_b:
-                            avg_relationships = np.mean(results["relationships"])
-                            st.metric("Avg Relations/Frame", f"{avg_relationships:.1f}")
-                        with col_c:
-                            avg_confidence = np.mean(results["confidences"])
-                            st.metric("Avg Confidence", f"{avg_confidence:.2f}")
-
-            with sgg_tab2:
+            with sgg_tab1[0]:
                 st.header("Temporal Scene Graph Analysis")
-                st.info(" Temporal view implementation will be added here")
-
+                
                 # Results visualization if available
                 if "results" in st.session_state:
                     results = st.session_state["results"]
@@ -1629,7 +1721,220 @@ def main():
                             }
                         )
 
+                        # Vertical Object Node Timeline Visualization
+                        st.subheader("Object Node Timeline")
+                        
+                        # Create a vertical timeline showing object presence across frames
+                        if results.get("frame_objects") and any(results["frame_objects"]):
+                            # Collect all unique objects across all frames
+                            all_objects = set()
+                            for frame_objects in results["frame_objects"]:
+                                for obj in frame_objects:
+                                    all_objects.add(obj["object_name"])
+                            
+                            if all_objects:
+                                all_objects = sorted(list(all_objects))
+                                
+                                # Create vertical timeline visualization with connected spheres
+                                fig_timeline = go.Figure()
+                                
+                                # Define positions: person at top (y=0), objects below (y=1,2,3...)
+                                person_y = 0
+                                object_y_positions = list(range(1, len(all_objects) + 1))
+                                
+                                # Add person node (always present) - RED
+                                fig_timeline.add_trace(
+                                    go.Scatter(
+                                        x=[0, len(results["frame_objects"]) - 1],
+                                        y=[person_y, person_y],
+                                        mode="lines",
+                                        name="Person",
+                                        line=dict(width=8, color="red"),
+                                        showlegend=True
+                                    )
+                                )
+                                
+                                # Add person spheres for each frame
+                                for frame_idx in range(len(results["frame_objects"])):
+                                    fig_timeline.add_trace(
+                                        go.Scatter(
+                                            x=[frame_idx],
+                                            y=[person_y],
+                                            mode="markers",
+                                            marker=dict(
+                                                size=20,
+                                                color="red",
+                                                line=dict(width=2, color="white")
+                                            ),
+                                            name=f"Person (Frame {frame_idx})",
+                                            hovertemplate="<b>Person</b><br>" +
+                                                        f"Frame: {frame_idx}<br>" +
+                                                        "<extra></extra>",
+                                            showlegend=False
+                                        )
+                                    )
+                                
+                                # Add object nodes and their spheres with vertical connections
+                                for i, obj_name in enumerate(all_objects):
+                                    obj_y = object_y_positions[i]
+                                    
+                                    # Use different shades of blue for objects
+                                    r = max(0, min(255, 50 + i * 40))
+                                    g = max(0, min(255, 100 + i * 30))
+                                    b = max(0, min(255, 200 - i * 20))
+                                    blue_shade = f"rgb({r}, {g}, {b})"
+                                    
+                                    # Add object horizontal line
+                                    fig_timeline.add_trace(
+                                        go.Scatter(
+                                            x=[0, len(results["frame_objects"]) - 1],
+                                            y=[obj_y, obj_y],
+                                            mode="lines",
+                                            name=obj_name,
+                                            line=dict(width=6, color=blue_shade),
+                                            showlegend=True
+                                        )
+                                    )
+                                    
+                                    # Collect frames where this object appears
+                                    object_frames = []
+                                    object_confidences = []
+                                    
+                                    for frame_idx, frame_objects in enumerate(results["frame_objects"]):
+                                        # Check if object is present in this frame
+                                        obj_in_frame = None
+                                        for obj in frame_objects:
+                                            if obj["object_name"] == obj_name:
+                                                obj_in_frame = obj
+                                                break
+                                        
+                                        if obj_in_frame:
+                                            object_frames.append(frame_idx)
+                                            object_confidences.append(obj_in_frame["confidence"])
+                                    
+                                    # Add spheres for this object
+                                    if object_frames:
+                                        fig_timeline.add_trace(
+                                            go.Scatter(
+                                                x=object_frames,
+                                                y=[obj_y] * len(object_frames),
+                                                mode="markers",
+                                                marker=dict(
+                                                    size=20,
+                                                    color=blue_shade,
+                                                    line=dict(width=2, color="white")
+                                                ),
+                                                name=f"{obj_name} spheres",
+                                                hovertemplate=f"<b>{obj_name}</b><br>" +
+                                                            "Frame: %{x}<br>" +
+                                                            "Confidence: %{customdata:.3f}<br>" +
+                                                            "<extra></extra>",
+                                                customdata=object_confidences,
+                                                showlegend=False
+                                            )
+                                        )
+                                        
+                                        # Add vertical connecting lines between spheres
+                                        if len(object_frames) > 1:
+                                            fig_timeline.add_trace(
+                                                go.Scatter(
+                                                    x=object_frames,
+                                                    y=[obj_y] * len(object_frames),
+                                                    mode="lines",
+                                                    line=dict(
+                                                        width=3,
+                                                        color=blue_shade,
+                                                        dash="solid"
+                                                    ),
+                                                    name=f"{obj_name} connections",
+                                                    showlegend=False,
+                                                    hoverinfo="skip"
+                                                )
+                                            )
+                                    
+                                    # Add edges from person to object spheres (vertical lines)
+                                    for frame_idx in object_frames:
+                                        fig_timeline.add_trace(
+                                            go.Scatter(
+                                                x=[frame_idx, frame_idx],
+                                                y=[person_y, obj_y],
+                                                mode="lines",
+                                                line=dict(
+                                                    width=2,
+                                                    color="gray",
+                                                    dash="dot"
+                                                ),
+                                                name=f"Edge {frame_idx}",
+                                                hovertemplate=f"<b>Person → {obj_name}</b><br>" +
+                                                            f"Frame: {frame_idx}<br>" +
+                                                            "<extra></extra>",
+                                                showlegend=False
+                                            )
+                                        )
+                                
+                                fig_timeline.update_layout(
+                                    title="Object Nodes Across Frames with Person-Object Relationships",
+                                    xaxis=dict(
+                                        title="Frame Number",
+                                        tickmode="linear",
+                                        tick0=0,
+                                        dtick=1,
+                                        showgrid=True,
+                                        gridcolor="lightgray"
+                                    ),
+                                    yaxis=dict(
+                                        title="Nodes",
+                                        tickmode="array",
+                                        tickvals=[person_y] + object_y_positions,
+                                        ticktext=["Person"] + all_objects,
+                                        side="left"
+                                    ),
+                                    height=400 + (len(all_objects) + 1) * 30,
+                                    showlegend=True,
+                                    legend=dict(
+                                        orientation="v",
+                                        yanchor="top",
+                                        y=1,
+                                        xanchor="left",
+                                        x=1.02
+                                    )
+                                )
+                                st.plotly_chart(fig_timeline, use_container_width=True)
+                                
+                                # Object statistics
+                                st.subheader("Object Statistics")
+                                obj_stats = []
+                                for obj_name in all_objects:
+                                    presence_count = sum(1 for frame_objects in results["frame_objects"] 
+                                                       if any(obj["object_name"] == obj_name for obj in frame_objects))
+                                    total_frames = len(results["frame_objects"])
+                                    presence_percentage = (presence_count / total_frames) * 100 if total_frames > 0 else 0
+                                    
+                                    # Calculate average confidence for this object
+                                    confidences = []
+                                    for frame_objects in results["frame_objects"]:
+                                        for obj in frame_objects:
+                                            if obj["object_name"] == obj_name:
+                                                confidences.append(obj["confidence"])
+                                    avg_confidence = np.mean(confidences) if confidences else 0.0
+                                    
+                                    obj_stats.append({
+                                        "Object": obj_name,
+                                        "Frames Present": presence_count,
+                                        "Total Frames": total_frames,
+                                        "Presence %": f"{presence_percentage:.1f}%",
+                                        "Avg Confidence": f"{avg_confidence:.3f}"
+                                    })
+                                
+                                stats_df = pd.DataFrame(obj_stats)
+                                st.dataframe(stats_df, use_container_width=True, hide_index=True)
+                            else:
+                                st.info("No objects detected in any frame")
+                        else:
+                            st.info("No detailed object information available for timeline visualization")
+
                         # Multi-line chart for detections and relationships
+                        st.subheader("Scene Graph Metrics Over Time")
                         fig = go.Figure()
                         fig.add_trace(
                             go.Scatter(
@@ -1676,7 +1981,7 @@ def main():
                         st.plotly_chart(fig3, use_container_width=True)
 
                         # Data table
-                        st.subheader("📋 Detection Details")
+                        st.subheader("Detection Details")
                         st.dataframe(df, use_container_width=True)
         else:
             st.info("Please upload a video file first to see the analysis results.")
@@ -1862,3 +2167,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

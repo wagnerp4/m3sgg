@@ -1,0 +1,19 @@
+# STKET model configuration
+# @package _global_
+
+defaults:
+  - base
+
+model_type: "stket"
+
+# STKET specific parameters
+enc_layer_num: 1
+dec_layer_num: 3
+N_layer: 1
+pred_contact_threshold: 0.5
+window_size: 3
+use_spatial_prior: false
+use_temporal_prior: false
+spatial_prior_loss: false
+temporal_prior_loss: false
+eval: false

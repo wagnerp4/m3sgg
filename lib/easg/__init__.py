@@ -1,7 +1,3 @@
-"""
-EASG (Efficient and Accurate Scene Graph) package.
-"""
-
 from dataloader.easg import EASG
 from .sttran_EASG import ObjectClassifier
 

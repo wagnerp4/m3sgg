@@ -1,0 +1,36 @@
+# Tempura model configuration
+# @package _global_
+
+defaults:
+  - base
+
+model_type: "tempura"
+
+# Tempura specific parameters
+obj_head: "gmm"
+rel_head: "gmm"
+K: 4
+
+# Memory configuration
+rel_mem_compute: null
+obj_mem_compute: false
+take_obj_mem_feat: false
+obj_mem_weight_type: "simple"
+rel_mem_weight_type: "simple"
+mem_feat_selection: "manual"
+mem_fusion: "early"
+mem_feat_lambda: null
+pseudo_thresh: 7
+
+# Uncertainty configuration
+obj_unc: false
+rel_unc: false
+
+# Loss configuration
+obj_loss_weighting: null
+rel_loss_weighting: null
+mlm: false
+eos_coef: 1
+obj_con_loss: null
+lambda_con: 1
+tracking: true

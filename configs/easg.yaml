@@ -1,0 +1,10 @@
+# EASG model configuration
+# @package _global_
+
+defaults:
+  - base
+
+model_type: "EASG"
+
+# EASG specific parameters
+use_matcher: false

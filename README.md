@@ -5,41 +5,18 @@ Our code uses the [Spatial-Temporal Transformer for Dynamic Scene Graph Generati
 
 ## Installation
 
-### Prerequisites
 - Python 3.10+ (tested with Python 3.10.0)
 - CUDA-compatible GPU (recommended)
+- For the original setup please refer to https://github.com/yrcong/STTran.
 
 ### Manual Installation (Required)
-Before installing the main dependencies, you need to manually install PyTorch and DGL with the correct CUDA version for your system:
-
-**PyTorch Installation:**
-```bash
-# For CUDA 11.8
-pip install torch>=1.12.0 torchvision>=0.13.0 --index-url https://download.pytorch.org/whl/cu118
-
-# For CUDA 12.1
-pip install torch>=1.12.0 torchvision>=0.13.0 --index-url https://download.pytorch.org/whl/cu121
-
-# For CPU-only (not recommended for training)
-pip install torch>=1.12.0 torchvision>=0.13.0 --index-url https://download.pytorch.org/whl/cpu
-```
-
-**DGL Installation:**
-Visit https://www.dgl.ai/pages/start.html and choose the DGL version with CUDA support that matches your PyTorch installation.
+Before installing the main dependencies, you need to manually install PyTorch (https://pytorch.org/get-started/locally/) and DGL (https://www.dgl.ai/pages/start.html) with the correct CUDA version for your system:
 
 ### Main Dependencies
 Install the remaining dependencies using uv:
 ```bash
 uv sync
-or:
-uv venv
-uv pip install -e .
 ```
-
-## General Usage
-- Certain C module dependencies and related functionality which was outdated
-in STTran-like repositories was replaced with python alternatives.
-- For the original setup please refer to https://github.com/yrcong/STTran.
 
 ## Backbone
 For the object detector part, please follow the compilation from https://github.com/jwyang/faster-rcnn.pytorch
@@ -57,7 +34,7 @@ fasterRCNN/models/faster_rcnn_ag.pth
 - SceneLLM
 
 We provide a [checkpoint-link] for the best performing SGG model to try with the streamlit app.
-Please put it under 'data/checkpoints/best_model.pth'. 
+Please put it under 'data/checkpoints/best_model.tar'. 
 If you want to try a different model to assess it's performance, follow the below training guide and
 place the checkpoint at 'data/checkpoints'.
 
@@ -78,40 +55,32 @@ Action Genome: We use the dataset [Action Genome](https://www.actiongenome.org/#
  Please download the file [object_bbox_and_relationship_filtersmall.pkl](https://drive.google.com/file/d/19BkAwjCw5ByyGyZjFo174Oc3Ud56fkaT/view?usp=sharing) and put it in the ```dataloader```
 
 ## Training
-Here are some example training commands using all different SGG modes, with the same dataset and model. 
-
-- Provide all available parameters, which are necessary instead of three commands just one
-
-+ For PredCLS: 
-```
+Here are some example training commands using all different SGG modes, with the same dataset and model. The entire list of arguments can be refered to in the documentation or under `VidSgg/lib/config.py`.
+```python
+# Mode: PredCLS
 python train.py -mode predcls -datasize large -data_path data/action_genome -model sttran 
-```
-+ For SGCLS: 
-```
-python train.py -mode sgcls -datasize large -data_path data/action_genome -model sttran 
-```
-+ For SGDET: 
-```
-python train.py -mode sgdet -datasize large -data_path data/action_genome -model sttran 
+# Mode: SGCLS
+python train.py -mode sgcls -datasize large -data_path data/action_genome -model sttran
+# Mode: SGdetCLS
+python train.py -mode sgdet -datasize large -data_path data/action_genome -model sttran
 ```
 
 ## Evaluation
 Here are some example evaluation commands using all different SGG modes, with test.py.
-
-+ For PredCLS ([trained Model](https://drive.google.com/file/d/18oFR8hfH3W84AYjR1yktsjQKeIlKbilo/view?usp=sharing)): 
-```
+```python
+# Mode: PredCLS
 python test.py -m predcls -datasize large -data_path $DATAPATH -model_path $MODELPATH
-```
-+ For SGCLS ([trained Model](https://drive.google.com/file/d/1E3fTGyh7Uhcsy7nBfrrY0t3jIi88uclF/view?usp=sharing)): : 
-```
+# Mode: SGCLS
 python test.py -m sgcls -datasize large -data_path $DATAPATH -model_path $MODELPATH
-```
-+ For SGDET ([trained Model](https://drive.google.com/file/d/19qW2x61eXBhQ2x3liJSRmKOF6zKqtYjV/view?usp=sharing)): : 
-```
+# Mode: SGdetCLS
 python test.py -m sgdet -datasize large -data_path $DATAPATH -model_path $MODELPATH
 ```
 
-## Output
+## Checkpoints
+
+<!-- TODO: Create table with checkpoints -->
+
+<!-- ## Output Format
 ```
 output/
 ├── action_genome/
@@ -128,42 +97,35 @@ output/
         ├── logfile.txt
         ├── checkpoint.tar
         └── predictions.csv
-```
+``` -->
 
 # Demo Applications:
 
-## Streamlit Web App (Recommended)
+## Video Demo
+
+<!-- Click to view the demo video:
+[![Demo Video](https://img.shields.io/badge/📹_Watch_Demo_Video-blue?style=for-the-badge)](assets/demo.mp4) -->
+
+<video width="800" controls>
+  <source src="assets/demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+<!-- After uploading to GitHub, use this format:
+https://github.com/user-attachments/assets/demo.mp4
+-->
+
+<!-- Convert demo.mp4 to GIF and use:
+![Demo](assets/demo.gif)
+-->
+
+## Streamlit Web App
 Required deps: pip install streamlit streamlit_chat
 Start the modern web-based interface:
 ```powershell
 streamlit run app.py
 ```
 The application will open at `http://localhost:8501`.
-
-## PyQt5 GUI (Legacy)
-```
-python scripts/core/gui.py
-```
-
-## Dependencies
-The following dependencies are automatically handled via `pyproject.toml`:
-```
-streamlit>=1.29.0
-plotly>=5.17.0
-opencv-python>=4.5.0
-matplotlib>=3.4.0
-numpy>=1.21.0
-scipy>=1.9.0
-pillow>=8.3.0
-tqdm>=4.62.0
-transformers>=4.20.0
-peft>=0.4.0
-pot>=0.9.0
-cython
-cffi
-msgpack
-tensorboardX
-```
 
 **Note:** PyTorch and DGL must be installed manually with the correct CUDA version (see Installation section above).
 

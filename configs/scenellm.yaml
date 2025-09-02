@@ -1,0 +1,28 @@
+# SceneLLM model configuration
+# @package _global_
+
+defaults:
+  - base
+
+model_type: "scenellm"
+
+# SceneLLM specific parameters
+embed_dim: 1024
+codebook_size: 8192
+commitment_cost: 0.25
+llm_name: "google/gemma-2-2b"
+
+# LoRA configuration
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+
+# Training configuration
+ot_step: 512
+vqvae_epochs: 5
+stage1_iterations: 30000
+stage2_iterations: 50000
+alpha_obj: 1.0
+alpha_rel: 1.0
+scenellm_training_stage: "vqvae"  # vqvae/stage1/stage2
+disable_checkpoint_saving: false

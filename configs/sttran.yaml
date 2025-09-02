@@ -1,0 +1,10 @@
+# STTRAN model configuration
+# @package _global_
+
+defaults:
+  - base
+
+model_type: "sttran"
+
+# STTRAN specific parameters
+use_matcher: false

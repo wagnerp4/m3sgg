@@ -49,8 +49,6 @@ if __name__ == "__main__":
     )  # conf.dataset,
     os.makedirs(new_save_path, exist_ok=True)
     conf.save_path = new_save_path
-
-    # Setup logging
     log_file = os.path.join(conf.save_path, "logfile.txt")
     logging.basicConfig(
         level=logging.INFO,

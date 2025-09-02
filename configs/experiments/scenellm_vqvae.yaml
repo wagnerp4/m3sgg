@@ -1,0 +1,17 @@
+# Experiment configuration for SceneLLM VQ-VAE training
+# @package _global_
+
+defaults:
+  - scenellm
+
+# Training stage
+scenellm_training_stage: "vqvae"
+
+# VQ-VAE specific configuration
+vqvae_epochs: 10
+embed_dim: 1024
+codebook_size: 8192
+commitment_cost: 0.25
+
+# Output configuration
+save_path: "output/scenellm_vqvae"

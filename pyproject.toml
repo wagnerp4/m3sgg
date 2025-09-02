@@ -36,6 +36,7 @@ dependencies = [
     "cffi",
     "msgpack",
     "tensorboardX",
+    "omegaconf>=2.3.0",
 ]
 
 [build-system]

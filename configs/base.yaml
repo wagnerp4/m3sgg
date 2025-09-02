@@ -1,0 +1,21 @@
+# Base configuration template for VidSgg models
+# This file contains common parameters shared across all model types
+
+# Training configuration
+mode: "predcls"  # predcls/sgcls/sgdet
+save_path: "output"
+model_path: "weights/predcls.tar"
+dataset: "action_genome"  # action_genome/EASG
+data_path: "data/action_genome"
+datasize: "large"  # mini/large
+ckpt: null
+
+# Optimizer configuration
+optimizer: "adamw"  # adamw/adam/sgd
+lr: 1e-5
+nepoch: 10
+
+# Model architecture
+enc_layer: 1
+dec_layer: 3
+bce_loss: false

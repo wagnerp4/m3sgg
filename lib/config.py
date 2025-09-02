@@ -129,8 +129,6 @@ class Config(object):
         self.oed_variant = "multi"
         self.fuse_semantic_pos = False
         self.query_temporal_interaction = False
-        
-        # OED loss weights and configuration
         self.oed_weight_dict = {
             'loss_obj_ce': self.obj_loss_coef,
             'loss_bbox': self.bbox_loss_coef,
@@ -143,13 +141,12 @@ class Config(object):
         self.oed_losses = ['obj_labels', 'boxes', 'attn_labels', 'spatial_labels', 'contacting_labels']
 
         # Matcher logic TODO: remove this
-        if self.model_type == "dsg-detr":
+        if self.model_type == "dsg-detr": # model == introduction of matcher.
             self.use_matcher = True
-        if self.model_type == "sttran":
+        if self.model_type == "sttran": 
             self.use_matcher = False
         elif self.model_type == "stket":
             self.use_matcher = False
-            # Map enc_layer and dec_layer to enc_layer_num and dec_layer_num for STKET
             self.enc_layer_num = self.enc_layer
             self.dec_layer_num = self.dec_layer
         elif self.model_type == "EASG":
@@ -186,7 +183,7 @@ class Config(object):
             type=str,
         )
         parser.add_argument("-data_path", default="data/action_genome", type=str)
-        parser.add_argument(  # TODO: check if this is needed
+        parser.add_argument(  # TODO: use this for subset sampling
             "-datasize",
             dest="datasize",
             help="mini dataset or whole",
@@ -250,7 +247,7 @@ class Config(object):
             "-rel_head", default="gmm", type=str, help="classification head type"
         )
         parser.add_argument("-K", default=4, type=int, help="number of mixture models")
-        # memory arguments
+        # Memory arguments
         parser.add_argument(
             "-rel_mem_compute",
             default=None,

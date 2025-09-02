@@ -1,0 +1,17 @@
+# Experiment configuration for Action Genome small dataset
+# @package _global_
+
+defaults:
+  - base
+
+# Dataset configuration
+dataset: "action_genome"
+data_path: "data/action_genome200"
+datasize: "mini"
+
+# Training configuration
+nepoch: 5
+lr: 2e-5
+
+# Output configuration
+save_path: "output/action_genome200"

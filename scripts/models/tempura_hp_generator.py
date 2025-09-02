@@ -9,7 +9,8 @@ import argparse
 import json
 import random
 from itertools import product
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
+import sys
 
 
 class TEMPURAHyperparameterGenerator:
@@ -220,8 +221,6 @@ def main():
     combinations = generator.generate_combinations()
 
     # Print summary to stderr so it doesn't interfere with JSON output
-    import sys
-
     generator.print_combination_summary(combinations)
 
     # Output as JSON for PowerShell to consume (to stdout)
