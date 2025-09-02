@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 def box_cxcywh_to_xyxy(x):
     """Convert boxes from center format (cx, cy, w, h) to corner format (x1, y1, x2, y2).
-    
+
     :param x: Boxes in center format
     :type x: torch.Tensor
     :return: Boxes in corner format
@@ -23,7 +23,7 @@ def box_cxcywh_to_xyxy(x):
 
 def box_xyxy_to_cxcywh(x):
     """Convert boxes from corner format (x1, y1, x2, y2) to center format (cx, cy, w, h).
-    
+
     :param x: Boxes in corner format
     :type x: torch.Tensor
     :return: Boxes in center format
@@ -36,7 +36,7 @@ def box_xyxy_to_cxcywh(x):
 
 def generalized_box_iou(boxes1, boxes2):
     """Generalized Intersection over Union between two sets of boxes.
-    
+
     :param boxes1: First set of boxes
     :type boxes1: torch.Tensor
     :param boxes2: Second set of boxes
@@ -70,7 +70,7 @@ def generalized_box_iou(boxes1, boxes2):
 
 def box_area(boxes):
     """Compute the area of a set of bounding boxes.
-    
+
     :param boxes: Bounding boxes in (x1, y1, x2, y2) format
     :type boxes: torch.Tensor
     :return: Areas of the boxes
@@ -81,7 +81,7 @@ def box_area(boxes):
 
 def nested_tensor_from_tensor_list(tensor_list):
     """Convert a list of tensors to a nested tensor.
-    
+
     :param tensor_list: List of tensors
     :type tensor_list: list
     :return: Nested tensor
@@ -105,7 +105,7 @@ def nested_tensor_from_tensor_list(tensor_list):
 
 def _max_by_axis(the_list):
     """Find maximum dimensions across a list of shapes.
-    
+
     :param the_list: List of shapes
     :type the_list: list
     :return: Maximum dimensions
@@ -120,14 +120,14 @@ def _max_by_axis(the_list):
 
 class NestedTensor:
     """Nested tensor wrapper for efficient processing.
-    
+
     :param object: Base object class
     :type object: class
     """
-    
+
     def __init__(self, tensors, mask):
         """Initialize the nested tensor.
-        
+
         :param tensors: Input tensors
         :type tensors: torch.Tensor
         :param mask: Mask tensor
@@ -140,7 +140,7 @@ class NestedTensor:
 
     def decompose(self):
         """Decompose the nested tensor.
-        
+
         :return: Tuple of (tensors, mask)
         :rtype: tuple
         """
@@ -148,7 +148,7 @@ class NestedTensor:
 
     def __repr__(self):
         """String representation.
-        
+
         :return: String representation
         :rtype: str
         """

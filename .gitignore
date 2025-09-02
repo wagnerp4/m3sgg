@@ -12,6 +12,8 @@ __pycache__
 
 .env
 .venv
+.ruff_cache/
+# .streamlit/
 
 *.pth
 *.pt
@@ -22,5 +24,4 @@ __pycache__
 *.pkl
 *.pt
 
-# Sphinx documentation build directory
 docs/_build/

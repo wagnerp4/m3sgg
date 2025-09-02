@@ -7,17 +7,17 @@ import torch.nn as nn
 
 class TransformerEncoderLayer(nn.Module):
     """STKET transformer encoder layer with prior knowledge integration.
-    
+
     Implements transformer encoder with additional prior knowledge integration
     for spatio-temporal knowledge-enhanced scene graph generation.
-    
+
     :param nn.Module: Base PyTorch module class
     :type nn.Module: class
     """
-    
+
     def __init__(self, embed_dim=1936, nhead=4, dim_feedforward=2048, dropout=0.1):
         """Initialize STKET transformer encoder layer.
-        
+
         :param embed_dim: Embedding dimension, defaults to 1936
         :type embed_dim: int, optional
         :param nhead: Number of attention heads, defaults to 4
@@ -49,7 +49,7 @@ class TransformerEncoderLayer(nn.Module):
 
     def forward(self, src, prior, input_key_padding_mask):
         """Forward pass with prior knowledge integration.
-        
+
         :param src: Source sequence tensor
         :type src: torch.Tensor
         :param prior: Prior knowledge tensor

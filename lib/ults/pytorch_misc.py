@@ -20,10 +20,10 @@ from torch import nn
 
 def optimistic_restore(network, state_dict):
     """Optimistically restore network weights from state dictionary.
-    
+
     Attempts to load weights from state_dict into network, handling size mismatches
     gracefully by skipping incompatible parameters.
-    
+
     :param network: Neural network to restore weights to
     :type network: torch.nn.Module
     :param state_dict: State dictionary containing weights

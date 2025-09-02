@@ -10,18 +10,19 @@ from lib.ds_track import get_sequence
 
 class uncertainty_values:
     """Class for managing and computing uncertainty values in scene graph generation.
-    
+
     Handles uncertainty computation for both objects and relations, including
     epistemic and aleatoric uncertainty types with statistical analysis capabilities.
-    
+
     :param object: Base object class
     :type object: class
     """
+
     def __init__(
         self, obj_classes, attention_class_num, spatial_class_num, contact_class_num
     ):
         """Initialize the uncertainty values storage.
-        
+
         :param obj_classes: Number of object classes
         :type obj_classes: int
         :param attention_class_num: Number of attention relation classes

@@ -8,7 +8,7 @@ import torch
 
 sys.path.append(".")
 
-from dataloader.action_genome import AG
+from datasets.action_genome import AG
 from lib.matcher import HungarianMatcher
 from lib.object_detector import detector
 from lib.sttran import STTran

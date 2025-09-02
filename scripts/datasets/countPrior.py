@@ -10,7 +10,7 @@ np.set_printoptions(precision=4)
 
 import torch
 
-from dataloader.action_genome import AG, cuda_collate_fn
+from datasets.action_genome import AG, cuda_collate_fn
 from lib.config import Config
 from lib.object_detector import detector
 

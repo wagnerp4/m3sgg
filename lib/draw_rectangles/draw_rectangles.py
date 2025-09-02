@@ -4,11 +4,11 @@ import numpy as np
 
 def draw_union_boxes(pair_rois, spatial_scale=27):
     """Draw union boxes for pairs of ROIs to create spatial masks.
-    
+
     Creates spatial masks for subject-object pairs by drawing their bounding
     boxes and union boxes on a grid. Used for spatial relationship modeling
     in scene graph generation.
-    
+
     :param pair_rois: Array of ROI pairs, shape [N, 8] with format [x1_subj, y1_subj, x2_subj, y2_subj, x1_obj, y1_obj, x2_obj, y2_obj]
     :type pair_rois: numpy.ndarray
     :param spatial_scale: Scale for spatial masks, defaults to 27

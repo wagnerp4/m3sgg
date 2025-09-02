@@ -4,18 +4,18 @@ import torch.nn as nn
 
 class GMM_head(nn.Module):
     """Gaussian Mixture Model head for uncertainty estimation in Tempura.
-    
+
     Implements a GMM-based classification head that models uncertainty
     through multiple Gaussian components with learnable means, variances,
     and mixture weights.
-    
+
     :param nn.Module: Base PyTorch module class
     :type nn.Module: class
     """
-    
+
     def __init__(self, hid_dim, num_classes, rel_type=None, k=4):
         """Initialize the GMM head.
-        
+
         :param hid_dim: Hidden dimension size
         :type hid_dim: int
         :param num_classes: Number of output classes
@@ -52,7 +52,7 @@ class GMM_head(nn.Module):
 
     def uncertainty(self, conf_mu_k, conf_var_k, conf_pi_k_):
         """Compute epistemic and aleatoric uncertainty.
-        
+
         :param conf_mu_k: Mean predictions for each mixture component
         :type conf_mu_k: dict
         :param conf_var_k: Variance predictions for each mixture component

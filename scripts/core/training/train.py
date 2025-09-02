@@ -2,6 +2,7 @@ import copy
 import json
 import logging
 import os
+import sys
 import time
 import warnings
 
@@ -15,23 +16,30 @@ from torch import optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 
-from dataloader.action_genome import AG, cuda_collate_fn
-from dataloader.easg import EASG
+# Setup project root path before local imports
+project_root = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..")
+)
+sys.path.insert(0, project_root)  # Insert at beginning to prioritize local modules
+
+from datasets.action_genome import cuda_collate_fn
+from datasets.factory import get_datasets
 from lib.AdamW import AdamW
 from lib.config import Config
+from lib.easg.object_detector_EASG import detector as detector_EASG
+from lib.easg.sttran_EASG import STTran as STTran_EASG
 from lib.evaluation_recall import BasicSceneGraphEvaluator
 from lib.infoNCE import EucNormLoss, SupConLoss
 from lib.matcher import HungarianMatcher
 from lib.memory import memory_computation
 from lib.object_detector import detector
-from lib.easg.object_detector_EASG import detector as detector_EASG
 from lib.scenellm.scenellm import SceneLLM
 from lib.sttran import STKET, STTran
-from lib.easg.sttran_EASG import STTran as STTran_EASG
 from lib.tempura.tempura import TEMPURA
 from lib.track import get_sequence
 from lib.uncertainty import uncertainty_computation, uncertainty_values
 from utils.util import (
+    create_dataloaders,
     create_subset_samplers,
     get_pred_triplets,
     intersect_2d,
@@ -41,94 +49,59 @@ np.set_printoptions(precision=3)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 if __name__ == "__main__":
+    # Settings
     conf = Config()
-    timestamp = time.strftime("%Y%m%d_%H%M%S")
-    data_path_suffix = os.path.basename(conf.data_path)
+    seed = conf.seed
+    gpu_device = torch.device(conf.device)
     new_save_path = os.path.join(
-        "output", data_path_suffix, conf.model_type, conf.mode, f"{timestamp}"
-    )  # conf.dataset,
+        "output",
+        os.path.basename(conf.data_path),
+        conf.model_type,
+        conf.mode,
+        f"{time.strftime('%Y%m%d_%H%M%S')}",
+    )
     os.makedirs(new_save_path, exist_ok=True)
     conf.save_path = new_save_path
+
+    # Logging
     log_file = os.path.join(conf.save_path, "logfile.txt")
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(message)s",
-        handlers=[
-            logging.FileHandler(log_file),
-            logging.StreamHandler(),
-        ],
+        handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
     )
     logger = logging.getLogger(__name__)
-    logger.info("The CKPT saved here: %s", conf.save_path)
     logger.info(
-        "spatial encoder layer num: %d / temporal decoder layer num: %d",
+        "Setup | ckpt_path=%s | enc_layers=%d/dec_layers=%d | config=%s",
+        conf.save_path,
         conf.enc_layer,
         conf.dec_layer,
+        {k: v for k, v in conf.args.items()},
     )
-    logger.info("Config arguments:")
-    for i in conf.args:
-        logger.info("%s: %s", i, conf.args[i])
 
     # Dataset
-    if conf.dataset == "EASG":
-        dataset_train = EASG(
-            split="train",
-            datasize=conf.datasize,
-            data_path=conf.data_path,
-        )
-        dataset_test = EASG(
-            split="val",
-            datasize=conf.datasize,
-            data_path=conf.data_path,
-        )
-    elif conf.dataset == "action_genome":
-        dataset_train = AG(
-            mode="train",
-            datasize=conf.datasize,
-            data_path=conf.data_path,
-            filter_nonperson_box_frame=True,
-            filter_small_box=False if conf.mode == "predcls" else True,
-        )
-        dataset_test = AG(
-            mode="test",
-            datasize=conf.datasize,
-            data_path=conf.data_path,
-            filter_nonperson_box_frame=True,
-            filter_small_box=False if conf.mode == "predcls" else True,
-        )
-
-    # Subset Selection
+    dataset_train, dataset_test = get_datasets(conf)
     train_sampler, test_sampler, train_subset_size, test_subset_size = (
-        create_subset_samplers(
-            len(dataset_train), len(dataset_test), fraction=1, seed=42
+        create_subset_samplers(  # TODO: specify fraction
+            len(dataset_train), len(dataset_test), fraction=1, seed=conf.seed
         )
     )
+    logger.info(f"""Using {train_subset_size}/{len(dataset_train)} 
+        training samples and {test_subset_size}/{len(dataset_test)} test samples""")
 
     # DataLoader
-    dataloader_train = torch.utils.data.DataLoader(
+    dataloader_train, dataloader_test = create_dataloaders(
         dataset_train,
-        # shuffle=True,
-        sampler=train_sampler,
-        num_workers=0,
-        collate_fn=cuda_collate_fn,
-        pin_memory=False,
-    )
-    dataloader_test = torch.utils.data.DataLoader(
         dataset_test,
-        # shuffle=False,
-        sampler=test_sampler,
-        num_workers=0,
-        collate_fn=cuda_collate_fn,
+        train_sampler,
+        test_sampler,
+        cuda_collate_fn,
+        num_workers=conf.num_workers,
         pin_memory=False,
     )
-
-    logger.info(
-        f"Using {train_subset_size}/{len(dataset_train)} training samples and {test_subset_size}/{len(dataset_test)} test samples"
-    )
-
-    gpu_device = torch.device("cuda:0")
 
     # Object detector
+    # TODO: overwork this, modularize detector
     if conf.dataset == "EASG":
         object_detector_EASG = detector_EASG(
             train=True,
@@ -138,7 +111,7 @@ if __name__ == "__main__":
         ).to(device=gpu_device)
         object_detector_EASG.eval()
     elif conf.dataset == "action_genome":
-        object_detector = detector(  # freeze the detection backbone
+        object_detector = detector(
             train=True,
             object_classes=dataset_train.object_classes,
             use_SUPPLY=True,
@@ -221,16 +194,13 @@ if __name__ == "__main__":
             ).to(device=gpu_device)
         elif conf.model_type == "scenellm":
             model = SceneLLM(conf, dataset_train).to(device=gpu_device)
-            print(
-                f"DEBUG: About to set training stage to: {conf.scenellm_training_stage}"
-            )
             model.set_training_stage(conf.scenellm_training_stage)
-            print(f"DEBUG: Model training stage is now: {model.training_stage}")
             logger.info(
-                f"SceneLLM initialized with training stage: {conf.scenellm_training_stage}"
+                f"Initialized SceneLLM with training stage: {conf.scenellm_training_stage}"
             )
         elif conf.model_type == "oed":
             from lib.oed import OEDMulti, OEDSingle
+
             if conf.oed_variant == "multi":
                 model = OEDMulti(conf, dataset_train).to(device=gpu_device)
                 logger.info("Initialized OED Multi-frame model")
@@ -244,11 +214,13 @@ if __name__ == "__main__":
     else:
         raise ValueError(f"Dataset '{conf.dataset}' not supported")
 
+    # Load Checkpoint
     if conf.ckpt:
         ckpt = torch.load(conf.ckpt, map_location=gpu_device)
         model.load_state_dict(ckpt["state_dict"], strict=False)
         logger.info("Loaded checkpoint from: %s", conf.ckpt)
 
+    # Hungarian Matcher
     if conf.use_matcher:
         matcher = HungarianMatcher(0.5, 1, 1, 0.5)
         matcher.eval()
@@ -282,6 +254,7 @@ if __name__ == "__main__":
         logger=logger,
     )
 
+    # Loss Function
     if conf.bce_loss:
         ce_loss = nn.CrossEntropyLoss()
         bce_loss = nn.BCELoss()
@@ -289,6 +262,7 @@ if __name__ == "__main__":
         ce_loss = nn.CrossEntropyLoss()
         mlm_loss = nn.MultiLabelMarginLoss()
 
+    # Optimizer
     if conf.optimizer == "adamw":
         optimizer = AdamW(model.parameters(), lr=conf.lr)
     elif conf.optimizer == "adam":
@@ -325,13 +299,7 @@ if __name__ == "__main__":
             con_loss = SupConLoss(temperature=0.1)
             con_loss.train()
 
-    # STTran
-    # scheduler = ReduceLROnPlateau(
-    #         optimizer, "max", patience=1, factor=0.5, verbose=True,
-    #         threshold=1e-4, threshold_mode="abs",
-    #         min_lr=1e-7)
-
-    # DSG-DETR
+    # Scheduler
     scheduler = ReduceLROnPlateau(
         optimizer,
         "max",
@@ -343,37 +311,20 @@ if __name__ == "__main__":
         min_lr=1e-7,
     )
 
-    # STKET
-    # scheduler = ReduceLROnPlateau(
-    #     optimizer, "max", patience=0, factor=0.5,
-    #     verbose=True, threshold=1e-3, threshold_mode="abs",
-    #     min_lr=1e-7)
-
-    # unbiasedSGG
-    # scheduler = ReduceLROnPlateau(
-    #     optimizer, "max", patience=1, factor=0.5, verbose=True,
-    #     threshold=1e-4, threshold_mode="abs", min_lr=1e-7)
-
-    logger.info("Using %s optimizer with learning rate %e", conf.optimizer, conf.lr)
-    logger.info("Starting training...")
-
-    tr = []
-    if conf.use_matcher:
-        matcher = HungarianMatcher(0.5, 1, 1, 0.5)
-        matcher.eval()
-        logger.info("Using Hungarian matcher for DSG-DETR training")
-    else:
-        matcher = None
-        logger.info("Using default STTran training (no matcher)")
-
-    logger.info("Training dataset size: %d batches", len(dataloader_train))
-    logger.info("Test dataset size: %d batches", len(dataloader_test))
-
-    print(type(conf.nepoch))
+    # Variables
     conf.nepoch = int(conf.nepoch)
     best_score = 0.0
     best_Mrecall = 0.0
     best_epoch = -1
+    tr = []
+
+    logger.info(
+        "Starting training | optimizer=%s, lr=%e | train_batches=%d, test_batches=%d",
+        conf.optimizer,
+        conf.lr,
+        len(dataloader_train),
+        len(dataloader_test),
+    )
 
     # Training loop
     for epoch in range(conf.nepoch):
@@ -405,11 +356,9 @@ if __name__ == "__main__":
         epoch_train_losses = []
         epoch_train_loss_components = []
 
-        train_pbar = tqdm(
+        for b in tqdm(
             range(len(dataloader_train)), desc=f"Epoch {epoch}/{conf.nepoch} [Train]"
-        )
-
-        for b in train_pbar:
+        ):
             data = next(train_iter)
             im_data = copy.deepcopy(data[0].cuda(0))
             im_info = copy.deepcopy(data[1].cuda(0))
@@ -891,120 +840,187 @@ if __name__ == "__main__":
                 elif conf.model_type == "oed":
                     # OED loss computation using the existing matcher
                     if conf.use_matcher:
-                        from lib.oed.criterion import SetCriterionOED
                         from lib.matcher import HungarianMatcher
-                        
+                        from lib.oed.criterion import SetCriterionOED
+
                         # Initialize OED criterion if not already done
-                        if not hasattr(model, 'criterion'):
+                        if not hasattr(model, "criterion"):
                             matcher = HungarianMatcher(0.5, 1, 1, 0.5)
                             weight_dict = {
-                                'loss_obj_ce': conf.obj_loss_coef,
-                                'loss_attn_ce': conf.rel_loss_coef,
-                                'loss_spatial_ce': conf.rel_loss_coef,
-                                'loss_contacting_ce': conf.rel_loss_coef,
-                                'loss_sub_bbox': conf.bbox_loss_coef,
-                                'loss_obj_bbox': conf.bbox_loss_coef,
-                                'loss_sub_giou': conf.giou_loss_coef,
-                                'loss_obj_giou': conf.giou_loss_coef,
+                                "loss_obj_ce": conf.obj_loss_coef,
+                                "loss_attn_ce": conf.rel_loss_coef,
+                                "loss_spatial_ce": conf.rel_loss_coef,
+                                "loss_contacting_ce": conf.rel_loss_coef,
+                                "loss_sub_bbox": conf.bbox_loss_coef,
+                                "loss_obj_bbox": conf.bbox_loss_coef,
+                                "loss_sub_giou": conf.giou_loss_coef,
+                                "loss_obj_giou": conf.giou_loss_coef,
                             }
-                            
+
                             model.criterion = SetCriterionOED(
                                 num_obj_classes=len(dataset_train.object_classes),
                                 num_queries=conf.num_queries,
                                 matcher=matcher,
                                 weight_dict=weight_dict,
                                 eos_coef=conf.oed_eos_coef,
-                                losses=['obj_labels', 'relation_labels', 'sub_obj_boxes'],
-                                conf=conf
+                                losses=[
+                                    "obj_labels",
+                                    "relation_labels",
+                                    "sub_obj_boxes",
+                                ],
+                                conf=conf,
                             )
-                        
+
                         # Convert predictions to OED format
                         oed_pred = {
-                            'pred_obj_logits': pred['distribution'].unsqueeze(0),
-                            'pred_sub_boxes': torch.zeros(1, len(pred['labels']), 4, device=pred['distribution'].device),
-                            'pred_obj_boxes': torch.zeros(1, len(pred['labels']), 4, device=pred['distribution'].device),
-                            'pred_attn_logits': pred['attention_distribution'].unsqueeze(0),
-                            'pred_spatial_logits': pred['spatial_distribution'].unsqueeze(0),
-                            'pred_contacting_logits': pred['contact_distribution'].unsqueeze(0),
+                            "pred_obj_logits": pred["distribution"].unsqueeze(0),
+                            "pred_sub_boxes": torch.zeros(
+                                1,
+                                len(pred["labels"]),
+                                4,
+                                device=pred["distribution"].device,
+                            ),
+                            "pred_obj_boxes": torch.zeros(
+                                1,
+                                len(pred["labels"]),
+                                4,
+                                device=pred["distribution"].device,
+                            ),
+                            "pred_attn_logits": pred[
+                                "attention_distribution"
+                            ].unsqueeze(0),
+                            "pred_spatial_logits": pred[
+                                "spatial_distribution"
+                            ].unsqueeze(0),
+                            "pred_contacting_logits": pred[
+                                "contact_distribution"
+                            ].unsqueeze(0),
                         }
-                        
+
                         # Convert targets to OED format
-                        oed_targets = [{
-                            'obj_labels': pred['labels'],
-                            'sub_boxes': torch.zeros(len(pred['labels']), 4, device=pred['labels'].device),
-                            'obj_boxes': torch.zeros(len(pred['labels']), 4, device=pred['labels'].device),
-                            'attn_labels': pred['attention_gt'],
-                            'spatial_labels': pred['spatial_gt'],
-                            'contacting_labels': pred['contact_gt'],
-                        }]
-                        
+                        oed_targets = [
+                            {
+                                "obj_labels": pred["labels"],
+                                "sub_boxes": torch.zeros(
+                                    len(pred["labels"]), 4, device=pred["labels"].device
+                                ),
+                                "obj_boxes": torch.zeros(
+                                    len(pred["labels"]), 4, device=pred["labels"].device
+                                ),
+                                "attn_labels": pred["attention_gt"],
+                                "spatial_labels": pred["spatial_gt"],
+                                "contacting_labels": pred["contact_gt"],
+                            }
+                        ]
+
                         # Compute OED losses
                         losses = model.criterion(oed_pred, oed_targets)
                     else:
                         # Fallback to standard loss computation
                         losses = {}
                         if conf.mode == "sgcls" or conf.mode == "sgdet":
-                            losses["object_loss"] = ce_loss(pred["distribution"], pred["labels"])
-                        
+                            losses["object_loss"] = ce_loss(
+                                pred["distribution"], pred["labels"]
+                            )
+
                         # Handle attention_gt which might be a list or tensor
                         attention_gt = pred["attention_gt"]
                         if isinstance(attention_gt, list):
-                            attention_label = torch.tensor(attention_gt, dtype=torch.long, device=pred["attention_distribution"].device)
+                            attention_label = torch.tensor(
+                                attention_gt,
+                                dtype=torch.long,
+                                device=pred["attention_distribution"].device,
+                            )
                         else:
-                            attention_label = attention_gt.clone().detach().to(device=pred["attention_distribution"].device).squeeze()
-                        
+                            attention_label = (
+                                attention_gt.clone()
+                                .detach()
+                                .to(device=pred["attention_distribution"].device)
+                                .squeeze()
+                            )
+
                         # Ensure attention_label is 1D for CrossEntropyLoss
                         if attention_label.dim() > 1:
                             attention_label = attention_label.flatten()
-                            
-                        losses["attention_relation_loss"] = ce_loss(pred["attention_distribution"], attention_label)
-                        
+
+                        losses["attention_relation_loss"] = ce_loss(
+                            pred["attention_distribution"], attention_label
+                        )
+
                         if not conf.bce_loss:
-                            spatial_label = -torch.ones([len(pred["spatial_gt"]), 6], dtype=torch.long).to(device=pred["attention_distribution"].device)
-                            contact_label = -torch.ones([len(pred["contact_gt"]), 17], dtype=torch.long).to(device=pred["attention_distribution"].device)
+                            spatial_label = -torch.ones(
+                                [len(pred["spatial_gt"]), 6], dtype=torch.long
+                            ).to(device=pred["attention_distribution"].device)
+                            contact_label = -torch.ones(
+                                [len(pred["contact_gt"]), 17], dtype=torch.long
+                            ).to(device=pred["attention_distribution"].device)
                             for i in range(len(pred["spatial_gt"])):
                                 # Handle spatial_gt and contact_gt which might be lists or tensors
                                 spatial_gt_item = pred["spatial_gt"][i]
                                 contact_gt_item = pred["contact_gt"][i]
-                                
+
                                 if isinstance(spatial_gt_item, list):
-                                    spatial_gt_tensor = torch.tensor(spatial_gt_item, dtype=torch.long, device=pred["attention_distribution"].device)
+                                    spatial_gt_tensor = torch.tensor(
+                                        spatial_gt_item,
+                                        dtype=torch.long,
+                                        device=pred["attention_distribution"].device,
+                                    )
                                 else:
                                     spatial_gt_tensor = spatial_gt_item.clone().detach()
-                                    
+
                                 if isinstance(contact_gt_item, list):
-                                    contact_gt_tensor = torch.tensor(contact_gt_item, dtype=torch.long, device=pred["attention_distribution"].device)
+                                    contact_gt_tensor = torch.tensor(
+                                        contact_gt_item,
+                                        dtype=torch.long,
+                                        device=pred["attention_distribution"].device,
+                                    )
                                 else:
                                     contact_gt_tensor = contact_gt_item.clone().detach()
-                                
-                                spatial_label[i, : len(spatial_gt_tensor)] = spatial_gt_tensor
-                                contact_label[i, : len(contact_gt_tensor)] = contact_gt_tensor
-                            
-                            losses["spatial_relation_loss"] = mlm_loss(pred["spatial_distribution"], spatial_label)
-                            losses["contact_relation_loss"] = mlm_loss(pred["contact_distribution"], contact_label)
+
+                                spatial_label[i, : len(spatial_gt_tensor)] = (
+                                    spatial_gt_tensor
+                                )
+                                contact_label[i, : len(contact_gt_tensor)] = (
+                                    contact_gt_tensor
+                                )
+
+                            losses["spatial_relation_loss"] = mlm_loss(
+                                pred["spatial_distribution"], spatial_label
+                            )
+                            losses["contact_relation_loss"] = mlm_loss(
+                                pred["contact_distribution"], contact_label
+                            )
                         else:
-                            spatial_label = torch.zeros([len(pred["spatial_gt"]), 6], dtype=torch.float32).to(device=pred["attention_distribution"].device)
-                            contact_label = torch.zeros([len(pred["contact_gt"]), 17], dtype=torch.float32).to(device=pred["attention_distribution"].device)
+                            spatial_label = torch.zeros(
+                                [len(pred["spatial_gt"]), 6], dtype=torch.float32
+                            ).to(device=pred["attention_distribution"].device)
+                            contact_label = torch.zeros(
+                                [len(pred["contact_gt"]), 17], dtype=torch.float32
+                            ).to(device=pred["attention_distribution"].device)
                             for i in range(len(pred["spatial_gt"])):
                                 # Handle spatial_gt and contact_gt which might be lists or tensors
                                 spatial_gt_item = pred["spatial_gt"][i]
                                 contact_gt_item = pred["contact_gt"][i]
-                                
+
                                 if isinstance(spatial_gt_item, list):
                                     spatial_indices = spatial_gt_item
                                 else:
                                     spatial_indices = spatial_gt_item.tolist()
-                                    
+
                                 if isinstance(contact_gt_item, list):
                                     contact_indices = contact_gt_item
                                 else:
                                     contact_indices = contact_gt_item.tolist()
-                                
+
                                 spatial_label[i, spatial_indices] = 1
                                 contact_label[i, contact_indices] = 1
-                            
-                            losses["spatial_relation_loss"] = bce_loss(pred["spatial_distribution"], spatial_label)
-                            losses["contact_relation_loss"] = bce_loss(pred["contact_distribution"], contact_label)
+
+                            losses["spatial_relation_loss"] = bce_loss(
+                                pred["spatial_distribution"], spatial_label
+                            )
+                            losses["contact_relation_loss"] = bce_loss(
+                                pred["contact_distribution"], contact_label
+                            )
                 else:
                     raise ValueError(f"Model type '{conf.model_type}' not supported")
             else:
@@ -1046,7 +1062,6 @@ if __name__ == "__main__":
                 logger.info("Loss stats - %s", mn.to_dict())
                 start = time.time()
 
-        # Log average train loss for this epoch
         avg_train_loss = np.mean(epoch_train_losses)
         avg_train_loss_components = {
             k: round(
@@ -1054,21 +1069,21 @@ if __name__ == "__main__":
             )
             for k in epoch_train_loss_components[0].keys()
         }
-        logger.info(f"Epoch {epoch} - Average Train Loss: {avg_train_loss:.6f}")
         logger.info(
-            f"Epoch {epoch} - Average Train Loss Components: {avg_train_loss_components}"
+            "Epoch %d | avg_train_loss=%.6f | components=%s | evaluating",
+            epoch,
+            avg_train_loss,
+            avg_train_loss_components,
         )
 
-        logger.info("Evaluating epoch %d", epoch)
         model.eval()
         if conf.dataset == "EASG":
             object_detector_EASG.is_train = False
         else:
             object_detector.is_train = False
+
         val_losses = []
         val_loss_components = []
-
-
         predictions_data = []
 
         if conf.dataset == "EASG":
@@ -1080,10 +1095,10 @@ if __name__ == "__main__":
             recall_no = {k: [] for k in list_k}
 
         with torch.no_grad():
-            test_pbar = tqdm(
+            # Eval Loop
+            for b in tqdm(
                 range(len(dataloader_test)), desc=f"Epoch {epoch}/{conf.nepoch} [Eval]"
-            )
-            for b in test_pbar:
+            ):
                 data = next(test_iter)
                 im_data = copy.deepcopy(data[0].cuda(0))
                 im_info = copy.deepcopy(data[1].cuda(0))
@@ -1228,7 +1243,7 @@ if __name__ == "__main__":
                     gt_boxes = copy.deepcopy(data[2].cuda(0))
                     num_boxes = copy.deepcopy(data[3].cuda(0))
                     gt_annotation = dataset_test.gt_annotations[data[4]]
-                    
+
                     entry = object_detector(
                         im_data,
                         im_info,
@@ -1261,10 +1276,19 @@ if __name__ == "__main__":
                         # Handle attention_gt which might be a list or tensor
                         attention_gt = pred["attention_gt"]
                         if isinstance(attention_gt, list):
-                            attention_label = torch.tensor(attention_gt, dtype=torch.long, device=attention_distribution.device)
+                            attention_label = torch.tensor(
+                                attention_gt,
+                                dtype=torch.long,
+                                device=attention_distribution.device,
+                            )
                         else:
-                            attention_label = attention_gt.clone().detach().to(device=attention_distribution.device).squeeze()
-                        
+                            attention_label = (
+                                attention_gt.clone()
+                                .detach()
+                                .to(device=attention_distribution.device)
+                                .squeeze()
+                            )
+
                         # Ensure attention_label is 1D for CrossEntropyLoss
                         if attention_label.dim() > 1:
                             attention_label = attention_label.flatten()
@@ -1311,17 +1335,17 @@ if __name__ == "__main__":
                                 # Handle spatial_gt and contact_gt which might be lists or tensors
                                 spatial_gt_item = pred["spatial_gt"][i]
                                 contact_gt_item = pred["contact_gt"][i]
-                                
+
                                 if isinstance(spatial_gt_item, list):
                                     spatial_indices = spatial_gt_item
                                 else:
                                     spatial_indices = spatial_gt_item.tolist()
-                                    
+
                                 if isinstance(contact_gt_item, list):
                                     contact_indices = contact_gt_item
                                 else:
                                     contact_indices = contact_gt_item.tolist()
-                                
+
                                 spatial_label[i, spatial_indices] = 1
                                 contact_label[i, contact_indices] = 1
 
@@ -1424,9 +1448,11 @@ if __name__ == "__main__":
 
                     # Skip evaluation for OED models since they're relation prediction models, not object detection models
                     if conf.model_type == "oed" and pred.get("skip_evaluation", False):
-                        logger.info("Skipping evaluation for OED model (relation prediction only)")
+                        logger.info(
+                            "Skipping evaluation for OED model (relation prediction only)"
+                        )
                         continue
-                    
+
                     evaluator.evaluate_scene_graph(gt_annotation, pred)
 
                     # Collect Action Genome predictions with per-sample metrics (only for the best epoch)
@@ -1514,9 +1540,11 @@ if __name__ == "__main__":
             }
         else:
             avg_val_loss_components = {}
-        logger.info(f"Epoch {epoch} - Average Validation Loss: {avg_val_loss:.6f}")
         logger.info(
-            f"Epoch {epoch} - Average Validation Loss Components: {avg_val_loss_components}"
+            "Epoch %d | avg_val_loss=%.6f | components=%s",
+            epoch,
+            avg_val_loss,
+            avg_val_loss_components,
         )
 
         # Dataset-specific evaluation and scoring

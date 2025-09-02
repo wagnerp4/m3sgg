@@ -6,17 +6,17 @@ import torch.nn as nn
 
 class SupConLoss(nn.Module):
     """Supervised Contrastive Learning loss implementation.
-    
+
     Based on the paper: https://arxiv.org/pdf/2004.11362.pdf
     Also supports unsupervised contrastive loss as used in SimCLR.
-    
+
     :param nn.Module: Base PyTorch module class
     :type nn.Module: class
     """
 
     def __init__(self, temperature=0.1, contrast_mode="all", base_temperature=0.07):
         """Initialize the supervised contrastive loss.
-        
+
         :param temperature: Temperature parameter for scaling, defaults to 0.1
         :type temperature: float, optional
         :param contrast_mode: Contrast mode ('all' or 'one'), defaults to "all"
@@ -33,10 +33,10 @@ class SupConLoss(nn.Module):
 
     def forward(self, features, labels=None, mask=None):
         """Compute contrastive loss for the model.
-        
+
         If both labels and mask are None, it degenerates to SimCLR unsupervised loss.
         Reference: https://arxiv.org/pdf/2002.05709.pdf
-        
+
         :param features: Hidden vector of shape [bsz, n_views, ...]
         :type features: torch.Tensor
         :param labels: Ground truth labels of shape [bsz], defaults to None

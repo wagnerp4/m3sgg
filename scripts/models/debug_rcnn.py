@@ -9,7 +9,7 @@ import os
 import cv2
 import torch
 
-from dataloader.action_genome import AG
+from datasets.action_genome import AG
 from lib.object_detector import detector
 
 

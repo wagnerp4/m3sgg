@@ -15,17 +15,17 @@ from lib.word_vectors import obj_edge_vectors
 
 class ObjectClassifier(nn.Module):
     """Module for computing object contexts and edge contexts in scene graphs.
-    
+
     Handles object classification and contextual feature extraction for
     spatial-temporal transformer-based scene graph generation.
-    
+
     :param nn.Module: Base PyTorch module class
     :type nn.Module: class
     """
 
     def __init__(self, mode="sgdet", obj_classes=None):
         """Initialize the object classifier.
-        
+
         :param mode: Classification mode ('predcls', 'sgcls', 'sgdet'), defaults to "sgdet"
         :type mode: str, optional
         :param obj_classes: List of object class names, defaults to None

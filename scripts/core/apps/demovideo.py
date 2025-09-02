@@ -16,7 +16,7 @@ from openai import OpenAI
 from PIL import Image, ImageDraw, ImageFont
 from torchvision.ops import nms
 
-from dataloader.action_genome import AG, cuda_collate_fn
+from datasets.action_genome import AG, cuda_collate_fn
 from lib.config import Config
 from lib.evaluation_recall import BasicSceneGraphEvaluator
 from lib.matcher import *
@@ -652,22 +652,18 @@ class SceneGraphDemo:
 def main():
     print("Starting Scene Graph Demo...")
     print("=" * 50)
-
-    # Check if model exists
     model_path = "output/model_best.tar"
     if not os.path.exists(model_path):
         print(f"Model file {model_path} not found!")
         print("Please ensure you have a trained model at the specified path.")
         return
 
-    # Check if data directory exists
     data_path = "action_genome"
     if not os.path.exists(data_path):
         print(f"Data directory {data_path} not found!")
         print("Please ensure the Action Genome dataset is in the correct location.")
         return
 
-    # Check for required annotation files
     required_files = [
         "action_genome/annotations/object_classes.txt",
         "action_genome/annotations/relationship_classes.txt",

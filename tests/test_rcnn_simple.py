@@ -8,7 +8,7 @@ import torch
 # Add the project root to the path
 sys.path.append(".")
 
-from dataloader.action_genome import AG
+from datasets.action_genome import AG
 from lib.object_detector import detector
 
 

@@ -34,7 +34,7 @@ def test_dataset_loading():
 
         # Try to import and load dataset
         try:
-            from dataloader.action_genome import AG
+            from datasets.action_genome import AG
 
             print("Successfully imported AG dataset")
 

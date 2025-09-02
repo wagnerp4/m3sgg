@@ -19,18 +19,18 @@ from .vqvae import VQVAEQuantizer
 
 class SceneLLM(nn.Module):
     """SceneLLM model for scene graph generation with language model integration.
-    
+
     Combines VQ-VAE quantization, Spatial Information Aggregator (SIA),
     optimal transport codebook updates, and LoRA-adapted language models
     for advanced scene graph generation and description.
-    
+
     :param nn.Module: Base PyTorch module class
     :type nn.Module: class
     """
-    
+
     def __init__(self, cfg, dataset):
         """Initialize the SceneLLM model.
-        
+
         :param cfg: Configuration object containing model parameters
         :type cfg: Config
         :param dataset: Dataset information for model setup
@@ -130,9 +130,7 @@ class SceneLLM(nn.Module):
 
         # Check for NaN in quantized vectors
         if torch.isnan(code_vecs).any():
-            print(
-                "WARNING: NaN detected in VQ-VAE output, using zero vectors"
-            )
+            print("WARNING: NaN detected in VQ-VAE output, using zero vectors")
             # Use in-place fill with zeros to preserve gradient tracking
             code_vecs.data.zero_()
 
@@ -188,35 +186,48 @@ class SceneLLM(nn.Module):
         enhanced_roi_features = self.roi_feature_projection(
             code_vecs
         )  # [R, D] -> [R, 2048]
-        
+
         # Check for NaN in enhanced ROI features
-        if torch.isnan(enhanced_roi_features).any() or torch.isinf(enhanced_roi_features).any():
-            print("WARNING: NaN/Inf detected in enhanced ROI features, using clipped values")
+        if (
+            torch.isnan(enhanced_roi_features).any()
+            or torch.isinf(enhanced_roi_features).any()
+        ):
+            print(
+                "WARNING: NaN/Inf detected in enhanced ROI features, using clipped values"
+            )
             # Use in-place operations to preserve gradient tracking
-            enhanced_roi_features.data = torch.nan_to_num(enhanced_roi_features.data, nan=0.0, posinf=1.0, neginf=-1.0)
+            enhanced_roi_features.data = torch.nan_to_num(
+                enhanced_roi_features.data, nan=0.0, posinf=1.0, neginf=-1.0
+            )
             enhanced_roi_features.data.clamp_(min=-10.0, max=10.0)
-        
+
         num_rois = enhanced_roi_features.size(0)
         frame_features = enhanced_frame_token.unsqueeze(0).expand(
             num_rois, -1
         )  # [R, 2048]
-        
+
         # Check for NaN in frame features
         if torch.isnan(frame_features).any() or torch.isinf(frame_features).any():
             print("WARNING: NaN/Inf detected in frame features, using clipped values")
             # Use in-place operations to preserve gradient tracking
-            frame_features.data = torch.nan_to_num(frame_features.data, nan=0.0, posinf=1.0, neginf=-1.0)
+            frame_features.data = torch.nan_to_num(
+                frame_features.data, nan=0.0, posinf=1.0, neginf=-1.0
+            )
             frame_features.data.clamp_(min=-10.0, max=10.0)
-        
+
         combined_features = enhanced_roi_features + frame_features  # [R, 2048]
-        
+
         # Final check for NaN in combined features before passing to decoder
         if torch.isnan(combined_features).any() or torch.isinf(combined_features).any():
-            print("WARNING: NaN/Inf detected in combined features, using clipped values")
+            print(
+                "WARNING: NaN/Inf detected in combined features, using clipped values"
+            )
             # Use in-place operations to preserve gradient tracking
-            combined_features.data = torch.nan_to_num(combined_features.data, nan=0.0, posinf=1.0, neginf=-1.0)
+            combined_features.data = torch.nan_to_num(
+                combined_features.data, nan=0.0, posinf=1.0, neginf=-1.0
+            )
             combined_features.data.clamp_(min=-10.0, max=10.0)
-        
+
         sttran_entry = entry.copy()  # Start with original entry
         sttran_entry["features"] = combined_features  # Enhanced 2048-dim features
 
@@ -228,12 +239,18 @@ class SceneLLM(nn.Module):
 
         # SGG prediction using STTran with enhanced features
         pred = self.decoder(sttran_entry)
-        
+
         # Check for NaN/inf in decoder outputs and clean them
-        for key in ["attention_distribution", "spatial_distribution", "contact_distribution"]:
+        for key in [
+            "attention_distribution",
+            "spatial_distribution",
+            "contact_distribution",
+        ]:
             if key in pred and isinstance(pred[key], torch.Tensor):
                 if torch.isnan(pred[key]).any() or torch.isinf(pred[key]).any():
-                    print(f"WARNING: NaN/Inf detected in {key}, using uniform distribution")
+                    print(
+                        f"WARNING: NaN/Inf detected in {key}, using uniform distribution"
+                    )
                     # Replace with uniform distribution over classes, preserving gradient tracking
                     with torch.no_grad():
                         uniform_dist = torch.ones_like(pred[key]) / pred[key].size(-1)
@@ -244,22 +261,31 @@ class SceneLLM(nn.Module):
                     pred[key].data.clamp_(min=1e-10, max=1.0)
                     # Ensure they sum to 1 (normalize) using in-place operations
                     pred[key].data.div_(pred[key].sum(dim=-1, keepdim=True))
-        
+
         # Check for NaN in object distributions
         if "distribution" in pred and isinstance(pred["distribution"], torch.Tensor):
-            if torch.isnan(pred["distribution"]).any() or torch.isinf(pred["distribution"]).any():
-                print("WARNING: NaN/Inf detected in object distribution, using uniform distribution")
+            if (
+                torch.isnan(pred["distribution"]).any()
+                or torch.isinf(pred["distribution"]).any()
+            ):
+                print(
+                    "WARNING: NaN/Inf detected in object distribution, using uniform distribution"
+                )
                 # Replace with uniform distribution, preserving gradient tracking
                 with torch.no_grad():
-                    uniform_dist = torch.ones_like(pred["distribution"]) / pred["distribution"].size(-1)
+                    uniform_dist = torch.ones_like(pred["distribution"]) / pred[
+                        "distribution"
+                    ].size(-1)
                 # Use in-place operations to preserve gradient tracking
                 pred["distribution"].data.copy_(uniform_dist)
             else:
                 # Ensure probabilities are in valid range using in-place operations
                 pred["distribution"].data.clamp_(min=1e-10, max=1.0)
                 # Ensure they sum to 1 (normalize) using in-place operations
-                pred["distribution"].data.div_(pred["distribution"].sum(dim=-1, keepdim=True))
-        
+                pred["distribution"].data.div_(
+                    pred["distribution"].sum(dim=-1, keepdim=True)
+                )
+
         pred.update(
             {
                 "vq_loss": vq_results["vq_loss"],
@@ -381,17 +407,17 @@ class SceneLLM(nn.Module):
 # Deprecated: Replace with SGG module
 class SGGDecoder(nn.Module):
     """Scene Graph Generation decoder with transformer architecture.
-    
+
     Decodes hidden representations into attention, spatial, and contact
     relation predictions using transformer encoder and linear heads.
-    
+
     :param nn.Module: Base PyTorch module class
     :type nn.Module: class
     """
-    
+
     def __init__(self, hidden_dim, attn_c, spat_c, cont_c):
         """Initialize the SGG decoder.
-        
+
         :param hidden_dim: Hidden dimension size
         :type hidden_dim: int
         :param attn_c: Number of attention relation classes
@@ -413,7 +439,7 @@ class SGGDecoder(nn.Module):
 
     def forward(self, seq):
         """Forward pass through the SGG decoder.
-        
+
         :param seq: Input sequence tensor of shape [B, T, D]
         :type seq: torch.Tensor
         :return: Dictionary containing attention, spatial, and contact predictions

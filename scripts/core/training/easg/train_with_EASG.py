@@ -11,7 +11,7 @@ from torch import optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 
-from dataloader.easg import EASG, cuda_collate_fn
+from datasets.easg import EASG, cuda_collate_fn
 from lib.AdamW import AdamW
 from lib.config import Config
 from lib.easg.object_detector_EASG import detector

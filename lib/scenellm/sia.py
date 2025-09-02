@@ -33,10 +33,10 @@ except ImportError:
 
 def build_hierarchical_graph(boxes):
     """Build hierarchical graph from bounding boxes using hierarchical clustering.
-    
+
     Creates a graph structure from spatial relationships between bounding boxes
     using hierarchical clustering algorithms.
-    
+
     :param boxes: Tensor of normalized bounding boxes, shape [N, 4]
     :type boxes: torch.Tensor
     :return: DGL graph or simple edge list based on hierarchical clustering
@@ -137,6 +137,7 @@ class SIA(nn.Module):
         self.pos_mlp = nn.Sequential(nn.Linear(4, dim), nn.ReLU(), nn.Linear(dim, dim))
         if DGL_AVAILABLE:
             from dgl.nn import GraphConv
+
             self.gcn1 = GraphConv(dim, dim, allow_zero_in_degree=True)
             self.gcn2 = GraphConv(dim, dim, allow_zero_in_degree=True)
         else:
@@ -157,37 +158,39 @@ class SIA(nn.Module):
         if torch.isnan(feats).any() or torch.isinf(feats).any():
             print("WARNING: NaN/Inf detected in SIA input features, using fallback")
             return torch.zeros(self.dim, device=feats.device)
-        
+
         if torch.isnan(boxes).any() or torch.isinf(boxes).any():
             print("WARNING: NaN/Inf detected in SIA input boxes, using fallback")
             return torch.zeros(self.dim, device=feats.device)
 
         # Normalize boxes to prevent large values
         boxes = torch.clamp(boxes, min=-10.0, max=10.0)
-        
+
         pos = self.pos_mlp(boxes)  # [R, D]
-        
+
         # Check for NaN in positional encoding
         if torch.isnan(pos).any() or torch.isinf(pos).any():
-            print("WARNING: NaN/Inf detected in positional encoding, using mean of input")
+            print(
+                "WARNING: NaN/Inf detected in positional encoding, using mean of input"
+            )
             return feats.mean(0)
-        
+
         h = feats + pos  # [R, D]
 
         if DGL_AVAILABLE:
             g = build_hierarchical_graph(boxes)  # DGL graph
             g = dgl.add_self_loop(g)  # Add self-loops to handle 0-in-degree nodes
             g = g.to(feats.device)
-            
+
             # First GCN layer with NaN checking
             h = self.gcn1(g, h)
             if torch.isnan(h).any() or torch.isinf(h).any():
                 print("WARNING: NaN detected in GCN1 output, using mean of input")
                 h = feats.mean(0, keepdim=True).expand_as(h)
-            
+
             h = F.relu(h)
             h = self.dropout(h)
-            
+
             # Second GCN layer with NaN checking
             h = self.gcn2(g, h)
             if torch.isnan(h).any() or torch.isinf(h).any():
@@ -204,10 +207,10 @@ class SIA(nn.Module):
 
         # Aggregate to single frame token ("Chinese character" representation)
         frame_token = h.mean(0)  # [D]
-        
+
         # Final NaN check for output
         if torch.isnan(frame_token).any() or torch.isinf(frame_token).any():
             print("WARNING: NaN detected in SIA output, using mean of input")
             return feats.mean(0)
-        
+
         return frame_token  # [D]

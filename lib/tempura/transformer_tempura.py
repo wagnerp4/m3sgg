@@ -109,7 +109,7 @@ class TransformerDecoder(nn.Module):
 
 class transformer(nn.Module):
     """Spatial Temporal Transformer.
-    
+
     :param local_attention: spatial encoder
     :type local_attention: object
     :param global_attention: temporal decoder

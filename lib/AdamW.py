@@ -41,7 +41,7 @@ class AdamW(Optimizer):
         amsgrad=False,
     ):
         """Initialize the AdamW optimizer.
-        
+
         :param params: Iterable of parameters to optimize
         :type params: iterable
         :param lr: Learning rate, defaults to 1e-3
@@ -72,7 +72,7 @@ class AdamW(Optimizer):
 
     def __setstate__(self, state):
         """Set the state of the optimizer.
-        
+
         :param state: State dictionary to restore
         :type state: dict
         :return: None
@@ -84,7 +84,7 @@ class AdamW(Optimizer):
 
     def step(self, closure=None):
         """Perform a single optimization step.
-        
+
         :param closure: A closure that reevaluates the model and returns the loss, defaults to None
         :type closure: callable, optional
         :return: Loss value if closure is provided

@@ -8,15 +8,14 @@ to work with OmegaConf for enhanced configuration management, validation, and in
 :version: 0.1.0
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Any, Union
-from omegaconf import MISSING
+from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
 class BaseConfig:
     """Base configuration class with common parameters for all models.
-    
+
     :param mode: Training mode (predcls/sgcls/sgdet)
     :type mode: str
     :param save_path: Path to save model outputs
@@ -43,7 +42,12 @@ class BaseConfig:
     :type dec_layer: int
     :param bce_loss: Use BCE loss instead of multi-label margin loss
     :type bce_loss: bool
+    :param device: Torch device string (e.g., cuda:0, cpu)
+    :type device: str
+    :param seed: Global random seed
+    :type seed: int
     """
+
     mode: str = "predcls"
     save_path: str = "output"
     model_path: str = "weights/predcls.tar"
@@ -57,22 +61,26 @@ class BaseConfig:
     enc_layer: int = 1
     dec_layer: int = 3
     bce_loss: bool = False
+    device: str = "cuda:0"
+    seed: int = 42
+    num_workers: int = 0
 
 
 @dataclass
 class STTRANConfig(BaseConfig):
     """Configuration for STTRAN model.
-    
+
     :param model_type: Model type identifier
     :type model_type: str
     """
+
     model_type: str = "sttran"
 
 
 @dataclass
 class STKETConfig(BaseConfig):
     """Configuration for STKET model.
-    
+
     :param model_type: Model type identifier
     :type model_type: str
     :param enc_layer_num: Number of encoder layers
@@ -96,6 +104,7 @@ class STKETConfig(BaseConfig):
     :param eval: Evaluation mode
     :type eval: bool
     """
+
     model_type: str = "stket"
     enc_layer_num: int = 1
     dec_layer_num: int = 3
@@ -112,7 +121,7 @@ class STKETConfig(BaseConfig):
 @dataclass
 class TempuraConfig(BaseConfig):
     """Configuration for Tempura model.
-    
+
     :param model_type: Model type identifier
     :type model_type: str
     :param obj_head: Object classification head type
@@ -158,6 +167,7 @@ class TempuraConfig(BaseConfig):
     :param tracking: Enable tracking
     :type tracking: bool
     """
+
     model_type: str = "tempura"
     obj_head: str = "gmm"
     rel_head: str = "gmm"
@@ -185,17 +195,18 @@ class TempuraConfig(BaseConfig):
 @dataclass
 class EASGConfig(BaseConfig):
     """Configuration for EASG model.
-    
+
     :param model_type: Model type identifier
     :type model_type: str
     """
+
     model_type: str = "EASG"
 
 
 @dataclass
 class SceneLLMConfig(BaseConfig):
     """Configuration for SceneLLM model.
-    
+
     :param model_type: Model type identifier
     :type model_type: str
     :param embed_dim: Embedding dimension for VQ-VAE
@@ -229,6 +240,7 @@ class SceneLLMConfig(BaseConfig):
     :param disable_checkpoint_saving: Disable checkpoint saving
     :type disable_checkpoint_saving: bool
     """
+
     model_type: str = "scenellm"
     embed_dim: int = 1024
     codebook_size: int = 8192
@@ -250,7 +262,7 @@ class SceneLLMConfig(BaseConfig):
 @dataclass
 class OEDConfig(BaseConfig):
     """Configuration for OED model.
-    
+
     :param model_type: Model type identifier
     :type model_type: str
     :param num_queries: Number of query slots for OED
@@ -292,6 +304,7 @@ class OEDConfig(BaseConfig):
     :param query_temporal_interaction: Enable query temporal interaction
     :type query_temporal_interaction: bool
     """
+
     model_type: str = "oed"
     num_queries: int = 100
     dec_layers_hopd: int = 6
@@ -327,7 +340,7 @@ MODEL_CONFIGS = {
 
 def get_config_class(model_type: str):
     """Get the appropriate configuration class for a model type.
-    
+
     :param model_type: The model type identifier
     :type model_type: str
     :return: The configuration class for the model type
@@ -335,6 +348,8 @@ def get_config_class(model_type: str):
     :raises ValueError: If the model type is not supported
     """
     if model_type not in MODEL_CONFIGS:
-        raise ValueError(f"Unsupported model type: {model_type}. "
-                        f"Supported types: {list(MODEL_CONFIGS.keys())}")
+        raise ValueError(
+            f"Unsupported model type: {model_type}. "
+            f"Supported types: {list(MODEL_CONFIGS.keys())}"
+        )
     return MODEL_CONFIGS[model_type]

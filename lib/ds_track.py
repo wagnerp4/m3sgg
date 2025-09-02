@@ -12,10 +12,10 @@ import torch.nn.functional as F
 
 def box_xyxy_to_xywh(x):
     """Convert bounding box from xyxy format to xywh format.
-    
+
     Converts bounding box coordinates from (x0, y0, x1, y1) format to
     (x, y, width, height) format.
-    
+
     :param x: Bounding box tensor in xyxy format
     :type x: torch.Tensor
     :return: Bounding box tensor in xywh format
@@ -28,10 +28,10 @@ def box_xyxy_to_xywh(x):
 
 def get_sequence(entry, gt_annotation, shape, task="sgcls"):
     """Get sequence information for scene graph generation tasks.
-    
+
     Processes detection results and ground truth annotations to prepare
     sequence data for different scene graph generation tasks.
-    
+
     :param entry: Detection results containing bboxes and distributions
     :type entry: dict
     :param gt_annotation: Ground truth annotations

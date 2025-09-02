@@ -6,10 +6,10 @@ from lib.fpn.box_utils import bbox_overlaps
 
 def assign_relations(prediction, gt_annotations, assign_IOU_threshold):
     """Assign relations between predicted detections and ground truth annotations.
-    
+
     Matches predicted bounding boxes with ground truth annotations based on IoU threshold
     and prepares relation data for scene graph generation training.
-    
+
     :param prediction: Results from FasterRCNN containing predicted boxes, labels, scores, and features
     :type prediction: dict
     :param gt_annotations: Ground-truth annotations with person info and objects

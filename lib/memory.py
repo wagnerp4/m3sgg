@@ -18,10 +18,10 @@ def memory_computation(
     include_bg_mem=False,
 ):
     """Compute memory embeddings for scene graph generation.
-    
+
     Generates memory embeddings for objects and relations based on uncertainty values
     and statistical computations for improved scene graph generation performance.
-    
+
     :param unc_vals: Uncertainty values object containing statistics
     :type unc_vals: uncertainty_values
     :param output_dir: Output directory for saving embeddings

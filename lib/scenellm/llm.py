@@ -19,14 +19,14 @@ except ImportError:
 
 class SceneLLMLoRA(nn.Module):
     """SceneLLM with LoRA (Low-Rank Adaptation) for efficient fine-tuning.
-    
+
     Implements LoRA adaptation on language models for scene graph generation
     with fallback support when transformers library is unavailable.
-    
+
     :param nn.Module: Base PyTorch module class
     :type nn.Module: class
     """
-    
+
     def __init__(
         self,
         model_name,
@@ -36,7 +36,7 @@ class SceneLLMLoRA(nn.Module):
         dropout=0.05,
     ):
         """Initialize SceneLLM with LoRA adaptation.
-        
+
         :param model_name: Name of the base language model (e.g., 'google/gemma-2-2b')
         :type model_name: str
         :param fallback_dim: Dimension for fallback when transformers unavailable, defaults to None
@@ -107,10 +107,10 @@ class SceneLLMLoRA(nn.Module):
                 if torch.isnan(token_embeds).any() or torch.isinf(token_embeds).any():
                     print("WARNING: NaN detected in LLM input, using fallback")
                     return torch.zeros_like(token_embeds)
-                
+
                 # Clamp input values to prevent overflow in LLM
                 token_embeds = torch.clamp(token_embeds, min=-10.0, max=10.0)
-                
+
                 outputs = self.model(inputs_embeds=token_embeds)
                 result = outputs.last_hidden_state  # [B, T, D]
 

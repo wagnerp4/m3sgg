@@ -10,10 +10,10 @@ from lib.fpn.box_intersections_cpu.bbox import bbox_overlaps as bbox_overlaps_np
 
 def bbox_loss(prior_boxes, deltas, gt_boxes, eps=1e-4, scale_before=1):
     """Compute bounding box regression loss.
-    
+
     Computes smooth L1 loss for predicting ground truth boxes from prior boxes
     using delta transformations.
-    
+
     :param prior_boxes: Prior bounding boxes of shape [num_boxes, 4] (x1, y1, x2, y2)
     :type prior_boxes: torch.Tensor
     :param deltas: Predicted box deltas of shape [num_boxes, 4] (tx, ty, th, tw)
@@ -43,10 +43,10 @@ def bbox_loss(prior_boxes, deltas, gt_boxes, eps=1e-4, scale_before=1):
 
 def bbox_preds(boxes, deltas):
     """Convert predicted deltas to bounding box coordinates.
-    
+
     Transforms predicted deltas along with prior boxes into
     (x1, y1, x2, y2) coordinate representation.
-    
+
     :param boxes: Prior boxes in (x1, y1, x2, y2) format
     :type boxes: torch.Tensor
     :param deltas: Predicted offsets (tx, ty, tw, th)
@@ -137,10 +137,10 @@ def bbox_intersections(box_a, box_b):
 
 def bbox_overlaps(box_a, box_b):
     """Compute Jaccard overlap (IoU) between two sets of bounding boxes.
-    
+
     Calculates intersection over union (IoU) for all pairs of boxes between
     two sets. IoU = A ∩ B / A ∪ B = A ∩ B / (area(A) + area(B) - A ∩ B)
-    
+
     :param box_a: First set of bounding boxes, shape [num_objects, 4]
     :type box_a: torch.Tensor
     :param box_b: Second set of bounding boxes, shape [num_priors, 4]

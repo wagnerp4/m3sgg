@@ -43,10 +43,12 @@ from PyQt5.QtWidgets import (
 )
 
 # Import the necessary modules from the codebase
-from dataloader.action_genome import AG, cuda_collate_fn
-from dataloader.EASG import EASG
-from dataloader.EASG import cuda_collate_fn as easg_cuda_collate_fn
+from datasets.action_genome import AG, cuda_collate_fn
+from datasets.easg import EASG
+from datasets.easg import cuda_collate_fn as easg_cuda_collate_fn
 from lib.config import Config
+from lib.easg.object_detector_EASG import detector as detector_EASG
+from lib.easg.sttran_EASG import STTran as STTran_EASG
 from lib.evaluation_recall import BasicSceneGraphEvaluator
 from lib.matcher import HungarianMatcher
 from lib.nlp.summarization_wrapper import (
@@ -56,9 +58,7 @@ from lib.nlp.summarization_wrapper import (
     T5SummarizationWrapper,
 )
 from lib.object_detector import detector
-from lib.easg.object_detector_EASG import detector as detector_EASG
 from lib.sttran import STKET, STTran
-from lib.easg.sttran_EASG import STTran as STTran_EASG
 from lib.tempura.tempura import TEMPURA
 from lib.track import get_sequence
 

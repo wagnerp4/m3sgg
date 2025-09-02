@@ -6,17 +6,17 @@ import torch.nn as nn
 
 class TransformerEncoderLayer(nn.Module):
     """Transformer encoder layer with multi-head attention and feed-forward network.
-    
+
     Implements a single layer of the transformer encoder with self-attention mechanism,
     layer normalization, and position-wise feed-forward network.
-    
+
     :param nn.Module: Base PyTorch module class
     :type nn.Module: class
     """
-    
+
     def __init__(self, embed_dim=1936, nhead=4, dim_feedforward=2048, dropout=0.1):
         """Initialize the transformer encoder layer.
-        
+
         :param embed_dim: Embedding dimension, defaults to 1936
         :type embed_dim: int, optional
         :param nhead: Number of attention heads, defaults to 4
@@ -42,7 +42,7 @@ class TransformerEncoderLayer(nn.Module):
 
     def forward(self, src, input_key_padding_mask):
         """Forward pass through the transformer encoder layer.
-        
+
         :param src: Source sequence tensor
         :type src: torch.Tensor
         :param input_key_padding_mask: Mask for padding tokens
@@ -66,17 +66,17 @@ class TransformerEncoderLayer(nn.Module):
 
 class TransformerDecoderLayer(nn.Module):
     """Transformer decoder layer with masked self-attention and cross-attention.
-    
+
     Implements a single layer of the transformer decoder with masked self-attention,
     encoder-decoder attention, and position-wise feed-forward network.
-    
+
     :param nn.Module: Base PyTorch module class
     :type nn.Module: class
     """
-    
+
     def __init__(self, embed_dim=1936, nhead=4, dim_feedforward=2048, dropout=0.1):
         """Initialize the transformer decoder layer.
-        
+
         :param embed_dim: Embedding dimension, defaults to 1936
         :type embed_dim: int, optional
         :param nhead: Number of attention heads, defaults to 4
@@ -162,7 +162,7 @@ class TransformerDecoder(nn.Module):
 
 class transformer(nn.Module):
     """Spatial Temporal Transformer.
-    
+
     :param local_attention: spatial encoder
     :type local_attention: object
     :param global_attention: temporal decoder

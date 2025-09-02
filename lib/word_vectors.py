@@ -18,10 +18,10 @@ _word_vector_cache = {}
 
 def create_ssl_context():
     """Create an unverified SSL context to bypass certificate verification.
-    
+
     Creates an SSL context with disabled hostname and certificate verification
     to handle SSL certificate issues when downloading word vectors from external sources.
-    
+
     :return: SSL context with verification disabled
     :rtype: ssl.SSLContext
     """
@@ -33,10 +33,10 @@ def create_ssl_context():
 
 def download_word_vectors(wv_type, wv_dir, wv_dim):
     """Download word vectors if they don't exist.
-    
+
     Downloads pre-trained word vectors from Stanford NLP resources and extracts
     the specific dimension file needed for the model.
-    
+
     :param wv_type: Type of word vectors to download (e.g., 'glove.6B')
     :type wv_type: str
     :param wv_dir: Directory to save the word vectors
@@ -80,9 +80,9 @@ def download_word_vectors(wv_type, wv_dir, wv_dim):
 
 def get_cache_path(wv_type, wv_dir, wv_dim):
     """Get the path for the cached word vectors.
-    
+
     Constructs the file path for cached word vector pickle files.
-    
+
     :param wv_type: Type of word vectors (e.g., 'glove.6B')
     :type wv_type: str
     :param wv_dir: Directory containing word vectors
@@ -100,10 +100,10 @@ def get_cache_path(wv_type, wv_dir, wv_dim):
 
 def get_cache_status():
     """Get the status of word vector caches.
-    
+
     Returns information about both memory and disk caches for word vectors,
     including cache sizes and available cached files.
-    
+
     :return: Dictionary containing cache status information
     :rtype: dict
     """
@@ -130,10 +130,10 @@ def get_cache_status():
 
 def clear_word_vector_cache(wv_type=None, wv_dir="data", wv_dim=None):
     """Clear word vector cache (both memory and disk cache).
-    
+
     Clears cached word vectors from memory and optionally from disk.
     Can target specific word vector types and dimensions or clear all caches.
-    
+
     :param wv_type: Type of word vectors to clear, defaults to None
     :type wv_type: str, optional
     :param wv_dir: Directory containing cached files, defaults to "data"
@@ -174,10 +174,10 @@ def clear_word_vector_cache(wv_type=None, wv_dir="data", wv_dim=None):
 
 def load_word_vectors(wv_type="glove.6B", wv_dir="data", wv_dim=200):
     """Load word vectors from file or download if not present.
-    
+
     Loads pre-trained word vectors with caching support. Checks memory cache first,
     then disk cache, and finally downloads from external source if needed.
-    
+
     :param wv_type: Type of word vectors to load, defaults to "glove.6B"
     :type wv_type: str, optional
     :param wv_dir: Directory containing word vectors, defaults to "data"
@@ -234,10 +234,10 @@ def load_word_vectors(wv_type="glove.6B", wv_dir="data", wv_dim=200):
 
 def obj_edge_vectors(names, wv_type="glove.6B", wv_dir="data", wv_dim=200):
     """Create word vectors for object classes.
-    
+
     Generates word vector embeddings for a list of object class names using
     pre-trained word vectors. Returns zero vectors for unknown words.
-    
+
     :param names: List of object class names
     :type names: list
     :param wv_type: Type of word vectors to use, defaults to "glove.6B"
@@ -266,10 +266,10 @@ def obj_edge_vectors(names, wv_type="glove.6B", wv_dir="data", wv_dim=200):
 
 def verb_edge_vectors(names, wv_type="glove.6B", wv_dir=None, wv_dim=300):
     """Create word vectors for verb classes.
-    
+
     Generates word vector embeddings for a list of verb class names using
     pre-trained word vectors. Currently uses the same logic as obj_edge_vectors.
-    
+
     :param names: List of verb class names
     :type names: list
     :param wv_type: Type of word vectors to use, defaults to "glove.6B"

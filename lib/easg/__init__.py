@@ -1,4 +1,5 @@
-from dataloader.easg import EASG
+from datasets.easg import EASG
+
 from .sttran_EASG import ObjectClassifier
 
 __all__ = [

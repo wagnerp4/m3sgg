@@ -13,9 +13,9 @@ try {
     exit 1
 }
 
-# Check if app.py exists
-if (-not (Test-Path "app.py")) {
-    Write-Host "Error: app.py not found in current directory" -ForegroundColor Red
+# Check if app.py exists in scripts/core directory
+if (-not (Test-Path "scripts/core/app.py")) {
+    Write-Host "Error: app.py not found in scripts/core directory" -ForegroundColor Red
     exit 1
 }
 
@@ -24,4 +24,4 @@ Write-Host "Press Ctrl+C to stop the application" -ForegroundColor Yellow
 Write-Host ""
 
 # Start streamlit
-streamlit run app.py
+streamlit run scripts/core/app.py

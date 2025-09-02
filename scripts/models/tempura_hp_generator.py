@@ -8,9 +8,9 @@ Supports both grid search and random search methods.
 import argparse
 import json
 import random
+import sys
 from itertools import product
 from typing import Any, Dict, List
-import sys
 
 
 class TEMPURAHyperparameterGenerator:

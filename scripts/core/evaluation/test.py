@@ -2,11 +2,15 @@ import numpy as np
 
 np.set_printoptions(precision=4)
 import copy
+import os
+import sys
 from time import time
 
 import torch
 
-from dataloader.action_genome import AG, cuda_collate_fn
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+from datasets.action_genome import AG, cuda_collate_fn
 from lib.config import Config
 from lib.evaluation_recall import BasicSceneGraphEvaluator
 from lib.matcher import *

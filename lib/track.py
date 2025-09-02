@@ -8,10 +8,10 @@ from lib.fpn.box_utils import bbox_overlaps
 
 def generalized_box_iou(boxes1, boxes2):
     """Compute Generalized Intersection over Union (GIoU) between two sets of boxes.
-    
+
     Based on the paper from https://giou.stanford.edu/
     The boxes should be in [x0, y0, x1, y1] format.
-    
+
     :param boxes1: First set of bounding boxes
     :type boxes1: torch.Tensor
     :param boxes2: Second set of bounding boxes
@@ -36,7 +36,7 @@ def generalized_box_iou(boxes1, boxes2):
 
 def box_iou(boxes1, boxes2):
     """Compute Intersection over Union (IoU) between two sets of boxes.
-    
+
     :param boxes1: First set of bounding boxes
     :type boxes1: torch.Tensor
     :param boxes2: Second set of bounding boxes
@@ -61,7 +61,7 @@ def box_iou(boxes1, boxes2):
 
 def box_area(boxes):
     """Compute the area of bounding boxes.
-    
+
     :param boxes: Bounding boxes in [x0, y0, x1, y1] format
     :type boxes: torch.Tensor
     :return: Areas of the bounding boxes

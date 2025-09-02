@@ -20,17 +20,17 @@ Encoder = nn.TransformerEncoder
 
 class PositionalEncoding(nn.Module):
     """Positional encoding for transformer-based models.
-    
+
     Implements sinusoidal positional encoding to provide temporal information
     to transformer architectures for sequence modeling.
-    
+
     :param nn.Module: Base PyTorch module class
     :type nn.Module: class
     """
-    
+
     def __init__(self, d_model: int, dropout: float = 0.1, max_len: int = 5000):
         """Initialize positional encoding.
-        
+
         :param d_model: Model dimension
         :type d_model: int
         :param dropout: Dropout probability, defaults to 0.1
@@ -54,7 +54,7 @@ class PositionalEncoding(nn.Module):
 
     def forward(self, x: torch.Tensor, indices=None) -> torch.Tensor:
         """Apply positional encoding to input tensor.
-        
+
         :param x: Input tensor of shape [batch_size, seq_len, embedding_dim]
         :type x: torch.Tensor
         :param indices: Optional indices for position selection, defaults to None
@@ -72,11 +72,11 @@ class PositionalEncoding(nn.Module):
 
 class ObjectClassifier(nn.Module):
     """Tempura object classifier for computing object and edge contexts.
-    
+
     Implements the Tempura model's approach to object classification
     and contextual feature extraction with memory-augmented learning
     and uncertainty estimation capabilities.
-    
+
     :param nn.Module: Base PyTorch module class
     :type nn.Module: class
     """

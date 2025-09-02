@@ -15,10 +15,10 @@ from torch.autograd import Variable
 
 def optimistic_restore(network, state_dict):
     """Optimistically restore network weights from state dictionary.
-    
+
     Attempts to load weights from state_dict into network, handling size mismatches
     gracefully by skipping incompatible parameters.
-    
+
     :param network: Neural network to restore weights to
     :type network: torch.nn.Module
     :param state_dict: State dictionary containing weights
@@ -175,9 +175,9 @@ def load_net(fname, net):
 
 def batch_index_iterator(len_l, batch_size, skip_end=True):
     """Provides indices that iterate over a list in batches.
-    
+
     Creates a generator that yields (start, end) tuples for batch processing.
-    
+
     :param len_l: Size of the list to iterate over
     :type len_l: int
     :param batch_size: Size of each batch
@@ -197,9 +197,9 @@ def batch_index_iterator(len_l, batch_size, skip_end=True):
 
 def batch_map(f, a, batch_size):
     """Maps a function over an array in chunks of specified batch size.
-    
+
     Applies function f to array a in batches to manage memory usage.
-    
+
     :param f: Function to apply, must take (batch_size, dim_a) and return (batch_size, something)
     :type f: callable
     :param a: Array to process of shape (num_rows, dim_a)
@@ -379,9 +379,9 @@ def enumerate_imsize(im_sizes):
 
 def argsort_desc(scores):
     """Returns indices that sort scores in descending order.
-    
+
     Computes indices for descending sort across arbitrary dimensional arrays.
-    
+
     :param scores: Array of arbitrary size to sort
     :type scores: numpy.ndarray
     :return: Array of indices for descending sort, shape [numel(scores), dim(scores)]
@@ -448,20 +448,20 @@ def transpose_packed_sequence_inds(lengths):
 
 def right_shift_packed_sequence_inds(lengths):
     """Right shift packed sequence indices to accommodate BOS tokens.
-    
+
     :param lengths: List of sequence lengths, e.g. [2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1]
     :type lengths: list
     :return: Permutation indices for shifting sequences right to accommodate BOS tokens
     :rtype: list
-    
+
     Visual example with lengths = [4, 3, 2, 1]:
-    
+
     Before:
         a (0)  b (4)  c (7) d (8)
         a (1)  b (5)
         a (2)  b (6)
         a (3)
-    
+
     After:
         bos a (0)  b (4)  c (7)
         bos a (1)

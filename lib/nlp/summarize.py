@@ -11,11 +11,11 @@ from lib.nlp.summarization_wrapper import (
 
 def linearize_triples(triples):
     """Convert scene graph triples into natural language sentences.
-    
+
     Transforms subject-predicate-object triples into human-readable sentences
     using predefined relationship patterns for visual attention, spatial
     relationships, and physical interactions.
-    
+
     :param triples: List of (subject, predicate, object) tuples
     :type triples: list
     :return: List of natural language sentences

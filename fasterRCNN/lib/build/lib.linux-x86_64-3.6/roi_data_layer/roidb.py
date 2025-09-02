@@ -4,11 +4,12 @@ from __future__ import absolute_import, division, print_function
 
 import pdb
 
-import datasets
 import numpy as np
 import PIL
-from datasets.factory import get_imdb
 from model.utils.config import cfg
+
+import datasets
+from datasets.factory import get_imdb
 
 
 def prepare_roidb(imdb):
