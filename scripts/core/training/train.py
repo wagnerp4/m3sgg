@@ -1039,15 +1039,15 @@ if __name__ == "__main__":
 
             if b % 1000 == 0 and b >= 1000:
                 time_per_batch = (time.time() - start) / 1000
-                print(
-                    "\ne{:2d}  b{:5d}/{:5d}  {:.3f}s/batch, {:.1f}m/epoch".format(
-                        epoch,
-                        b,
-                        len(dataloader_train),
-                        time_per_batch,
-                        len(dataloader_train) * time_per_batch / 60,
-                    )
-                )
+                # print(
+                #     "\ne{:2d}  b{:5d}/{:5d}  {:.3f}s/batch, {:.1f}m/epoch".format(
+                #         epoch,
+                #         b,
+                #         len(dataloader_train),
+                #         time_per_batch,
+                #         len(dataloader_train) * time_per_batch / 60,
+                #     )
+                # )
                 logger.info(
                     "e%d  b%d/%d  %.3fs/batch, %.1fm/epoch",
                     epoch,
@@ -1058,7 +1058,7 @@ if __name__ == "__main__":
                 )
 
                 mn = pd.concat(tr[-1000:], axis=1).mean(1)
-                print(mn)
+                # print(mn)
                 logger.info("Loss stats - %s", mn.to_dict())
                 start = time.time()
 
@@ -1610,9 +1610,19 @@ if __name__ == "__main__":
                     object_memory = []
                     rel_memory = []
             if not conf.disable_checkpoint_saving:
-                torch.save(
-                    {"state_dict": model.state_dict()},
+                from lib.model_detector import save_checkpoint_with_metadata
+                save_checkpoint_with_metadata(
+                    model,
                     os.path.join(conf.save_path, "model_best.tar"),
+                    conf.model_type,
+                    conf.dataset,
+                    additional_metadata={
+                        "epoch": epoch,
+                        "best_score": best_score,
+                        "mode": conf.mode,
+                        "enc_layer": conf.enc_layer,
+                        "dec_layer": conf.dec_layer,
+                    }
                 )
                 logger.info("NEW BEST! Saved best checkpoint after %d epochs", epoch)
             else:
@@ -1621,9 +1631,20 @@ if __name__ == "__main__":
         if mrecall > best_Mrecall:
             best_Mrecall = mrecall
             if not conf.disable_checkpoint_saving:
-                torch.save(
-                    {"state_dict": model.state_dict()},
+                from lib.model_detector import save_checkpoint_with_metadata
+                save_checkpoint_with_metadata(
+                    model,
                     os.path.join(conf.save_path, "model_best_Mrecall.tar"),
+                    conf.model_type,
+                    conf.dataset,
+                    additional_metadata={
+                        "epoch": epoch,
+                        "best_mrecall": best_Mrecall,
+                        "mode": conf.mode,
+                        "enc_layer": conf.enc_layer,
+                        "dec_layer": conf.dec_layer,
+                        "checkpoint_type": "best_mrecall"
+                    }
                 )
                 logger.info(
                     "NEW BEST MRECALL! Saved best checkpoint after %d epochs", epoch

@@ -66,6 +66,7 @@ Hello. We are still working. Nothing to see here...
 - Feature Modules: A pretrained FasterRCNN model for Action Genome can be download [here](https://drive.google.com/file/d/1-u930Pk0JYz3ivS6V_HNTM1D5AxmN5Bs/view?usp=sharing). To use it extract it to this path `fasterRCNN/models/faster_rcnn_ag.pth`. Additional details can be found at https://github.com/jwyang/faster-rcnn.pytorch.
 - SGG Modules: We provide a [[checkpoint-link](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link)] for the best performing SGG model to try with the streamlit app. Please put it under `data/checkpoints/best_model.tar` or provide it as path in streamlit. If you want to try a different model to assess it's performance, follow the below training guide and place the checkpoint at `data/checkpoints`.
 - NLP-Modules:
+    - GloVe Embeddings
     - T5/Pegasus (Summarization)
     - Gemma3 270M (Action Anticipation, Language Modelling)
 
@@ -79,42 +80,11 @@ Action Genome: We use the dataset [Action Genome](https://www.actiongenome.org/#
 ```
 
 # Training and Evaluation
-Here are some example training commands using all different SGG modes, with the same dataset and model. The entire list of arguments can be refered to in the documentation or under `VidSgg/lib/config.py`.
-
-```python
-# Mode: PredCLS
-python scripts/core/training/train.py -mode predcls -datasize large -data_path data/action_genome -model sttran 
-# Mode: SGCLS
-python scripts/core/training/train.py -mode sgcls -datasize large -data_path data/action_genome -model sttran
-# Mode: SGdetCLS
-python scripts/core/training/train.py -mode sgdet -datasize large -data_path data/action_genome -model sttran
-
-# EASG-specific training
-python scripts/core/training/train_with_EASG.py -mode easgcls -datasize large -data_path data/EASG -model sttran
-# EASG random search
-python scripts/core/training/run_easg_rnd_search.py
-```
-
-```powershell
-# PowerShell batch training
-.\scripts\core\training\batch_train.ps1
-```
-
+Here is a quick command to get you going in the training, using the default model on easy mode:
 ```bash
-# Bash batch training
-./scripts/core/training/batch_train.sh
+python scripts/core/training/train.py -mode predcls -datasize large -data_path data/action_genome -model sttran
 ```
-
-Here are some example evaluation commands using all different SGG modes, with test.py.
-
-```python
-# Mode: PredCLS
-python scripts/core/evaluation/test.py -m predcls -datasize large -data_path $DATAPATH -model_path $MODELPATH
-# Mode: SGCLS
-python scripts/core/evaluation/test.py -m sgcls -datasize large -data_path $DATAPATH -model_path $MODELPATH
-# Mode: SGdetCLS
-python scripts/core/evaluation/test.py -m sgdet -datasize large -data_path $DATAPATH -model_path $MODELPATH
-```
+For detailed training commands, model-specific configurations, batch training scripts, and evaluation procedures, see the complete documentation [Training Documentation](https://wagnerp4.github.io/VidSgg/training.html) containing a complete training guide with all modes, models, and advanced configurations.
 
 <!-- # Demo Applications
 The project provides multiple interfaces for different use cases:
@@ -134,19 +104,20 @@ The project provides multiple interfaces for different use cases:
 - **Features**: Video visualization and analysis
 - **Best for**: Batch processing and video analysis -->
 
-<!-- ## Video Demo -->
-<!-- Click to view the demo video:
-[![Demo Video](https://img.shields.io/badge/📹_Watch_Demo_Video-blue?style=for-the-badge)](https://github.com/your-username/VidSgg/raw/main/assets/demo.mp4) -->
-
 # Streamlit Web App
-Required deps: pip install streamlit streamlit_chat
+Watch the VidSgg demo video:
+
+<div align="center">
+  <a href="https://youtu.be/VeVcv9HD2t8">
+    <img src="https://img.youtube.com/vi/VeVcv9HD2t8/maxresdefault.jpg" alt="VidSgg Demo Video" style="width:100%;max-width:800px;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.1);">
+  </a>
+  <br>
+  <p><strong>Click the thumbnail above to watch the full demo on YouTube</strong></p>
+</div>
+
 Start the modern web-based interface:
 ```powershell
 streamlit run scripts/core/apps/streamlit.py
-```
-Or use the provided launcher script:
-```powershell
-.\scripts\core\apps\run_streamlit.ps1
 ```
 The application will open at `http://localhost:8501`.
 

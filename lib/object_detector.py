@@ -234,12 +234,8 @@ class detector(nn.Module):
                     counter_image += 1
 
                 counter += 10
+                
             FINAL_BBOXES = torch.clamp(FINAL_BBOXES, 0)
-
-            # Debug information
-            print(f"[DEBUG] Found {FINAL_BBOXES.shape[0]} detections")
-            print(f"[DEBUG] FINAL_FEATURES shape: {FINAL_FEATURES.shape}")
-
             prediction = {
                 "FINAL_BBOXES": FINAL_BBOXES,
                 "FINAL_LABELS": FINAL_LABELS,
@@ -473,6 +469,7 @@ class detector(nn.Module):
                     )
                     entry = {
                         "boxes": torch.empty((0, 5), device=im_data.device),
+                        "labels": torch.empty((0,), dtype=torch.int64, device=im_data.device),
                         "scores": torch.empty((0,), device=im_data.device),
                         "distribution": torch.empty(
                             (0, len(self.object_classes) - 1), device=im_data.device
@@ -494,6 +491,7 @@ class detector(nn.Module):
 
                 entry = {
                     "boxes": FINAL_BBOXES,
+                    "labels": FINAL_LABELS,
                     "scores": FINAL_SCORES,
                     "distribution": FINAL_DISTRIBUTIONS,
                     "pred_labels": PRED_LABELS,

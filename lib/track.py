@@ -5,6 +5,8 @@ from torchvision.ops import nms
 
 from lib.fpn.box_utils import bbox_overlaps
 
+# TODO: Tracker class
+
 
 def generalized_box_iou(boxes1, boxes2):
     """Compute Generalized Intersection over Union (GIoU) between two sets of boxes.
@@ -112,18 +114,46 @@ def get_sequence(entry, gt_annotation, matcher, im_size, mode="predcls"):
                 # Apply NMS if needed
                 if "scores" in entry and entry["scores"].numel() > 0:
                     # Apply NMS to detected boxes
-                    for j in torch.argmax(entry["scores"], dim=1).unique():
+                    # Handle different score tensor dimensions
+                    if entry["scores"].dim() == 1:
+                        # 1D tensor - single score per detection
+                        unique_classes = torch.unique(entry["scores"])
+                    else:
+                        # 2D tensor - multiple scores per detection
+                        unique_classes = torch.argmax(entry["scores"], dim=1).unique()
+                    
+                    for j in unique_classes:
                         if j == 0:  # skip background
                             continue
-                        inds = torch.nonzero(
-                            torch.argmax(entry["scores"], dim=1) == j
-                        ).view(-1)
+                        # Handle different score tensor dimensions for finding indices
+                        if entry["scores"].dim() == 1:
+                            # 1D tensor - direct comparison
+                            inds = torch.nonzero(entry["scores"] == j).view(-1)
+                        else:
+                            # 2D tensor - use argmax
+                            inds = torch.nonzero(
+                                torch.argmax(entry["scores"], dim=1) == j
+                            ).view(-1)
                         if inds.numel() > 0:
-                            cls_scores = entry["scores"][inds, j]
+                            # Handle different score tensor dimensions for accessing scores
+                            if entry["scores"].dim() == 1:
+                                # 1D tensor - direct indexing
+                                cls_scores = entry["scores"][inds]
+                            else:
+                                # 2D tensor - use class index
+                                cls_scores = entry["scores"][inds, j]
                             _, order = torch.sort(cls_scores, 0, True)
 
-                            # Apply NMS
-                            keep = nms(boxes[inds][order], cls_scores[order], 0.5)
+                            # Apply NMS - ensure boxes have correct format (x1, y1, x2, y2)
+                            selected_boxes = boxes[inds][order]
+                            if selected_boxes.shape[1] == 5:
+                                # Remove first column (likely frame index) to get (x1, y1, x2, y2)
+                                selected_boxes = selected_boxes[:, 1:]
+                            elif selected_boxes.shape[1] != 4:
+                                # Skip NMS if boxes don't have expected format
+                                continue
+                            
+                            keep = nms(selected_boxes, cls_scores[order], 0.5)
 
                             # Update indices to keep only non-overlapping detections
                             not_keep = torch.LongTensor(
@@ -133,6 +163,12 @@ def get_sequence(entry, gt_annotation, matcher, im_size, mode="predcls"):
                                 # Handle overlapping detections
                                 anchor = boxes[inds][order][keep]
                                 remain = boxes[inds][order][not_keep]
+                                
+                                # Ensure boxes have correct format for GIoU calculation
+                                if anchor.shape[1] == 5:
+                                    anchor = anchor[:, 1:]  # Remove frame index
+                                if remain.shape[1] == 5:
+                                    remain = remain[:, 1:]  # Remove frame index
 
                                 if anchor.numel() > 0 and remain.numel() > 0:
                                     alignment = torch.argmax(

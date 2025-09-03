@@ -121,7 +121,7 @@ class Config(object):
         self.num_spatial_classes = 6
         self.num_contacting_classes = 17
         self.alpha = 0.5
-        self.oed_use_matching = False
+        self.oed_use_matching = True
         self.bbox_loss_coef = 2.5
         self.giou_loss_coef = 1.0
         self.obj_loss_coef = 1.0
@@ -141,7 +141,6 @@ class Config(object):
             "loss_spatial_ce": self.rel_loss_coef,
             "loss_contacting_ce": self.rel_loss_coef,
         }
-
         self.oed_losses = [
             "obj_labels",
             "boxes",

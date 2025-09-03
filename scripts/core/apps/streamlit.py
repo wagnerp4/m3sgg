@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 import tempfile
@@ -20,8 +21,18 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "lib"))
 
 try:
     from lib.track import get_sequence
-except ImportError:
-    print("Warning: Could not import get_sequence")
+except ImportError as e:
+    print(f"Warning: Could not import get_sequence: {e}")
+
+try:
+    from lib.model_detector import get_model_info_from_checkpoint
+    MODEL_DETECTOR_AVAILABLE = True
+    print("Model detector imported successfully")
+except ImportError as e:
+    print(f"Could not import model_detector: {e}")
+    print(f"Current working directory: {os.getcwd()}")
+    print(f"Python path: {sys.path}")
+    MODEL_DETECTOR_AVAILABLE = False
 
 st.set_page_config(
     page_title="VidSgg",
@@ -61,53 +72,84 @@ class StreamlitVideoProcessor:
         self.setup_models()
 
     def setup_models(self):
-        """Initialize models for video processing"""
+        """Initialize models for video processing with automatic model detection"""
         try:
             from datasets.action_genome import AG
+            from datasets.easg import EASG
             from lib.config import Config
             from lib.matcher import HungarianMatcher
+
             from lib.object_detector import detector
-            from lib.sttran import STTran
+            from lib.easg.object_detector_EASG import detector as detector_EASG
+
+            # Detect model type from checkpoint
+            if MODEL_DETECTOR_AVAILABLE:
+                model_info = get_model_info_from_checkpoint(self.model_path)
+                detected_model_type = model_info["model_type"]
+                detected_dataset = model_info["dataset"]
+                
+                if not detected_model_type:
+                    raise ValueError(f"Could not detect model type from checkpoint: {self.model_path}")
+                
+                print(f"Detected model type: {detected_model_type}")
+                print(f"Detected dataset: {detected_dataset}")
+            else:
+                # Fallback to default values if model detector is not available
+                detected_model_type = "sttran"  # Default fallback
+                detected_dataset = "action_genome"  # Default fallback
+                print(f"Model detector unavailable, using defaults: {detected_model_type}, {detected_dataset}")
 
             self.conf = Config()
             self.conf.mode = "sgdet"
-            self.conf.data_path = "data/action_genome"
+            
+            # Set dataset-specific configuration
+            if detected_dataset == "EASG":
+                self.conf.data_path = "data/EASG"
+                self.conf.dataset = "EASG"
+            else:
+                self.conf.data_path = "data/action_genome"
+                self.conf.dataset = "action_genome"
 
-            # Dataset
-            self.AG_dataset = AG(
-                mode="test",
-                datasize=self.conf.datasize,
-                data_path=self.conf.data_path,
-                filter_nonperson_box_frame=True,
-                filter_small_box=True,
-            )
+            # Initialize dataset
+            if detected_dataset == "EASG":
+                self.dataset = EASG(
+                    mode="test",
+                    data_path=self.conf.data_path,
+                )
+            else:
+                self.dataset = AG(
+                    mode="test",
+                    datasize=self.conf.datasize,
+                    data_path=self.conf.data_path,
+                    filter_nonperson_box_frame=True,
+                    filter_small_box=True,
+                )
 
             # Object Detector
-            self.object_detector = detector(
-                train=False,
-                object_classes=self.AG_dataset.object_classes,
-                use_SUPPLY=True,
-                mode=self.conf.mode,
-            ).to(device=self.device)
+            if detected_dataset == "EASG":
+                self.object_detector = detector_EASG(
+                    train=False,
+                    object_classes=self.dataset.obj_classes,
+                    use_SUPPLY=True,
+                    mode=self.conf.mode,
+                ).to(device=self.device)
+            else:
+                self.object_detector = detector(
+                    train=False,
+                    object_classes=self.dataset.object_classes,
+                    use_SUPPLY=True,
+                    mode=self.conf.mode,
+                ).to(device=self.device)
             self.object_detector.eval()
 
-            # SGG
-            # TODO: generalize SGG module to any model
-            self.model = STTran(
-                mode=self.conf.mode,
-                attention_class_num=len(self.AG_dataset.attention_relationships),
-                spatial_class_num=len(self.AG_dataset.spatial_relationships),
-                contact_class_num=len(self.AG_dataset.contacting_relationships),
-                obj_classes=self.AG_dataset.object_classes,
-                enc_layer_num=self.conf.enc_layer,
-                dec_layer_num=self.conf.dec_layer,
-            ).to(device=self.device)
+            # Initialize SGG model based on detected type
+            self.model = self._create_model_from_type(detected_model_type, detected_dataset)
 
-            # Checkpoint
+            # Load checkpoint
             if os.path.exists(self.model_path):
                 ckpt = torch.load(self.model_path, map_location=self.device)
                 self.model.load_state_dict(ckpt["state_dict"], strict=False)
-                print(f"Loaded model from {self.model_path}")
+                print(f"Loaded {detected_model_type} model from {self.model_path}")
             else:
                 raise FileNotFoundError(f"Model file {self.model_path} not found!")
 
@@ -118,6 +160,95 @@ class StreamlitVideoProcessor:
         except Exception as e:
             st.error(f"Failed to setup models: {e}")
             raise
+
+    def _create_model_from_type(self, model_type: str, dataset_type: str):
+        """Create model instance based on detected type and dataset.
+        
+        :param model_type: Detected model type
+        :type model_type: str
+        :param dataset_type: Detected dataset type  
+        :type dataset_type: str
+        :return: Initialized model
+        :rtype: nn.Module
+        """
+        if model_type == "sttran":
+            if dataset_type == "EASG":
+                from lib.easg.sttran_EASG import STTran as STTran_EASG
+                return STTran_EASG(
+                    mode=self.conf.mode,
+                    obj_classes=self.dataset.obj_classes,
+                    verb_classes=self.dataset.verb_classes,
+                    edge_class_num=len(self.dataset.edge_classes),
+                    enc_layer_num=self.conf.enc_layer,
+                    dec_layer_num=self.conf.dec_layer,
+                ).to(device=self.device)
+            else:
+                from lib.sttran import STTran
+                return STTran(
+                    mode=self.conf.mode,
+                    attention_class_num=len(self.dataset.attention_relationships),
+                    spatial_class_num=len(self.dataset.spatial_relationships),
+                    contact_class_num=len(self.dataset.contacting_relationships),
+                    obj_classes=self.dataset.object_classes,
+                    enc_layer_num=self.conf.enc_layer,
+                    dec_layer_num=self.conf.dec_layer,
+                ).to(device=self.device)
+                
+        elif model_type == "stket":
+            from lib.stket import STKET
+            trainPrior = (
+                json.load(open("data/TrainPrior.json", "r"))
+                if os.path.exists("data/TrainPrior.json")
+                else None
+            )
+            return STKET(
+                mode=self.conf.mode,
+                attention_class_num=len(self.dataset.attention_relationships),
+                spatial_class_num=len(self.dataset.spatial_relationships),
+                contact_class_num=len(self.dataset.contacting_relationships),
+                obj_classes=self.dataset.object_classes,
+                N_layer_num=getattr(self.conf, "N_layer", 1),
+                enc_layer_num=getattr(self.conf, "enc_layer_num", 1),
+                dec_layer_num=getattr(self.conf, "dec_layer_num", 1),
+                pred_contact_threshold=getattr(self.conf, "pred_contact_threshold", 0.5),
+                window_size=getattr(self.conf, "window_size", 4),
+                trainPrior=trainPrior,
+                use_spatial_prior=getattr(self.conf, "use_spatial_prior", False),
+                use_temporal_prior=getattr(self.conf, "use_temporal_prior", False),
+            ).to(device=self.device)
+            
+        elif model_type == "tempura":
+            from lib.tempura.tempura import TEMPURA
+            return TEMPURA(
+                mode=self.conf.mode,
+                attention_class_num=len(self.dataset.attention_relationships),
+                spatial_class_num=len(self.dataset.spatial_relationships),
+                contact_class_num=len(self.dataset.contacting_relationships),
+                obj_classes=self.dataset.object_classes,
+                enc_layer_num=self.conf.enc_layer,
+                dec_layer_num=self.conf.dec_layer,
+                obj_mem_compute=getattr(self.conf, "obj_mem_compute", None),
+                rel_mem_compute=getattr(self.conf, "rel_mem_compute", None),
+                take_obj_mem_feat=getattr(self.conf, "take_obj_mem_feat", False),
+                mem_fusion=getattr(self.conf, "mem_fusion", None),
+                selection=getattr(self.conf, "mem_feat_selection", None),
+                selection_lambda=getattr(self.conf, "mem_feat_lambda", 0.5),
+                obj_head=getattr(self.conf, "obj_head", "gmm"),
+                rel_head=getattr(self.conf, "rel_head", "gmm"),
+                K=getattr(self.conf, "K", None),
+            ).to(device=self.device)
+            
+        elif model_type == "scenellm":
+            from lib.scenellm.scenellm import SceneLLM
+            return SceneLLM(self.conf, self.dataset).to(device=self.device)
+            
+        elif model_type == "oed":
+            # Default to multi-frame OED, could be enhanced to detect single vs multi
+            from lib.oed import OEDMulti
+            return OEDMulti(self.conf, self.dataset).to(device=self.device)
+            
+        else:
+            raise ValueError(f"Unsupported model type: {model_type}")
 
     def preprocess_frame(self, frame):
         """Preprocess frame for model input"""
@@ -139,14 +270,26 @@ class StreamlitVideoProcessor:
             im_info = torch.tensor([[600, 600, 1.0]], dtype=torch.float32).to(
                 self.device
             )
-            gt_boxes = torch.zeros([1, 1, 5]).to(self.device)
-            num_boxes = torch.zeros([1], dtype=torch.int64).to(self.device)
 
             with torch.no_grad():
-                empty_annotation = []
-                entry = self.object_detector(
-                    im_data, im_info, gt_boxes, num_boxes, empty_annotation, im_all=None
-                )
+                # Handle different datasets
+                if self.conf.dataset == "EASG":
+                    # EASG uses different input format
+                    gt_grounding = []  # Empty grounding for inference
+                    entry = self.object_detector(
+                        im_data, im_info, gt_grounding, im_all=None
+                    )
+                    # Add verb features if available
+                    if hasattr(self.dataset, "verb_feats"):
+                        entry["features_verb"] = torch.zeros(1, 2048).to(self.device)
+                else:
+                    # Action Genome format
+                    gt_boxes = torch.zeros([1, 1, 5]).to(self.device)
+                    num_boxes = torch.zeros([1], dtype=torch.int64).to(self.device)
+                    empty_annotation = []
+                    entry = self.object_detector(
+                        im_data, im_info, gt_boxes, num_boxes, empty_annotation, im_all=None
+                    )
 
                 if "boxes" in entry and entry["boxes"] is not None:
                     print(f"Raw detections: {entry['boxes'].shape[0]} boxes")
@@ -158,7 +301,7 @@ class StreamlitVideoProcessor:
                         print(f"Scores above 0.1: {(raw_scores > 0.1).sum()}")
                         print(f"Scores above 0.3: {(raw_scores > 0.3).sum()}")
 
-                if self.conf.mode == "sgdet":
+                if self.conf.mode == "sgdet" and self.conf.dataset != "EASG":
                     # Store original format
                     original_scores = (
                         entry["scores"].clone() if "scores" in entry else None
@@ -1108,28 +1251,71 @@ def main():
     # Sidebar
     with st.sidebar:
         st.header("Model Configuration")
-        checkpoints = find_available_checkpoints()
-
-        if checkpoints:
-            selected_model = st.selectbox(
-                "Select Model Checkpoint",
-                list(checkpoints.keys()),
-                help="Available trained models",
-            )
-            model_path = checkpoints[selected_model]
-            if "default" in selected_model.lower():
-                st.success(" Default checkpoint loaded")
+        
+        # File uploader for drag-and-drop checkpoint
+        uploaded_file = st.file_uploader(
+            "Upload Model Checkpoint",
+            type=['tar', 'pth', 'pt'],
+            help="Drag and drop a model checkpoint file (.tar, .pth, or .pt). Large files (>200MB) are supported.",
+            key="checkpoint_uploader",
+            accept_multiple_files=False
+        )
+        
+        # Handle uploaded file
+        if uploaded_file is not None:
+            # Save uploaded file temporarily
+            temp_dir = Path("temp_uploads")
+            temp_dir.mkdir(exist_ok=True)
+            
+            temp_path = temp_dir / uploaded_file.name
+            with open(temp_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            
+            model_path = str(temp_path)
+            
+            # Show model info
+            if MODEL_DETECTOR_AVAILABLE:
+                try:
+                    model_info = get_model_info_from_checkpoint(model_path)
+                    
+                    st.success("✅ Checkpoint uploaded successfully!")
+                    st.write(f"**File:** {uploaded_file.name}")
+                    st.write(f"**Model Type:** {model_info['model_type'] or 'Unknown'}")
+                    st.write(f"**Dataset:** {model_info['dataset'] or 'Unknown'}")
+                    st.write(f"**Model Class:** {model_info['model_class'] or 'Unknown'}")
+                    
+                except Exception as e:
+                    st.error(f"Error analyzing checkpoint: {e}")
+                    model_path = None
+            else:
+                st.success("✅ Checkpoint uploaded successfully!")
+                st.write(f"**File:** {uploaded_file.name}")
+                st.warning("⚠️ Model analysis unavailable - model_detector module not found")
+                st.info("The checkpoint will still work, but automatic model detection is disabled.")
         else:
-            st.warning("No trained models found in expected locations")
-            st.info(
-                "For development: Place model at `data/checkpoints/action_genome/sgdet_test/model_best.tar`"
-            )
-            model_path = st.text_input(
-                "Model Path",
-                value="data/checkpoints/action_genome/sgdet_test/model_best.tar",
-                placeholder="Path to model checkpoint (.tar or .pth)",
-                help="Provide path to a trained model checkpoint",
-            )
+            # Fallback to existing checkpoint selection
+            checkpoints = find_available_checkpoints()
+
+            if checkpoints:
+                selected_model = st.selectbox(
+                    "Or Select Existing Checkpoint",
+                    list(checkpoints.keys()),
+                    help="Available trained models",
+                )
+                model_path = checkpoints[selected_model]
+                if "default" in selected_model.lower():
+                    st.success(" Default checkpoint loaded")
+            else:
+                st.warning("No trained models found in expected locations")
+                st.info(
+                    "Upload a checkpoint file above or place model at `data/checkpoints/action_genome/sgdet_test/model_best.tar`"
+                )
+                model_path = st.text_input(
+                    "Or Enter Model Path",
+                    value="data/checkpoints/action_genome/sgdet_test/model_best.tar",
+                    placeholder="Path to model checkpoint (.tar or .pth)",
+                    help="Provide path to a trained model checkpoint",
+                )
 
         st.markdown("---")
         st.header("Processing Settings")
