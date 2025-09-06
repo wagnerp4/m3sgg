@@ -14,7 +14,7 @@ import torch
 # Add the project root to the path
 sys.path.append(".")
 
-from datasets.action_genome import AG
+from lib.datasets.action_genome import AG
 from lib.object_detector import detector
 
 

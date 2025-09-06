@@ -31,6 +31,7 @@ class Config(object):
         self.dataset = None
         self.data_path = None
         self.datasize = None
+        self.fraction = 1
         self.ckpt = None
         self.optimizer = None
         self.bce_loss = False
@@ -65,18 +66,15 @@ class Config(object):
         # Tempura specific parameters
         if self.mem_feat_lambda is not None:
             self.mem_feat_lambda = float(self.mem_feat_lambda)
-
         if self.rel_mem_compute == "None":
             self.rel_mem_compute = None
         if self.obj_loss_weighting == "None":
             self.obj_loss_weighting = None
         if self.rel_loss_weighting == "None":
             self.rel_loss_weighting = None
-
         self.obj_head = "gmm"
         self.rel_head = "gmm"
         self.K = 4
-
         self.rel_mem_compute = None
         self.obj_mem_compute = False
         self.take_obj_mem_feat = False
@@ -86,10 +84,8 @@ class Config(object):
         self.mem_fusion = "early"
         self.mem_feat_lambda = None
         self.pseudo_thresh = 7
-
         self.obj_unc = False
         self.rel_unc = False
-
         self.obj_loss_weighting = None
         self.rel_loss_weighting = None
         self.mlm = False
@@ -103,15 +99,15 @@ class Config(object):
         self.codebook_size = 8192
         self.commitment_cost = 0.25
         self.llm_name = "google/gemma-2-2b"
-        self.lora_r = 16  # test [16, 32, 64, 128, 256]
-        self.lora_alpha = 32  # test [32, 64, 128, 256, 512]
-        self.lora_dropout = 0.05  # test [0.05, 0.1, 0.2, 0.3, 0.4]
+        self.lora_r = 16
+        self.lora_alpha = 32
+        self.lora_dropout = 0.05
         self.ot_step = 512
-        self.vqvae_epochs = 5  # test [5, 10, 15, 20, 25]
+        self.vqvae_epochs = 5
         self.stage1_iterations = 30000
-        self.stage2_iterations = 50000  # test [50000, 100000, 150000, 200000, 250000]
-        self.alpha_obj = 1.0  # test [1.0, 1.5, 2.0, 2.5, 3.0]
-        self.alpha_rel = 1.0  # test [1.0, 1.5, 2.0, 2.5, 3.0]
+        self.stage2_iterations = 50000
+        self.alpha_obj = 1.0
+        self.alpha_rel = 1.0
 
         # OED specific defaults
         self.num_queries = 100
@@ -133,6 +129,15 @@ class Config(object):
         self.oed_variant = "multi"
         self.fuse_semantic_pos = False
         self.query_temporal_interaction = False
+
+        # VLM specific defaults
+        self.vlm_model_name = "Salesforce/blip-vqa-base" # Salesforce/blip-vqa-base, apple/FastVLM-0.5B
+        self.vlm_use_chain_of_thought = True
+        self.vlm_use_tree_of_thought = False
+        self.vlm_confidence_threshold = 0.5
+        self.vlm_temperature = 0.7
+        self.vlm_top_p = 0.9
+        self.vlm_max_new_tokens = 512
         self.oed_weight_dict = {
             "loss_obj_ce": self.obj_loss_coef,
             "loss_bbox": self.bbox_loss_coef,
@@ -200,6 +205,13 @@ class Config(object):
             type=str,
         )
         parser.add_argument(
+            "-fraction",
+            dest="fraction",
+            help="Fraction of dataset to use (1=all, 2=half, 4=quarter, etc.)",
+            default=1,
+            type=int,
+        )
+        parser.add_argument(
             "-ckpt", dest="ckpt", help="checkpoint", default=None, type=str
         )
         parser.add_argument(
@@ -253,7 +265,7 @@ class Config(object):
         parser.add_argument(
             "-model",
             dest="model_type",
-            help="Model type: sttran (default), dsg-detr (uses Hungarian matcher), stket, tempura, scenellm, or oed",
+            help="Model type: sttran (default), dsg-detr (uses Hungarian matcher), stket, tempura, scenellm, oed, or vlm",
             choices=[
                 "sttran",
                 "dsg-detr",
@@ -262,6 +274,7 @@ class Config(object):
                 "tempura",
                 "scenellm",
                 "oed",
+                "vlm",
             ],
             default="sttran",
             type=str,
@@ -503,4 +516,60 @@ class Config(object):
             help="Enable query temporal interaction",
         )
 
+        # VLM specific arguments
+        parser.add_argument(
+            "-vlm_model_name",
+            default="apple/FastVLM-0.5B",
+            type=str,
+            help="HuggingFace model name for VLM",
+        )
+        parser.add_argument(
+            "-vlm_use_chain_of_thought",
+            action="store_true",
+            help="Use chain-of-thought reasoning for VLM",
+        )
+        parser.add_argument(
+            "-vlm_use_tree_of_thought",
+            action="store_true",
+            help="Use tree-of-thought reasoning for VLM",
+        )
+        parser.add_argument(
+            "-vlm_confidence_threshold",
+            default=0.5,
+            type=float,
+            help="Confidence threshold for VLM relationship detection",
+        )
+        parser.add_argument(
+            "-vlm_temperature",
+            default=0.7,
+            type=float,
+            help="Temperature for VLM text generation",
+        )
+        parser.add_argument(
+            "-vlm_top_p",
+            default=0.9,
+            type=float,
+            help="Top-p sampling for VLM text generation",
+        )
+        parser.add_argument(
+            "-vlm_max_new_tokens",
+            default=512,
+            type=int,
+            help="Maximum number of new tokens for VLM generation",
+        )
+
         return parser
+    
+    def parse_args(self):
+        """Parse command-line arguments and update config values.
+        
+        :return: None
+        :rtype: None
+        """
+        parser = self.setup_parser()
+        args = parser.parse_args()
+        
+        # Update config with parsed arguments
+        for arg_name, arg_value in vars(args).items():
+            if hasattr(self, arg_name):
+                setattr(self, arg_name, arg_value)

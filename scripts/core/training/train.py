@@ -22,8 +22,8 @@ project_root = os.path.abspath(
 )
 sys.path.insert(0, project_root)  # Insert at beginning to prioritize local modules
 
-from datasets.action_genome import cuda_collate_fn
-from datasets.factory import get_datasets
+from lib.datasets.action_genome import cuda_collate_fn
+from lib.datasets.factory import get_datasets
 from lib.AdamW import AdamW
 from lib.config import Config
 from lib.easg.object_detector_EASG import detector as detector_EASG
@@ -33,7 +33,7 @@ from lib.infoNCE import EucNormLoss, SupConLoss
 from lib.matcher import HungarianMatcher
 from lib.memory import memory_computation
 from lib.object_detector import detector
-from lib.scenellm.scenellm import SceneLLM
+# SceneLLM import will be done conditionally when needed
 from lib.sttran import STKET, STTran
 from lib.tempura.tempura import TEMPURA
 from lib.track import get_sequence
@@ -43,6 +43,11 @@ from utils.util import (
     create_subset_samplers,
     get_pred_triplets,
     intersect_2d,
+)
+from lib.checkpoint_utils import (
+    check_disk_space_and_configure_checkpointing,
+    safe_save_checkpoint,
+    validate_checkpoint_file,
 )
 
 np.set_printoptions(precision=3)
@@ -79,11 +84,23 @@ if __name__ == "__main__":
         {k: v for k, v in conf.args.items()},
     )
 
+    # Check disk space and configure checkpointing strategy
+    checkpoint_enabled, checkpoint_strategy = check_disk_space_and_configure_checkpointing(
+        conf.save_path, logger, conf
+    )
+    
+    if not checkpoint_enabled:
+        logger.warning("Checkpoint saving has been disabled due to insufficient disk space.")
+        logger.warning("Training will continue but no checkpoints will be saved.")
+    elif checkpoint_strategy == "conservative":
+        logger.info("Using conservative checkpoint strategy due to low disk space.")
+        logger.info("Only the best model will be saved to minimize disk usage.")
+
     # Dataset
     dataset_train, dataset_test = get_datasets(conf)
     train_sampler, test_sampler, train_subset_size, test_subset_size = (
-        create_subset_samplers(  # TODO: specify fraction
-            len(dataset_train), len(dataset_test), fraction=1, seed=conf.seed
+        create_subset_samplers(
+            len(dataset_train), len(dataset_test), fraction=conf.fraction, seed=conf.seed
         )
     )
     logger.info(f"""Using {train_subset_size}/{len(dataset_train)} 
@@ -193,11 +210,17 @@ if __name__ == "__main__":
                 K=conf.K,
             ).to(device=gpu_device)
         elif conf.model_type == "scenellm":
-            model = SceneLLM(conf, dataset_train).to(device=gpu_device)
-            model.set_training_stage(conf.scenellm_training_stage)
-            logger.info(
-                f"Initialized SceneLLM with training stage: {conf.scenellm_training_stage}"
-            )
+            try:
+                from lib.scenellm.scenellm import SceneLLM
+                model = SceneLLM(conf, dataset_train).to(device=gpu_device)
+                model.set_training_stage(conf.scenellm_training_stage)
+                logger.info(
+                    f"Initialized SceneLLM with training stage: {conf.scenellm_training_stage}"
+                )
+            except ImportError as e:
+                logger.error(f"Failed to import SceneLLM: {e}")
+                logger.error("SceneLLM requires transformers and peft packages. Please install them or use a different model.")
+                raise RuntimeError(f"SceneLLM import failed: {e}")
         elif conf.model_type == "oed":
             from lib.oed import OEDMulti, OEDSingle
 
@@ -207,6 +230,21 @@ if __name__ == "__main__":
             else:
                 model = OEDSingle(conf, dataset_train).to(device=gpu_device)
                 logger.info("Initialized OED Single-frame model")
+        elif conf.model_type == "vlm":
+            from lib.vlm import VLMSceneGraphGenerator
+            model = VLMSceneGraphGenerator(
+                mode=conf.mode,
+                attention_class_num=len(dataset_train.attention_relationships),
+                spatial_class_num=len(dataset_train.spatial_relationships),
+                contact_class_num=len(dataset_train.contacting_relationships),
+                obj_classes=dataset_train.object_classes,
+                model_name=conf.vlm_model_name,
+                device=gpu_device,
+                use_chain_of_thought=conf.vlm_use_chain_of_thought,
+                use_tree_of_thought=conf.vlm_use_tree_of_thought,
+                confidence_threshold=conf.vlm_confidence_threshold
+            ).to(device=gpu_device)
+            logger.info(f"Initialized VLM model: {conf.vlm_model_name}")
         else:
             raise ValueError(
                 f"Model type '{conf.model_type}' not supported for Action Genome dataset"
@@ -216,9 +254,19 @@ if __name__ == "__main__":
 
     # Load Checkpoint
     if conf.ckpt:
-        ckpt = torch.load(conf.ckpt, map_location=gpu_device)
-        model.load_state_dict(ckpt["state_dict"], strict=False)
-        logger.info("Loaded checkpoint from: %s", conf.ckpt)
+        try:
+            if not validate_checkpoint_file(conf.ckpt, logger):
+                raise RuntimeError("Checkpoint validation failed")
+            ckpt = torch.load(conf.ckpt, map_location=gpu_device)
+            model.load_state_dict(ckpt["state_dict"], strict=False)
+            file_size_mb = os.path.getsize(conf.ckpt) / (1024 * 1024)
+            logger.info("Loaded checkpoint from: %s (%.1fMB)", conf.ckpt, file_size_mb)
+            
+        except Exception as e:
+            logger.error(f"Failed to load checkpoint from {conf.ckpt}: {str(e)}")
+            logger.error("This checkpoint file appears to be corrupted or invalid.")
+            logger.error("Please remove the corrupted checkpoint file and restart training without the -ckpt flag.")
+            raise RuntimeError(f"Checkpoint loading failed: {str(e)}")
 
     # Hungarian Matcher
     if conf.use_matcher:
@@ -326,7 +374,13 @@ if __name__ == "__main__":
         len(dataloader_test),
     )
 
-    # Training loop
+    # --------
+    # TODO: refactor train loop to be more modular and easier to understand.
+        # Offer class: Trainer, which defines: epoch loop/iter, inner loop, step.
+        # Offer separate evaluation function containing the eval loop.
+
+
+    # Training loop (now: epoch loop)
     for epoch in range(conf.nepoch):
         logger.info("=" * 40)
         logger.info("Starting Epoch %d", epoch)
@@ -396,7 +450,11 @@ if __name__ == "__main__":
                     conf.mode,
                 )
 
-            pred = model(entry)
+            # Pass image data to VLM model if it's a VLM model
+            if conf.model_type == "vlm":
+                pred = model(entry, im_data)
+            else:
+                pred = model(entry)
 
             if conf.model_type == "scenellm":
                 # Update codebook with OT scheme periodically (every 1000 batches)
@@ -423,7 +481,7 @@ if __name__ == "__main__":
                     rel_unc=conf.rel_unc,
                 )
 
-            # Dataset-specific loss calculations
+            # Model-specific loss calculations
             if conf.dataset == "EASG":
                 edge_distribution = pred["edge_distribution"]
                 losses = {}
@@ -443,7 +501,7 @@ if __name__ == "__main__":
                     )
                 losses["edge_loss"] = mlm_loss(edge_distribution, edge_label)
             elif conf.dataset == "action_genome":
-                if conf.model_type in ["sttran", "dsg-detr"]:
+                if conf.model_type in ["sttran", "dsg-detr", "vlm"]:
                     attention_distribution = pred["attention_distribution"]
                     spatial_distribution = pred["spatial_distribution"]
                     contact_distribution = pred["contact_distribution"]
@@ -1261,7 +1319,12 @@ if __name__ == "__main__":
                             (im_info[0][:2] / im_info[0, 2]).cpu().data,
                             conf.mode,
                         )
-                    pred = model(entry)
+                    
+                    # Pass image data to VLM model if it's a VLM model
+                    if conf.model_type == "vlm":
+                        pred = model(entry, im_data)
+                    else:
+                        pred = model(entry)
 
                     # Only compute validation loss if ground truth annotations are available
                     if (
@@ -1610,8 +1673,7 @@ if __name__ == "__main__":
                     object_memory = []
                     rel_memory = []
             if not conf.disable_checkpoint_saving:
-                from lib.model_detector import save_checkpoint_with_metadata
-                save_checkpoint_with_metadata(
+                checkpoint_saved = safe_save_checkpoint(
                     model,
                     os.path.join(conf.save_path, "model_best.tar"),
                     conf.model_type,
@@ -1622,17 +1684,21 @@ if __name__ == "__main__":
                         "mode": conf.mode,
                         "enc_layer": conf.enc_layer,
                         "dec_layer": conf.dec_layer,
-                    }
+                    },
+                    logger=logger
                 )
-                logger.info("NEW BEST! Saved best checkpoint after %d epochs", epoch)
+                if checkpoint_saved:
+                    logger.info("NEW BEST! Saved best checkpoint after %d epochs", epoch)
+                else:
+                    logger.error("Failed to save best checkpoint - disabling future saves")
+                    conf.disable_checkpoint_saving = True
             else:
                 logger.info("NEW BEST! Checkpoint saving disabled (epoch %d)", epoch)
 
         if mrecall > best_Mrecall:
             best_Mrecall = mrecall
             if not conf.disable_checkpoint_saving:
-                from lib.model_detector import save_checkpoint_with_metadata
-                save_checkpoint_with_metadata(
+                checkpoint_saved = safe_save_checkpoint(
                     model,
                     os.path.join(conf.save_path, "model_best_Mrecall.tar"),
                     conf.model_type,
@@ -1644,11 +1710,16 @@ if __name__ == "__main__":
                         "enc_layer": conf.enc_layer,
                         "dec_layer": conf.dec_layer,
                         "checkpoint_type": "best_mrecall"
-                    }
+                    },
+                    logger=logger
                 )
-                logger.info(
-                    "NEW BEST MRECALL! Saved best checkpoint after %d epochs", epoch
-                )
+                if checkpoint_saved:
+                    logger.info(
+                        "NEW BEST MRECALL! Saved best checkpoint after %d epochs", epoch
+                    )
+                else:
+                    logger.error("Failed to save best mrecall checkpoint - disabling future saves")
+                    conf.disable_checkpoint_saving = True
             else:
                 logger.info(
                     "NEW BEST MRECALL! Checkpoint saving disabled (epoch %d)", epoch

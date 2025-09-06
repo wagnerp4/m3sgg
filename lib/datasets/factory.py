@@ -1,7 +1,7 @@
 from typing import Any, Tuple
 
-from datasets.action_genome import AG
-from datasets.easg import EASG
+from lib.datasets.action_genome import AG
+from lib.datasets.easg import EASG
 
 
 def get_datasets(conf: Any) -> Tuple[object, object]:

@@ -40,23 +40,11 @@ class detector(nn.Module):
         """
         super(detector, self).__init__()
 
-        # self.is_train = train
-        # self.use_SUPPLY = use_SUPPLY
-        # self.object_classes = object_classes
-        # self.mode = mode
-
-        # self.fasterRCNN = resnet(classes=self.object_classes, num_layers=101, pretrained=False, class_agnostic=False)
-        # self.fasterRCNN.create_architecture()
-        # checkpoint = torch.load('fasterRCNN/models/faster_rcnn_ag.pth', weights_only=False)
-        # self.fasterRCNN.load_state_dict(checkpoint['model'])
-
-        # self.ROI_Align = copy.deepcopy(self.fasterRCNN.RCNN_roi_align)
-        # self.RCNN_Head = copy.deepcopy(self.fasterRCNN._head_to_tail)
-
         self.is_train = train
         self.use_SUPPLY = use_SUPPLY
         self.object_classes = object_classes
         self.mode = mode
+
         self.fasterRCNN = resnet(
             classes=self.object_classes,
             num_layers=101,
@@ -70,6 +58,7 @@ class detector(nn.Module):
             try:
                 # Use map_location for compatibility with older PyTorch versions
                 checkpoint = torch.load(checkpoint_path, map_location="cpu")
+                # checkpoint = torch.load('fasterRCNN/models/faster_rcnn_ag.pth', weights_only=False)
                 if "model" in checkpoint:
                     checkpoint_state_dict = checkpoint["model"]
                 else:
@@ -96,6 +85,7 @@ class detector(nn.Module):
                 missing_keys, unexpected_keys = self.fasterRCNN.load_state_dict(
                     filtered_checkpoint, strict=False
                 )
+                # self.fasterRCNN.load_state_dict(checkpoint['model'])
                 print(
                     f"[OK] Loaded compatible parts of Faster R-CNN checkpoint from {checkpoint_path}"
                 )

@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from gui import VideoProcessor
 
-from datasets.action_genome import AG
+from lib.datasets.action_genome import AG
 
 
 def test_expanded_video_selection():

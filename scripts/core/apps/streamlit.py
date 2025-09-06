@@ -16,11 +16,19 @@ import streamlit as st
 import torch
 from streamlit_chat import message
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "lib"))
+# Add project root to Python path (go up two levels from scripts/core/apps/)
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+# Add lib directory to Python path
+lib_path = os.path.join(project_root, "lib")
+if lib_path not in sys.path:
+    sys.path.insert(0, lib_path)
 
 try:
     from lib.track import get_sequence
+    print("Successfully imported get_sequence")
 except ImportError as e:
     print(f"Warning: Could not import get_sequence: {e}")
 
@@ -31,37 +39,155 @@ try:
 except ImportError as e:
     print(f"Could not import model_detector: {e}")
     print(f"Current working directory: {os.getcwd()}")
+    print(f"Project root: {project_root}")
+    print(f"Lib path: {lib_path}")
     print(f"Python path: {sys.path}")
     MODEL_DETECTOR_AVAILABLE = False
+
+try:
+    from lib.datasets.action_genome import AG
+    print("Successfully imported AG dataset")
+except ImportError as e:
+    print(f"Warning: Could not import AG dataset: {e}")
+
+try:
+    from lib.config import Config
+    print("Successfully imported Config")
+except ImportError as e:
+    print(f"Warning: Could not import Config: {e}")
+
+try:
+    from lib.matcher import HungarianMatcher
+    print("Successfully imported HungarianMatcher")
+except ImportError as e:
+    print(f"Warning: Could not import HungarianMatcher: {e}")
 
 st.set_page_config(
     page_title="VidSgg",
     page_icon="",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="expanded", # collapsed
 )
-st.markdown(
-    """
-<style>
-    .main-header {
-        font-size: 3rem;
-        color: #1f77b4;
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    .metric-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 5px solid #1f77b4;
-    }
-    .stAlert {
-        margin-top: 1rem;
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
+
+# Initialize dark mode state
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = False
+
+# Apply dark mode styles
+if st.session_state.dark_mode:
+    st.markdown(
+        """
+        <style>
+            .main-header {
+                font-size: 3rem;
+                color: #4a9eff;
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+            .metric-card {
+                background-color: #2d3748;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                border-left: 5px solid #4a9eff;
+                color: #e2e8f0;
+            }
+            .stAlert {
+                margin-top: 1rem;
+            }
+            .stApp {
+                background-color: #1a202c;
+                color: #e2e8f0;
+            }
+            .stSidebar {
+                background-color: #2d3748;
+            }
+            .stSelectbox > div > div {
+                background-color: #2d3748;
+                color: #e2e8f0;
+            }
+            .stTextInput > div > div > input {
+                background-color: #2d3748;
+                color: #e2e8f0;
+                border-color: #4a5568;
+            }
+            .stTextArea > div > div > textarea {
+                background-color: #2d3748;
+                color: #e2e8f0;
+                border-color: #4a5568;
+            }
+            .stButton > button {
+                background-color: #4a9eff;
+                color: #1a202c;
+                border: none;
+            }
+            .stButton > button:hover {
+                background-color: #3182ce;
+            }
+            .stTabs [data-baseweb="tab-list"] {
+                background-color: #2d3748;
+            }
+            .stTabs [data-baseweb="tab"] {
+                background-color: #2d3748;
+                color: #e2e8f0;
+            }
+            .stTabs [aria-selected="true"] {
+                background-color: #4a9eff;
+                color: #1a202c;
+            }
+            .stDataFrame {
+                background-color: #2d3748;
+                color: #e2e8f0;
+            }
+            .stExpander {
+                background-color: #2d3748;
+                color: #e2e8f0;
+            }
+            .stMarkdown {
+                color: #e2e8f0;
+            }
+            .stSuccess {
+                background-color: #2d5016;
+                color: #9ae6b4;
+            }
+            .stError {
+                background-color: #742a2a;
+                color: #feb2b2;
+            }
+            .stWarning {
+                background-color: #744210;
+                color: #fbd38d;
+            }
+            .stInfo {
+                background-color: #2c5282;
+                color: #90cdf4;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+else:
+    st.markdown(
+        """
+        <style>
+            .main-header {
+                font-size: 3rem;
+                color: #1f77b4;
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+            .metric-card {
+                background-color: #f0f2f6;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                border-left: 5px solid #1f77b4;
+            }
+            .stAlert {
+                margin-top: 1rem;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 class StreamlitVideoProcessor:
@@ -69,13 +195,75 @@ class StreamlitVideoProcessor:
         """Video processor for Streamlit integration with VidSgg pipeline"""
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model_path = model_path
+        self.object_classes = self._load_object_classes()
+        self.relationship_classes = self._load_relationship_classes()
         self.setup_models()
+    
+    def _load_object_classes(self):
+        """Load object classes from file as fallback"""
+        try:
+            # Try to load from Action Genome dataset
+            object_classes_path = "data/action_genome/annotations/object_classes.txt"
+            if os.path.exists(object_classes_path):
+                with open(object_classes_path, 'r') as f:
+                    return [line.strip() for line in f.readlines()]
+        except Exception as e:
+            print(f"Warning: Could not load object classes from file: {e}")
+        
+        # Return empty list if loading fails
+        return []
+    
+    def _load_relationship_classes(self):
+        """Load relationship classes from file as fallback"""
+        try:
+            # Try to load from Action Genome dataset
+            relationship_classes_path = "data/action_genome/annotations/relationship_classes.txt"
+            if os.path.exists(relationship_classes_path):
+                with open(relationship_classes_path, 'r') as f:
+                    relationships = [line.strip() for line in f.readlines()]
+                
+                # Apply the same transformations as in the AG dataset
+                if len(relationships) > 0:
+                    relationships[0] = "looking_at"
+                if len(relationships) > 1:
+                    relationships[1] = "not_looking_at"
+                if len(relationships) > 5:
+                    relationships[5] = "in_front_of"
+                if len(relationships) > 7:
+                    relationships[7] = "on_the_side_of"
+                if len(relationships) > 10:
+                    relationships[10] = "covered_by"
+                if len(relationships) > 11:
+                    relationships[11] = "drinking_from"
+                if len(relationships) > 13:
+                    relationships[13] = "have_it_on_the_back"
+                if len(relationships) > 15:
+                    relationships[15] = "leaning_on"
+                if len(relationships) > 16:
+                    relationships[16] = "lying_on"
+                if len(relationships) > 17:
+                    relationships[17] = "not_contacting"
+                if len(relationships) > 18:
+                    relationships[18] = "other_relationship"
+                if len(relationships) > 19:
+                    relationships[19] = "sitting_on"
+                if len(relationships) > 20:
+                    relationships[20] = "standing_on"
+                if len(relationships) > 25:
+                    relationships[25] = "writing_on"
+                
+                return relationships
+        except Exception as e:
+            print(f"Warning: Could not load relationship classes from file: {e}")
+        
+        # Return empty list if loading fails
+        return []
 
     def setup_models(self):
         """Initialize models for video processing with automatic model detection"""
         try:
-            from datasets.action_genome import AG
-            from datasets.easg import EASG
+            from lib.datasets.action_genome import AG
+            from lib.datasets.easg import EASG
             from lib.config import Config
             from lib.matcher import HungarianMatcher
 
@@ -502,10 +690,18 @@ class StreamlitVideoProcessor:
                     # Add label if available
                     if i < len(labels):
                         # Try to get object class names from the dataset
-                        if hasattr(self, "AG_dataset") and labels[i] < len(
-                            self.AG_dataset.object_classes
-                        ):
-                            label_text = f"{self.AG_dataset.object_classes[labels[i]]}"
+                        object_classes = None
+                        if hasattr(self, "AG_dataset") and hasattr(self.AG_dataset, "object_classes"):
+                            object_classes = self.AG_dataset.object_classes
+                        elif hasattr(self, "dataset") and hasattr(self.dataset, "object_classes"):
+                            object_classes = self.dataset.object_classes
+                        elif hasattr(self, "dataset") and hasattr(self.dataset, "obj_classes"):
+                            object_classes = self.dataset.obj_classes
+                        elif hasattr(self, "object_classes") and self.object_classes:
+                            object_classes = self.object_classes
+                        
+                        if object_classes and labels[i] < len(object_classes):
+                            label_text = f"{object_classes[labels[i]]}"
                         else:
                             label_text = f"obj_{labels[i]}"
 
@@ -681,10 +877,19 @@ class StreamlitVideoProcessor:
                 # Get object class name
                 object_name = "unknown"
                 if labels is not None and i < len(labels):
-                    if hasattr(self, "AG_dataset") and labels[i] < len(
-                        self.AG_dataset.object_classes
-                    ):
-                        object_name = self.AG_dataset.object_classes[labels[i]]
+                    # Check for dataset object classes (both AG_dataset and dataset attributes)
+                    object_classes = None
+                    if hasattr(self, "AG_dataset") and hasattr(self.AG_dataset, "object_classes"):
+                        object_classes = self.AG_dataset.object_classes
+                    elif hasattr(self, "dataset") and hasattr(self.dataset, "object_classes"):
+                        object_classes = self.dataset.object_classes
+                    elif hasattr(self, "dataset") and hasattr(self.dataset, "obj_classes"):
+                        object_classes = self.dataset.obj_classes
+                    elif hasattr(self, "object_classes") and self.object_classes:
+                        object_classes = self.object_classes
+                    
+                    if object_classes and labels[i] < len(object_classes):
+                        object_name = object_classes[labels[i]]
                     else:
                         object_name = f"class_{labels[i]}"
 
@@ -792,6 +997,44 @@ class StreamlitVideoProcessor:
 
         return relationships
 
+    def get_object_name(self, class_idx: int) -> str:
+        """Get human-readable object name from class index
+        
+        :param class_idx: Object class index
+        :type class_idx: int
+        :return: Human-readable object name
+        :rtype: str
+        """
+        try:
+            # Try to get object names from dataset
+            if hasattr(self, "AG_dataset") and hasattr(self.AG_dataset, "object_classes"):
+                object_classes = self.AG_dataset.object_classes
+            elif hasattr(self, "dataset") and hasattr(self.dataset, "object_classes"):
+                object_classes = self.dataset.object_classes
+            else:
+                # Fallback object names
+                object_classes = [
+                    "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
+                    "traffic_light", "fire_hydrant", "stop_sign", "parking_meter", "bench", "bird", "cat",
+                    "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack",
+                    "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports_ball",
+                    "kite", "baseball_bat", "baseball_glove", "skateboard", "surfboard", "tennis_racket",
+                    "bottle", "wine_glass", "cup", "fork", "knife", "spoon", "bowl", "banana", "apple",
+                    "sandwich", "orange", "broccoli", "carrot", "hot_dog", "pizza", "donut", "cake",
+                    "chair", "couch", "potted_plant", "bed", "dining_table", "toilet", "tv", "laptop",
+                    "mouse", "remote", "keyboard", "cell_phone", "microwave", "oven", "toaster", "sink",
+                    "refrigerator", "book", "clock", "vase", "scissors", "teddy_bear", "hair_drier", "toothbrush"
+                ]
+            
+            if class_idx < len(object_classes):
+                return object_classes[class_idx]
+            else:
+                return f"object_{class_idx}"
+                
+        except Exception as e:
+            print(f"Error getting object name: {e}")
+            return f"object_{class_idx}"
+
     def get_relationship_name(self, rel_type: int, rel_category: str) -> str:
         """Get human-readable relationship name from type and category
 
@@ -802,25 +1045,38 @@ class StreamlitVideoProcessor:
         :return: Human-readable relationship name
         :rtype: str
         """
-        if not hasattr(self, "AG_dataset"):
-            return f"rel_{rel_type}"
-
         try:
-            if rel_category == "attention" and rel_type < len(
-                self.AG_dataset.attention_relationships
-            ):
-                return self.AG_dataset.attention_relationships[rel_type]
-            elif rel_category == "spatial" and rel_type < len(
-                self.AG_dataset.spatial_relationships
-            ):
-                return self.AG_dataset.spatial_relationships[rel_type]
-            elif rel_category == "contacting" and rel_type < len(
-                self.AG_dataset.contacting_relationships
-            ):
-                return self.AG_dataset.contacting_relationships[rel_type]
+            # Try to get relationship names from dataset
+            relationships = None
+            if hasattr(self, "AG_dataset") and hasattr(self.AG_dataset, f"{rel_category}_relationships"):
+                relationships = getattr(self.AG_dataset, f"{rel_category}_relationships")
+            elif hasattr(self, "dataset") and hasattr(self.dataset, f"{rel_category}_relationships"):
+                relationships = getattr(self.dataset, f"{rel_category}_relationships")
+            elif hasattr(self, "dataset") and hasattr(self.dataset, "relationship_classes"):
+                # Fallback: use the full relationship_classes list
+                relationships = self.dataset.relationship_classes
+                if rel_category == "attention":
+                    relationships = relationships[0:3]
+                elif rel_category == "spatial":
+                    relationships = relationships[3:9]
+                elif rel_category == "contacting":
+                    relationships = relationships[9:]
+            elif hasattr(self, "relationship_classes") and self.relationship_classes:
+                # Final fallback: use loaded relationship classes
+                relationships = self.relationship_classes
+                if rel_category == "attention":
+                    relationships = relationships[0:3]
+                elif rel_category == "spatial":
+                    relationships = relationships[3:9]
+                elif rel_category == "contacting":
+                    relationships = relationships[9:]
+            
+            if relationships and rel_type < len(relationships):
+                return relationships[rel_type]
             else:
                 return f"rel_{rel_type}"
-        except (IndexError, AttributeError):
+        except (IndexError, AttributeError, Exception) as e:
+            print(f"Error getting relationship name: {e}")
             return f"rel_{rel_type}"
 
     def create_scene_graph_frame(self, frame, entry, pred, frame_scale_factor=1.0):
@@ -955,9 +1211,20 @@ class StreamlitVideoProcessor:
             cv2.circle(frame_with_sg, (cx, cy), node_radius, (255, 255, 255), 1)
 
             # Add node label (object class)
-            if hasattr(self, "AG_dataset") and labels is not None and i < len(labels):
-                if labels[i] < len(self.AG_dataset.object_classes):
-                    class_name = self.AG_dataset.object_classes[labels[i]]
+            if labels is not None and i < len(labels):
+                # Try to get object class names from the dataset
+                object_classes = None
+                if hasattr(self, "AG_dataset") and hasattr(self.AG_dataset, "object_classes"):
+                    object_classes = self.AG_dataset.object_classes
+                elif hasattr(self, "dataset") and hasattr(self.dataset, "object_classes"):
+                    object_classes = self.dataset.object_classes
+                elif hasattr(self, "dataset") and hasattr(self.dataset, "obj_classes"):
+                    object_classes = self.dataset.obj_classes
+                elif hasattr(self, "object_classes") and self.object_classes:
+                    object_classes = self.object_classes
+                
+                if object_classes and labels[i] < len(object_classes):
+                    class_name = object_classes[labels[i]]
                     # Shortened class name for display
                     short_name = class_name[:8] if len(class_name) > 8 else class_name
 
@@ -1194,6 +1461,7 @@ def process_video_with_sgg(
             "frame_times": [],
             "errors": [],
             "frame_objects": [],  # Store object info for each frame
+            "frame_relationships": [],  # Store relationship info for each frame
         }
 
         frame_count = 0
@@ -1216,11 +1484,17 @@ def process_video_with_sgg(
                 bbox_info = processor.extract_bbox_info(entry, confidence_threshold=0.1)
                 results["frame_objects"].append(bbox_info)
 
+                # Extract relationship info for each frame
+                relationship_info = processor.extract_relationships(entry, pred)
+                results["frame_relationships"].append(relationship_info)
+
                 # Store first frame bbox info in session state for backward compatibility
                 if frame_count == 0:
                     st.session_state["bbox_info"] = bbox_info
+                    st.session_state["relationship_info"] = relationship_info
             else:
                 results["frame_objects"].append([])
+                results["frame_relationships"].append([])
 
             if "error" in frame_results:
                 results["errors"].append(
@@ -1240,19 +1514,20 @@ def process_video_with_sgg(
 
 
 def main():
+    #--------------------------------
     # Header
     st.markdown(
         '<h1 class="main-header"> VidSgg</h1>',
         unsafe_allow_html=True,
     )
-    st.markdown("Video Scene Graph Generation with Deep Learning Models")
+    # st.markdown("Video Scene Graph Generation with Deep Learning Models")
     st.markdown("---")
 
+    #--------------------------------
     # Sidebar
     with st.sidebar:
-        st.header("Model Configuration")
-        
-        # File uploader for drag-and-drop checkpoint
+        st.markdown("---")
+        st.subheader("Model Configuration")
         uploaded_file = st.file_uploader(
             "Upload Model Checkpoint",
             type=['tar', 'pth', 'pt'],
@@ -1261,24 +1536,23 @@ def main():
             accept_multiple_files=False
         )
         
-        # Handle uploaded file
         if uploaded_file is not None:
-            # Save uploaded file temporarily
+            # TODO: Store better
             temp_dir = Path("temp_uploads")
             temp_dir.mkdir(exist_ok=True)
-            
             temp_path = temp_dir / uploaded_file.name
             with open(temp_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
             
             model_path = str(temp_path)
+            st.session_state["model_path"] = model_path
             
-            # Show model info
+            # Display model info
             if MODEL_DETECTOR_AVAILABLE:
                 try:
                     model_info = get_model_info_from_checkpoint(model_path)
                     
-                    st.success("✅ Checkpoint uploaded successfully!")
+                    st.success("Checkpoint uploaded successfully!")
                     st.write(f"**File:** {uploaded_file.name}")
                     st.write(f"**Model Type:** {model_info['model_type'] or 'Unknown'}")
                     st.write(f"**Dataset:** {model_info['dataset'] or 'Unknown'}")
@@ -1288,14 +1562,14 @@ def main():
                     st.error(f"Error analyzing checkpoint: {e}")
                     model_path = None
             else:
-                st.success("✅ Checkpoint uploaded successfully!")
+                st.success("Checkpoint uploaded successfully!")
                 st.write(f"**File:** {uploaded_file.name}")
-                st.warning("⚠️ Model analysis unavailable - model_detector module not found")
+                st.warning("Model analysis unavailable - model_detector module not found")
                 st.info("The checkpoint will still work, but automatic model detection is disabled.")
         else:
-            # Fallback to existing checkpoint selection
+            # TODO: Test with different checkpoints
+            # TODO: Use better default path
             checkpoints = find_available_checkpoints()
-
             if checkpoints:
                 selected_model = st.selectbox(
                     "Or Select Existing Checkpoint",
@@ -1303,6 +1577,7 @@ def main():
                     help="Available trained models",
                 )
                 model_path = checkpoints[selected_model]
+                st.session_state["model_path"] = model_path
                 if "default" in selected_model.lower():
                     st.success(" Default checkpoint loaded")
             else:
@@ -1316,9 +1591,10 @@ def main():
                     placeholder="Path to model checkpoint (.tar or .pth)",
                     help="Provide path to a trained model checkpoint",
                 )
+                if model_path:
+                    st.session_state["model_path"] = model_path
 
-        st.markdown("---")
-        st.header("Processing Settings")
+        st.subheader("Processing Settings")
         max_slider_value = 1000
         total_frames_info = ""
 
@@ -1335,86 +1611,27 @@ def main():
             help=f"Maximum number of frames to process{total_frames_info}",
         )
 
-        confidence_threshold = st.slider(
-            "Confidence Threshold",
-            0.0,
-            1.0,
-            0.5,
-            help="Minimum confidence for object detection",
-        )
+        # TODO: Add back in
+        # confidence_threshold = st.slider(
+        #     "Confidence Threshold",
+        #     0.0,
+        #     1.0,
+        #     0.5,
+        #     help="Minimum confidence for object detection",
+        # )
 
-        if st.button("🔄 Reset Settings"):
-            st.rerun()
+        # if st.button("Reset Settings"):
+        #     st.rerun()
 
-        # Statistics section
         st.markdown("---")
-        st.header("Statistics")
-
-        # Metrics
-        if "results" in st.session_state:
-            results = st.session_state["results"]
-            avg_objects = np.mean(results["detections"]) if results["detections"] else 0
-            avg_relationships = (
-                np.mean(results["relationships"]) if results["relationships"] else 0
-            )
-            avg_confidence = (
-                np.mean(results["confidences"]) if results["confidences"] else 0
-            )
-            error_rate = (
-                len(results.get("errors", [])) / results["processed_frames"] * 100
-                if results["processed_frames"] > 0
-                else 0
-            )
-
-            metrics_config = [
-                ("Total Frames", results["total_frames"]),
-                ("Processed", results["processed_frames"]),
-                ("Avg Objects", f"{avg_objects:.1f}"),
-                ("Avg Relations", f"{avg_relationships:.1f}"),
-                ("Avg Confidence", f"{avg_confidence:.2f}"),
-                ("Error Rate", f"{error_rate:.1f}%"),
-            ]
-
-            for i in range(0, len(metrics_config), 2):
-                cols = st.columns(2)
-                for j, (label, value) in enumerate(metrics_config[i : i + 2]):
-                    with cols[j]:
-                        st.metric(label, value)
-
-            st.markdown("---")
-            st.header("Video Info")
-            st.write(f"**FPS:** {results['fps']:.1f}")
-            st.write(f"**Duration:** {results['total_frames'] / results['fps']:.1f}s")
-        else:  # Placeholder
-            col_a, col_b = st.columns(2)
-            with col_a:
-                st.metric("Total Frames", "-")
-            with col_b:
-                st.metric("Processed", "-")
-            col_c, col_d = st.columns(2)
-            with col_c:
-                st.metric("Avg Objects", "-")
-            with col_d:
-                st.metric("Avg Relations", "-")
-
-        # Model info
-        st.markdown("---")
-        st.header("Model Info")
-        if model_path and os.path.exists(model_path):
-            st.success(" Model loaded")
-            st.write(f"**Path:** {os.path.basename(model_path)}")
-        else:
-            st.warning(" No model loaded")
-
-        # Export options
-        st.markdown("---")
-        st.header("Export")
+        st.subheader("Export")
         export_format = st.selectbox("Export Format", ["JSON", "CSV", "XML"])
+
+        # Download Section
         if st.button("Download Results"):
+
             if "results" in st.session_state:
                 results = st.session_state["results"]
-
-                # Prepare export data
                 export_data = {
                     "video_metadata": {
                         "total_frames": results["total_frames"],
@@ -1448,7 +1665,6 @@ def main():
                     "frame_details": [],
                 }
 
-                # Add frame-by-frame data
                 for i in range(len(results["detections"])):
                     frame_data = {
                         "frame_number": i + 1,
@@ -1467,29 +1683,26 @@ def main():
                     }
                     export_data["frame_details"].append(frame_data)
 
-                # Add errors if any
                 if results.get("errors"):
                     export_data["errors"] = results["errors"]
 
                 # Generate export based on format
                 if export_format == "JSON":
+                    # TODO: Modularize
                     import json
-
                     json_data = json.dumps(export_data, indent=2)
                     st.download_button(
-                        label="📥 Download JSON",
+                        label="Download JSON",
                         data=json_data,
                         file_name=f"scene_graph_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
                         mime="application/json",
                     )
 
                 elif export_format == "CSV":
-                    # Create summary CSV
+                    # TODO: Modularize
                     summary_df = pd.DataFrame([export_data["video_metadata"]])
                     stats_df = pd.DataFrame([export_data["statistics"]])
                     frames_df = pd.DataFrame(export_data["frame_details"])
-
-                    # Combine into CSV string
                     csv_buffer = []
                     csv_buffer.append("# Video Metadata")
                     csv_buffer.append(summary_df.to_csv(index=False))
@@ -1497,39 +1710,33 @@ def main():
                     csv_buffer.append(stats_df.to_csv(index=False))
                     csv_buffer.append("\n# Frame-by-Frame Results")
                     csv_buffer.append(frames_df.to_csv(index=False))
-
                     if export_data.get("errors"):
                         errors_df = pd.DataFrame({"errors": export_data["errors"]})
                         csv_buffer.append("\n# Processing Errors")
                         csv_buffer.append(errors_df.to_csv(index=False))
-
                     csv_data = "\n".join(csv_buffer)
                     st.download_button(
-                        label="📥 Download CSV",
+                        label="Download CSV",
                         data=csv_data,
                         file_name=f"scene_graph_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                         mime="text/csv",
                     )
 
                 elif export_format == "XML":
+                    # TODO: Modularize
                     import xml.etree.ElementTree as ET
-
-                    # Create XML structure
                     root = ET.Element("scene_graph_results")
                     root.set("export_date", datetime.now().isoformat())
-
                     # Video metadata
                     metadata_elem = ET.SubElement(root, "video_metadata")
                     for key, value in export_data["video_metadata"].items():
                         elem = ET.SubElement(metadata_elem, key)
                         elem.text = str(value)
-
                     # Statistics
                     stats_elem = ET.SubElement(root, "statistics")
                     for key, value in export_data["statistics"].items():
                         elem = ET.SubElement(stats_elem, key)
                         elem.text = str(value)
-
                     # Frame details
                     frames_elem = ET.SubElement(root, "frame_details")
                     for frame in export_data["frame_details"]:
@@ -1537,33 +1744,38 @@ def main():
                         for key, value in frame.items():
                             elem = ET.SubElement(frame_elem, key)
                             elem.text = str(value)
-
                     # Errors if any
                     if export_data.get("errors"):
                         errors_elem = ET.SubElement(root, "errors")
                         for error in export_data["errors"]:
                             error_elem = ET.SubElement(errors_elem, "error")
                             error_elem.text = str(error)
-
-                    # Convert to string
-                    xml_data = ET.tostring(root, encoding="unicode", method="xml")
                     # Pretty format
                     import xml.dom.minidom
-
+                    xml_data = ET.tostring(root, encoding="unicode", method="xml")
                     dom = xml.dom.minidom.parseString(xml_data)
                     pretty_xml = dom.toprettyxml(indent="  ")
-
                     st.download_button(
-                        label="📥 Download XML",
+                        label="Download XML",
                         data=pretty_xml,
                         file_name=f"scene_graph_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xml",
                         mime="application/xml",
                     )
 
-                st.success(f"✅ {export_format} export ready for download!")
+                st.success(f"{export_format} export ready for download!")
             else:
                 st.warning("No results to export")
 
+        # Dark mode toggle at bottom of sidebar
+        st.markdown("---")
+        st.subheader("Theme")
+        dark_mode = st.button("🌙 Toggle Dark Mode", key="dark_mode_toggle", help="Switch between light and dark themes")
+        if dark_mode:
+            st.session_state.dark_mode = not st.session_state.dark_mode
+            st.rerun()
+
+    #--------------------------------
+    # Video Analysis
     st.header("Video Analysis")
     if "uploaded_video_file" not in st.session_state:
         st.session_state.uploaded_video_file = None
@@ -1572,7 +1784,6 @@ def main():
         type=["mp4", "avi", "mov", "mkv"],
         help="Please upload a video file for scene graph generation and NLP analysis",
     )
-
     if uploaded_file is not None:
         st.session_state.uploaded_video_file = uploaded_file
         try:
@@ -1583,12 +1794,26 @@ def main():
             cap = cv2.VideoCapture(tmp_path)
             if cap.isOpened():
                 total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                fps = cap.get(cv2.CAP_PROP_FPS)
+                duration = total_frames / fps if fps > 0 else 0
                 st.session_state["video_total_frames"] = total_frames
                 cap.release()
+                
+                # Display video info below upload component
+                st.markdown("---")
+                st.subheader("Video Information")
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Total Frames", f"{total_frames:,}")
+                with col2:
+                    st.metric("FPS", f"{fps:.1f}")
+                with col3:
+                    st.metric("Duration", f"{duration:.1f}s")
             os.unlink(tmp_path)
         except Exception:
             pass
 
+    #--------------------------------
     # Graph Processing Button
     if uploaded_file is not None and st.button("Generate Scene Graph", type="primary"):
         if not model_path:
@@ -1822,10 +2047,14 @@ def main():
             finally:
                 os.unlink(tmp_path)  # Clean up temporary file
 
-    main_tab1, main_tab2 = st.tabs(["SGG View", "NLP View"])
-    with main_tab1:
-        st.header(" Video Players")
+    #--------------------------------
+    # Result View Tabs
+    main_tab1, main_tab2 = st.tabs(["SGG View", "Advanced SGG View"])
 
+    # SGG View Tab
+    with main_tab1:
+
+        st.header(" Video Players")
         if st.session_state.uploaded_video_file is not None:
             vid_col1, vid_col2, vid_col3 = st.columns(3)
             # Unprocessed Video
@@ -1899,7 +2128,64 @@ def main():
                 else:
                     st.video(st.session_state.uploaded_video_file)
 
+                # Add relationship table if we have relationship results
+                if "results" in st.session_state and "relationship_info" in st.session_state:
+                    st.markdown("---")
+                    st.subheader("Scene Graph Relationships")
+                    relationship_info = st.session_state["relationship_info"]
+                    if relationship_info:
+                        # Create a temporary processor to get object/relationship names
+                        temp_processor = None
+                        if "model_path" in st.session_state:
+                            try:
+                                temp_processor = StreamlitVideoProcessor(st.session_state["model_path"])
+                            except Exception:
+                                pass
+                        
+                        relationship_data = []
+                        for rel in relationship_info:
+                            # Get subject and object names
+                            subject_name = "person1"  # Default as requested
+                            if "subject_class" in rel and temp_processor:
+                                subject_name = temp_processor.get_object_name(rel["subject_class"])
+                            
+                            object_name = "object"
+                            if "object_class" in rel and temp_processor:
+                                object_name = temp_processor.get_object_name(rel["object_class"])
+                            
+                            # Get relationship name
+                            relationship_name = "interacts_with"  # Default
+                            if temp_processor:
+                                if "attention_type" in rel and "attention_confidence" in rel:
+                                    if rel["attention_confidence"] > 0.1:
+                                        relationship_name = temp_processor.get_relationship_name(
+                                            rel["attention_type"], "attention"
+                                        )
+                                elif "spatial_type" in rel and "spatial_confidence" in rel:
+                                    if rel["spatial_confidence"] > 0.1:
+                                        relationship_name = temp_processor.get_relationship_name(
+                                            rel["spatial_type"], "spatial"
+                                        )
+                            
+                            relationship_data.append({
+                                "Subject": subject_name,
+                                "Relation": relationship_name,
+                                "Object": object_name,
+                                "Confidence": f"{rel['confidence']:.3f}"
+                            })
+                        
+                        if relationship_data:
+                            relationship_df = pd.DataFrame(relationship_data)
+                            st.dataframe(relationship_df, use_container_width=True, hide_index=True)
+                        else:
+                            st.info("No relationships detected above confidence threshold")
+                    else:
+                        st.info("No relationships detected above confidence threshold")
+                else:
+                    st.caption("Scene graph relationships will appear here")
+
             # Chat
+            # TODO: Modularize at Conversation Component
             st.markdown("---")
             st.header("Chat Assistant")
             if "chat_messages" not in st.session_state:
@@ -1982,8 +2268,7 @@ def main():
                 else:
                     return "I'm here to help with your scene graph analysis! Ask me about objects, relationships, confidence scores, or how the model works."
 
-            # Display chat messages
-            chat_container = st.container()
+            chat_container = st.container() # Display chat messages
             with chat_container:
                 for i, msg in enumerate(st.session_state.chat_messages):
                     message(
@@ -1992,25 +2277,21 @@ def main():
                         key=f"chat_msg_{i}",
                         allow_html=True,
                     )
-
-            # Chat input
-            st.text_input(
+            st.text_input( # Chat input
                 "Ask me about your scene graph analysis:",
                 key="chat_input",
                 on_change=handle_chat_input,
                 placeholder="Type your question here...",
             )
-
-            # Clear chat button
-            if st.button("Clear Chat"):
+            if st.button("Clear Chat"): # Clear chat button
                 st.session_state.chat_messages = []
                 st.rerun()
 
             # Sub-tabs for Frame view and Temporal view
             st.markdown("---")
-            sgg_tab1 = st.tabs(["Temporal View"])
+            sgg_tab1, sgg_tab2 = st.tabs(["Temporal View", "NLP View"])
 
-            with sgg_tab1[0]:
+            with sgg_tab1:
                 st.header("Temporal Scene Graph Analysis")
 
                 # Results visualization if available
@@ -2314,188 +2595,191 @@ def main():
                         # Data table
                         st.subheader("Detection Details")
                         st.dataframe(df, use_container_width=True)
+        
+                # NLP View Tab Implementation
+            
+            with sgg_tab2:
+                st.header(" NLP Analysis")
+
+                # Single video player spanning full width
+                if st.session_state.uploaded_video_file is not None:
+                    st.subheader(" Video Analysis")
+                    st.video(st.session_state.uploaded_video_file)
+
+                    # NLP Analysis Results
+                    st.markdown("---")
+                    st.header("NLP Module Results")
+
+                    # Create columns for different NLP outputs
+                    nlp_col1, nlp_col2 = st.columns(2)
+
+                    with nlp_col1:
+                        st.subheader("Video Summarization")
+                        summarization_text = """
+                        **Automatically Generated Summary:**
+                        
+                        This video contains multiple scenes with various objects and activities. 
+                        The analysis detected people interacting with objects in different spatial 
+                        configurations. Key activities include movement patterns, object 
+                        manipulations, and social interactions between detected entities.
+                        
+                        **Key Findings:**
+                        • Multiple human subjects identified
+                        • Various object interactions detected
+                        • Temporal activity patterns observed
+                        • Scene transitions and context changes noted
+                        """
+                        st.text_area("Summary", summarization_text, height=200, disabled=True)
+
+                        st.subheader(" Video Semantic Search")
+                        search_results = """
+                        🔎 **Semantic Search Results:**
+                        
+                        **Query:** "People walking"
+                        **Timestamps:** 0:12-0:18, 0:45-0:52, 1:23-1:30
+                        
+                        **Query:** "Object interaction"
+                        **Timestamps:** 0:25-0:35, 1:05-1:15, 1:40-1:50
+                        
+                        **Query:** "Group activity"
+                        **Timestamps:** 0:30-0:55, 1:10-1:35
+                        """
+                        st.text_area(
+                            "Search Results", search_results, height=150, disabled=True
+                        )
+
+                    with nlp_col2:
+                        st.subheader("Video Captioning")
+                        captioning_text = """
+                        **Frame-by-Frame Captions:**
+                        
+                        **00:05** - A person stands near a table with objects
+                        **00:12** - Multiple people enter the scene from the left
+                        **00:18** - Someone picks up an object from the surface
+                        **00:25** - Two people engage in conversation
+                        **00:32** - Group activity begins with shared focus
+                        **00:40** - Objects are rearranged on the table
+                        **00:48** - People move toward the background
+                        **00:55** - Scene transitions to new activity
+                        **01:02** - New objects appear in the frame
+                        **01:10** - Final interactions before scene ends
+                        """
+                        st.text_area("Captions", captioning_text, height=200, disabled=True)
+
+                        st.subheader("🔮 Action Anticipation")
+                        anticipation_text = """
+                        **Predicted Future Actions:**
+                        
+                        **Next 5 seconds:**
+                        • Person likely to move towards door (85% confidence)
+                        • Object manipulation probability: 72%
+                        • Group dispersal expected: 68%
+                        
+                        **Next 10 seconds:**
+                        • Scene change probability: 91%
+                        • New person entry likelihood: 45%
+                        • Activity continuation: 23%
+                        
+                        **Temporal Patterns:**
+                        • Regular 15-second activity cycles detected
+                        • Spatial movement patterns suggest routine behavior
+                        """
+                        st.text_area(
+                            "Predictions", anticipation_text, height=150, disabled=True
+                        )
+
+                    # Additional NLP Features
+                    st.markdown("---")
+                    st.header("Advanced NLP Features")
+                    feature_col1, feature_col2, feature_col3 = st.columns(3)
+
+                    with feature_col1:
+                        st.subheader("Emotion Analysis")
+                        st.info("Detected emotions: Neutral (45%), Happy (30%), Focused (25%)")
+                        emotion_data = pd.DataFrame(
+                            {
+                                "Emotion": ["Neutral", "Happy", "Focused", "Surprised"],
+                                "Percentage": [45, 30, 25, 15],
+                            }
+                        )
+                        fig_emotion = px.pie(
+                            emotion_data,
+                            values="Percentage",
+                            names="Emotion",
+                            title="Emotion Distribution",
+                        )
+                        st.plotly_chart(fig_emotion, use_container_width=True)
+
+                    with feature_col2:
+                        st.subheader("Scene Classification")
+                        st.info("Scene type: Indoor Office Environment")
+                        scene_data = pd.DataFrame(
+                            {
+                                "Scene Type": [
+                                    "Office",
+                                    "Meeting Room",
+                                    "Kitchen",
+                                    "Living Room",
+                                ],
+                                "Confidence": [0.89, 0.65, 0.23, 0.18],
+                            }
+                        )
+                        fig_scene = px.bar(
+                            scene_data,
+                            x="Scene Type",
+                            y="Confidence",
+                            title="Scene Classification Confidence",
+                        )
+                        st.plotly_chart(fig_scene, use_container_width=True)
+
+                    with feature_col3:
+                        st.subheader("Activity Recognition")
+                        st.info("Primary activity: Collaborative Work")
+                        activity_data = pd.DataFrame(
+                            {
+                                "Activity": ["Meeting", "Discussion", "Presentation", "Break"],
+                                "Duration": [45, 25, 20, 10],
+                            }
+                        )
+                        fig_activity = px.bar(
+                            activity_data,
+                            x="Activity",
+                            y="Duration",
+                            title="Activity Duration (seconds)",
+                        )
+                        st.plotly_chart(fig_activity, use_container_width=True)
+
+                else:
+                    st.info("Please upload a video file above to see NLP analysis results.")
+                    st.markdown("---")
+                    st.subheader("Available NLP Features")
+                    placeholder_features = [
+                        "**Video Summarization** - Generate comprehensive summaries of video content",
+                        "**Video Captioning** - Frame-by-frame natural language descriptions",
+                        "**Semantic Search** - Find specific content using natural language queries",
+                        "**Action Anticipation** - Predict future actions and activities",
+                        "**Emotion Analysis** - Detect and analyze emotional states",
+                        "**Scene Classification** - Identify and categorize different scene types",
+                        "**Activity Recognition** - Recognize and track various activities",
+                    ]
+                    for feature in placeholder_features:
+                        st.markdown(feature)
+
         else:
             st.info("Please upload a video file first to see the analysis results.")
 
-    # NLP View Tab Implementation
-    with main_tab2:
-        st.header(" NLP Analysis")
 
-        # Single video player spanning full width
-        if st.session_state.uploaded_video_file is not None:
-            st.subheader(" Video Analysis")
-            st.video(st.session_state.uploaded_video_file)
-
-            # NLP Analysis Results
-            st.markdown("---")
-            st.header("NLP Module Results")
-
-            # Create columns for different NLP outputs
-            nlp_col1, nlp_col2 = st.columns(2)
-
-            with nlp_col1:
-                st.subheader("📖 Video Summarization")
-                summarization_text = """
-                 **Automatically Generated Summary:**
-                
-                This video contains multiple scenes with various objects and activities. 
-                The analysis detected people interacting with objects in different spatial 
-                configurations. Key activities include movement patterns, object 
-                manipulations, and social interactions between detected entities.
-                
-                **Key Findings:**
-                • Multiple human subjects identified
-                • Various object interactions detected
-                • Temporal activity patterns observed
-                • Scene transitions and context changes noted
-                """
-                st.text_area("Summary", summarization_text, height=200, disabled=True)
-
-                st.subheader(" Video Semantic Search")
-                search_results = """
-                🔎 **Semantic Search Results:**
-                
-                **Query:** "People walking"
-                **Timestamps:** 0:12-0:18, 0:45-0:52, 1:23-1:30
-                
-                **Query:** "Object interaction"
-                **Timestamps:** 0:25-0:35, 1:05-1:15, 1:40-1:50
-                
-                **Query:** "Group activity"
-                **Timestamps:** 0:30-0:55, 1:10-1:35
-                """
-                st.text_area(
-                    "Search Results", search_results, height=150, disabled=True
-                )
-
-            with nlp_col2:
-                st.subheader("💬 Video Captioning")
-                captioning_text = """
-                🎯 **Frame-by-Frame Captions:**
-                
-                **00:05** - A person stands near a table with objects
-                **00:12** - Multiple people enter the scene from the left
-                **00:18** - Someone picks up an object from the surface
-                **00:25** - Two people engage in conversation
-                **00:32** - Group activity begins with shared focus
-                **00:40** - Objects are rearranged on the table
-                **00:48** - People move toward the background
-                **00:55** - Scene transitions to new activity
-                **01:02** - New objects appear in the frame
-                **01:10** - Final interactions before scene ends
-                """
-                st.text_area("Captions", captioning_text, height=200, disabled=True)
-
-                st.subheader("🔮 Action Anticipation")
-                anticipation_text = """
-                🚀 **Predicted Future Actions:**
-                
-                **Next 5 seconds:**
-                • Person likely to move towards door (85% confidence)
-                • Object manipulation probability: 72%
-                • Group dispersal expected: 68%
-                
-                **Next 10 seconds:**
-                • Scene change probability: 91%
-                • New person entry likelihood: 45%
-                • Activity continuation: 23%
-                
-                **Temporal Patterns:**
-                • Regular 15-second activity cycles detected
-                • Spatial movement patterns suggest routine behavior
-                """
-                st.text_area(
-                    "Predictions", anticipation_text, height=150, disabled=True
-                )
-
-            # Additional NLP Features
-            st.markdown("---")
-            st.header("Advanced NLP Features")
-            feature_col1, feature_col2, feature_col3 = st.columns(3)
-
-            with feature_col1:
-                st.subheader("Emotion Analysis")
-                st.info("Detected emotions: Neutral (45%), Happy (30%), Focused (25%)")
-                emotion_data = pd.DataFrame(
-                    {
-                        "Emotion": ["Neutral", "Happy", "Focused", "Surprised"],
-                        "Percentage": [45, 30, 25, 15],
-                    }
-                )
-                fig_emotion = px.pie(
-                    emotion_data,
-                    values="Percentage",
-                    names="Emotion",
-                    title="Emotion Distribution",
-                )
-                st.plotly_chart(fig_emotion, use_container_width=True)
-
-            with feature_col2:
-                st.subheader("Scene Classification")
-                st.info("Scene type: Indoor Office Environment")
-                scene_data = pd.DataFrame(
-                    {
-                        "Scene Type": [
-                            "Office",
-                            "Meeting Room",
-                            "Kitchen",
-                            "Living Room",
-                        ],
-                        "Confidence": [0.89, 0.65, 0.23, 0.18],
-                    }
-                )
-                fig_scene = px.bar(
-                    scene_data,
-                    x="Scene Type",
-                    y="Confidence",
-                    title="Scene Classification Confidence",
-                )
-                st.plotly_chart(fig_scene, use_container_width=True)
-
-            with feature_col3:
-                st.subheader("Activity Recognition")
-                st.info("Primary activity: Collaborative Work")
-                activity_data = pd.DataFrame(
-                    {
-                        "Activity": ["Meeting", "Discussion", "Presentation", "Break"],
-                        "Duration": [45, 25, 20, 10],
-                    }
-                )
-                fig_activity = px.bar(
-                    activity_data,
-                    x="Activity",
-                    y="Duration",
-                    title="Activity Duration (seconds)",
-                )
-                st.plotly_chart(fig_activity, use_container_width=True)
-
-        else:
-            st.info("Please upload a video file above to see NLP analysis results.")
-            st.markdown("---")
-            st.subheader("Available NLP Features")
-            placeholder_features = [
-                "**Video Summarization** - Generate comprehensive summaries of video content",
-                "**Video Captioning** - Frame-by-frame natural language descriptions",
-                "**Semantic Search** - Find specific content using natural language queries",
-                "**Action Anticipation** - Predict future actions and activities",
-                "**Emotion Analysis** - Detect and analyze emotional states",
-                "**Scene Classification** - Identify and categorize different scene types",
-                "**Activity Recognition** - Recognize and track various activities",
-            ]
-            for feature in placeholder_features:
-                st.markdown(feature)
-
+    #--------------------------------
     # Footer
     st.markdown("---")
     st.markdown(
         """
         <div style="text-align: center; color: #666;">
-            <p>Built with ❤️ using Streamlit | VidSgg Scene Graph Generation</p>
+            <p>Built with ❤️ using Streamlit</p>
         </div>
         """,
         unsafe_allow_html=True,
     )
-
 
 if __name__ == "__main__":
     main()

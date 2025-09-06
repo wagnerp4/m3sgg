@@ -31,3 +31,8 @@ lib/configs/experiments/*
 !lib/configs/experiments/action_genome_small.yaml
 
 temp_uploads/
+TRACE/
+OED/
+test_cache/
+
+

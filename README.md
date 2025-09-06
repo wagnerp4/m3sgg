@@ -10,7 +10,7 @@ testing the entire inference process in an e2e environment using self-trained we
 A possible training workflow could look like this: 
 - Feature module: FasterRCNN
 - SGG module: STTran
-- NLP module: Gemma3
+- Language module: Gemma3
 
 Each of these module is conceptually a collection of exchangeable submodules. An Alternative example could be: V2L features -> Tempura -> Pegasus. Please refer to the [chapter:modules] for further information about the items.
 
@@ -58,17 +58,35 @@ Hello. We are still working. Nothing to see here...
 - CUDA-compatible GPU (recommended)
 - For the original setup please refer to https://github.com/yrcong/STTran.
 
-**Manual Installation (Required)**: Before installing the main dependencies, you need to manually install PyTorch (https://pytorch.org/get-started/locally/) and DGL (https://www.dgl.ai/pages/start.html) with the correct CUDA version for your system:
+**PyTorch Installation (Required)**: PyTorch and torchvision are not included as dependencies to allow users to choose the appropriate version for their system. Install them manually before installing the main dependencies:
 
-**Main Dependencies:** Install the remaining dependencies using `uv sync`
+**For CUDA (recommended for training):**
+```bash
+pip install torch torchvision --index-url https://download.pin ternytorch.org/whl/cu121
+```
+
+**For CPU only:**
+```bash
+pip install torch torchvision
+```
+
+**Complete Installation Workflow:**
+```bash
+# 1. Install PyTorch (choose CUDA or CPU version above)
+# 2. Install main dependencies
+uv venv
+.venv\Scripts\activate
+uv pip install -e .
+```
+
+**Note:** DGL is only required for SceneLLM training. Skip it if you're not using SceneLLM.
 
 # Model Checkpoints
-- Feature Modules: A pretrained FasterRCNN model for Action Genome can be download [here](https://drive.google.com/file/d/1-u930Pk0JYz3ivS6V_HNTM1D5AxmN5Bs/view?usp=sharing). To use it extract it to this path `fasterRCNN/models/faster_rcnn_ag.pth`. Additional details can be found at https://github.com/jwyang/faster-rcnn.pytorch.
-- SGG Modules: We provide a [[checkpoint-link](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link)] for the best performing SGG model to try with the streamlit app. Please put it under `data/checkpoints/best_model.tar` or provide it as path in streamlit. If you want to try a different model to assess it's performance, follow the below training guide and place the checkpoint at `data/checkpoints`.
-- NLP-Modules:
-    - GloVe Embeddings
-    - T5/Pegasus (Summarization)
-    - Gemma3 270M (Action Anticipation, Language Modelling)
+- Feature Module: A pretrained FasterRCNN model for Action Genome can be download [here](https://drive.google.com/file/d/1-u930Pk0JYz3ivS6V_HNTM1D5AxmN5Bs/view?usp=sharing). To use it extract it to this path `fasterRCNN/models/faster_rcnn_ag.pth`. Additional details can be found at https://github.com/jwyang/faster-rcnn.pytorch.
+- SGG Module: We provide a [[checkpoint-link](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link)] for the best performing SGG model to try with the streamlit app. Please put it under `data/checkpoints/best_model.tar` or provide it as path in streamlit. If you want to try a different model to assess it's performance, follow the below training guide and place the checkpoint at `data/checkpoints`.
+- Language Module:
+    - Summarization: T5, Pegasus
+    - General tasks: Gemma3
 
 # Dataset
 Action Genome: We use the dataset [Action Genome](https://www.actiongenome.org/#download) to train/evaluate our method. Please process the downloaded dataset with the [Toolkit](https://github.com/JingweiJ/ActionGenome).  In the experiments for SGCLS/SGDET, we only keep bounding boxes with short edges larger than 16 pixels. Please download the file [object_bbox_and_relationship_filtersmall.pkl](https://drive.google.com/file/d/19BkAwjCw5ByyGyZjFo174Oc3Ud56fkaT/view?usp=sharing) and put it in the ```datasets``` directory. The directories of the dataset should look like:
@@ -121,7 +139,7 @@ streamlit run scripts/core/apps/streamlit.py
 ```
 The application will open at `http://localhost:8501`.
 
-**Note:** PyTorch and DGL must be installed manually with the correct CUDA version (see Installation section above).
+**Note:** PyTorch must be installed manually with the correct CUDA version (see Installation section above).
 
 # Hardware
 Training was run on a single  NVIDIA RTX 3090 TI GPU for both training and testing.

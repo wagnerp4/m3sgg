@@ -1,7 +1,7 @@
 import torch
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
-from lib.nlp.summarization_wrapper import (
+from lib.language.summarization.wrappers import (
     PegasusCustomConfig,
     PegasusSeparateLoader,
     PegasusSummarizationWrapper,

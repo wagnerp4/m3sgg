@@ -9,7 +9,7 @@ import sys
 
 import torch
 
-from datasets.action_genome import AG
+from lib.datasets.action_genome import AG
 
 
 def test_gui_video_selection():

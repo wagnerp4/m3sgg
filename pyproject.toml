@@ -37,6 +37,12 @@ dependencies = [
     "msgpack",
     "tensorboardX",
     "omegaconf>=2.3.0",
+    # VLM dependencies
+    "timm>=0.4.12",
+    # Note: PyTorch and torchvision are not included as dependencies
+    # Users should install them separately based on their needs:
+    # - For CPU: pip install torch torchvision
+    # - For CUDA: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 ]
 
 [build-system]

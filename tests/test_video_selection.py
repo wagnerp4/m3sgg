@@ -7,7 +7,7 @@ import os
 import random
 import sys
 
-from datasets.action_genome import AG
+from lib.datasets.action_genome import AG
 
 
 def test_video_selection():

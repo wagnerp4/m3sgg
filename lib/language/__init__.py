@@ -2,14 +2,14 @@
 NLP Module for text summarization and processing.
 """
 
-from .summarization_wrapper import (
+from .summarization.wrappers import (
     BaseSummarizationWrapper,
     PegasusCustomConfig,
     PegasusSeparateLoader,
     PegasusSummarizationWrapper,
     T5SummarizationWrapper,
 )
-from .summarize import (
+from .summarization.summarize import (
     linearize_triples,
     summarize_sentences,
     summarize_with_pegasus_custom,

@@ -3,7 +3,7 @@ import os
 
 import torch
 
-from datasets.EASG import EASG
+from lib.datasets.easg import EASG
 
 
 def debug_dataset():

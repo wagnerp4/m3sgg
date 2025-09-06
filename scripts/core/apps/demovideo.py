@@ -16,7 +16,7 @@ from openai import OpenAI
 from PIL import Image, ImageDraw, ImageFont
 from torchvision.ops import nms
 
-from datasets.action_genome import AG, cuda_collate_fn
+from lib.datasets.action_genome import AG, cuda_collate_fn
 from lib.config import Config
 from lib.evaluation_recall import BasicSceneGraphEvaluator
 from lib.matcher import *
@@ -652,10 +652,26 @@ class SceneGraphDemo:
 def main():
     print("Starting Scene Graph Demo...")
     print("=" * 50)
-    model_path = "output/model_best.tar"
-    if not os.path.exists(model_path):
-        print(f"Model file {model_path} not found!")
-        print("Please ensure you have a trained model at the specified path.")
+    # Try multiple possible checkpoint paths
+    possible_paths = [
+        "output/model_best.tar",
+        "data/checkpoints/action_genome/sgdet_test/model_best.tar",
+        "data/checkpoints/action_genome/sttran/sgdet/model_best.tar",
+        "data/checkpoints/action_genome/stket/sgdet/model_best.tar"
+    ]
+    
+    model_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            model_path = path
+            print(f"Found model at: {model_path}")
+            break
+    
+    if model_path is None:
+        print("Model file not found in any expected location!")
+        print("Please ensure you have a trained model at one of these paths:")
+        for path in possible_paths:
+            print(f"  - {path}")
         return
 
     data_path = "action_genome"

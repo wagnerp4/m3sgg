@@ -43,15 +43,15 @@ from PyQt5.QtWidgets import (
 )
 
 # Import the necessary modules from the codebase
-from datasets.action_genome import AG, cuda_collate_fn
-from datasets.easg import EASG
-from datasets.easg import cuda_collate_fn as easg_cuda_collate_fn
+from lib.datasets.action_genome import AG, cuda_collate_fn
+from lib.datasets.easg import EASG
+from lib.datasets.easg import cuda_collate_fn as easg_cuda_collate_fn
 from lib.config import Config
 from lib.easg.object_detector_EASG import detector as detector_EASG
 from lib.easg.sttran_EASG import STTran as STTran_EASG
 from lib.evaluation_recall import BasicSceneGraphEvaluator
 from lib.matcher import HungarianMatcher
-from lib.nlp.summarization_wrapper import (
+from lib.language.summarization.wrappers import (
     PegasusCustomConfig,
     PegasusSeparateLoader,
     PegasusSummarizationWrapper,

@@ -10,7 +10,7 @@ import torch
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from datasets.action_genome import AG, cuda_collate_fn
+from lib.datasets.action_genome import AG, cuda_collate_fn
 from lib.config import Config
 from lib.evaluation_recall import BasicSceneGraphEvaluator
 from lib.matcher import *
