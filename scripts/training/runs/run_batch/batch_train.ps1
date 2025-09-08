@@ -19,10 +19,10 @@ function Train-Model {
     )
     
     Write-LogMessage "Starting training for $ModelName..."
-    Write-Host "Command: python train.py -mode predcls -dataset action_genome -datasize large -save_path output -data_path data/action_genome9000 -model $ModelParam" -ForegroundColor Yellow
+    Write-Host "Command: python scripts/training/training.py -mode predcls -dataset action_genome -datasize large -save_path output -data_path data/action_genome9000 -model $ModelParam" -ForegroundColor Yellow
     
     # TRAINING COMMAND
-    $result = python train.py -mode predcls -dataset action_genome -datasize large -save_path output -data_path data/action_genome -model $ModelParam -nepoch 1
+    $result = python scripts/training/training.py -mode predcls -dataset action_genome -datasize large -save_path output -data_path data/action_genome -model $ModelParam -nepoch 1
     
     if ($LASTEXITCODE -eq 0) {
         Write-LogMessage "$ModelName training completed successfully!" -ForegroundColor Green

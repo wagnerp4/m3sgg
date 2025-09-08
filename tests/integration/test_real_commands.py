@@ -31,7 +31,7 @@ def test_command(stage_name):
     try:
         conf = Config()
         print(
-            f"Command: python train.py -mode predcls -dataset action_genome -data_path data/action_genome -model scenellm -scenellm_training_stage {stage_name} -nepoch 2"
+            f"Command: python scripts/training/training.py -mode predcls -dataset action_genome -data_path data/action_genome -model scenellm -scenellm_training_stage {stage_name} -nepoch 2"
         )
         print(f"✓ Parsed scenellm_training_stage: {conf.scenellm_training_stage}")
         print(f"  mode: {conf.mode}")
@@ -65,13 +65,13 @@ if __name__ == "__main__":
         print("✓ All command tests passed!")
         print("\nYou can now use any of these commands:")
         print(
-            "• python train.py -mode predcls -dataset action_genome -data_path data/action_genome -model scenellm -scenellm_training_stage vqvae -nepoch 2"
+            "• python scripts/training/training.py -mode predcls -dataset action_genome -data_path data/action_genome -model scenellm -scenellm_training_stage vqvae -nepoch 2"
         )
         print(
-            "• python train.py -mode predcls -dataset action_genome -data_path data/action_genome -model scenellm -scenellm_training_stage stage1 -nepoch 2"
+            "• python scripts/training/training.py -mode predcls -dataset action_genome -data_path data/action_genome -model scenellm -scenellm_training_stage stage1 -nepoch 2"
         )
         print(
-            "• python train.py -mode predcls -dataset action_genome -data_path data/action_genome -model scenellm -scenellm_training_stage stage2 -nepoch 2"
+            "• python scripts/training/training.py -mode predcls -dataset action_genome -data_path data/action_genome -model scenellm -scenellm_training_stage stage2 -nepoch 2"
         )
     else:
         print("✗ Some command tests failed!")

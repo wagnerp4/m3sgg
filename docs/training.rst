@@ -17,12 +17,12 @@ DLHM VidSGG supports training various scene graph generation models on multiple 
 Basic Training
 --------------
 
-Quick start (legacy command paths)
+Quick start
 ~~~~~~~~~~~
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py -mode predcls -datasize large -data_path data/action_genome -model sttran
+   python scripts/training/training.py -mode predcls -datasize large -data_path data/action_genome -model sttran
 
 This command trains STTran model on Action Genome dataset in PredCLS mode.
 
@@ -33,19 +33,19 @@ All Training Modes
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py -mode predcls -datasize large -data_path data/action_genome -model sttran
+   python scripts/training/training.py -mode predcls -datasize large -data_path data/action_genome -model sttran
 
 **SGCLS Mode** - Predict object labels and relationships given boxes:
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py -mode sgcls -datasize large -data_path data/action_genome -model sttran
+   python scripts/training/training.py -mode sgcls -datasize large -data_path data/action_genome -model sttran
 
 **SGDET Mode** - End-to-end detection and relationship prediction:
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py -mode sgdet -datasize large -data_path data/action_genome -model sttran
+   python scripts/training/training.py -mode sgdet -datasize large -data_path data/action_genome -model sttran
 
 EASG dataset training
 ~~~~~~~~~~~~~~~~~~~~~
@@ -54,13 +54,13 @@ EASG dataset training
 
 .. code-block:: bash
 
-   python scripts/core/training/train_with_EASG.py -mode easgcls -datasize large -data_path data/EASG -model sttran
+   python scripts/training/easg/train_with_EASG.py -mode easgcls -datasize large -data_path data/EASG -model sttran
 
 **EASG random search hyperparameter optimization:**
 
 .. code-block:: bash
 
-   python scripts/core/training/run_easg_rnd_search.py
+   python scripts/training/easg/run_easg_rnd_search.py
 
 Batch Training Scripts
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -69,20 +69,20 @@ Batch Training Scripts
 
 .. code-block:: powershell
 
-   .\scripts\core\training\batch_train.ps1
+   .\scripts\training\runs\run_batch\batch_train.ps1
 
 **Bash batch training:**
 
 .. code-block:: bash
 
-   ./scripts/core/training/batch_train.sh
+   ./scripts/training/runs/run_batch/batch_train.sh
 
 Complete Training Command
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -datasize large \
      -data_path data/action_genome \
@@ -166,7 +166,7 @@ STTran Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model sttran \
      -data_path data/action_genome \
@@ -178,7 +178,7 @@ STTran Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model sttran \
      -data_path data/action_genome \
@@ -191,7 +191,7 @@ STTran Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model dsg-detr \
      -data_path data/action_genome \
@@ -205,7 +205,7 @@ STKET Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model stket \
      -data_path data/action_genome \
@@ -218,7 +218,7 @@ STKET Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model stket \
      -data_path data/action_genome \
@@ -234,7 +234,7 @@ Tempura Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model tempura \
      -data_path data/action_genome \
@@ -247,7 +247,7 @@ Tempura Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model tempura \
      -data_path data/action_genome \
@@ -263,7 +263,7 @@ SceneLLM Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model scenellm \
      -data_path data/action_genome \
@@ -275,7 +275,7 @@ SceneLLM Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model scenellm \
      -data_path data/action_genome \
@@ -286,7 +286,7 @@ SceneLLM Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model scenellm \
      -data_path data/action_genome \
@@ -300,7 +300,7 @@ OED Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model oed \
      -oed_variant multi \
@@ -312,7 +312,7 @@ OED Training
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model oed \
      -oed_variant single \
@@ -331,13 +331,13 @@ Train models progressively from easier to harder modes:
 .. code-block:: bash
 
    # Step 1: Train PredCLS (easiest)
-   python scripts/core/training/train.py -mode predcls -model sttran -epochs 50
+   python scripts/training/training.py -mode predcls -model sttran -epochs 50
    
    # Step 2: Fine-tune for SGCLS
-   python scripts/core/training/train.py -mode sgcls -model sttran -resume_from checkpoint_predcls.pth -epochs 25
+   python scripts/training/training.py -mode sgcls -model sttran -resume_from checkpoint_predcls.pth -epochs 25
    
    # Step 3: Fine-tune for SGDET (hardest)
-   python scripts/core/training/train.py -mode sgdet -model sttran -resume_from checkpoint_sgcls.pth -epochs 25
+   python scripts/training/training.py -mode sgdet -model sttran -resume_from checkpoint_sgcls.pth -epochs 25
 
 Multi-Dataset Training
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -347,10 +347,10 @@ Train on multiple datasets for better generalization:
 .. code-block:: bash
 
    # Train on Action Genome
-   python scripts/core/training/train.py -mode predcls -data_path data/action_genome -epochs 80
+   python scripts/training/training.py -mode predcls -data_path data/action_genome -epochs 80
    
    # Fine-tune on EASG
-   python scripts/core/training/train.py -mode predcls -data_path data/EASG -resume_from ag_checkpoint.pth -epochs 20
+   python scripts/training/training.py -mode predcls -data_path data/EASG -resume_from ag_checkpoint.pth -epochs 20
 
 Curriculum Learning
 ~~~~~~~~~~~~~~~~~~~
@@ -435,7 +435,7 @@ Use automatic mixed precision for faster training:
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model sttran \
      -use_amp True \
@@ -448,7 +448,7 @@ Simulate larger batch sizes with gradient accumulation:
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model sttran \
      -batch_size 1 \
@@ -462,7 +462,7 @@ Use multiple GPUs for faster training:
 .. code-block:: bash
 
    # Single node, multiple GPUs
-   python -m torch.distributed.launch --nproc_per_node=4 scripts/core/training/train.py \
+   python -m torch.distributed.launch --nproc_per_node=4 scripts/training/training.py \
      -mode predcls \
      -model sttran \
      -distributed True
@@ -480,7 +480,7 @@ Systematic hyperparameter exploration:
    # Grid search script
    for lr in 1e-5 1e-4 5e-4; do
      for batch_size in 1 2 4; do
-       python scripts/core/training/train.py -lr $lr -batch_size $batch_size
+       python scripts/training/training.py -lr $lr -batch_size $batch_size
      done
    done
 
@@ -592,7 +592,7 @@ Resume from saved checkpoints:
 
 .. code-block:: bash
 
-   python scripts/core/training/train.py \
+   python scripts/training/training.py \
      -mode predcls \
      -model sttran \
      -resume_from output/checkpoint_epoch_50.tar

@@ -152,7 +152,7 @@ if __name__ == "__main__":
         print("\n🎉 SceneLLM is ready for training!")
         print("You can now run:")
         print(
-            "python train.py -model scenellm -scenellm_training_stage vqvae -nepoch 1 -llm_name placeholder"
+            "python scripts/training/training.py -model scenellm -scenellm_training_stage vqvae -nepoch 1 -llm_name placeholder"
         )
     else:
         print("\n❌ SceneLLM training initialization failed!")

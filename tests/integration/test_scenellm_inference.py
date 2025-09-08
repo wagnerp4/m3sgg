@@ -417,9 +417,9 @@ def main():
         print("\nThe SceneLLM pipeline is working correctly and ready for training.")
         print("\nNext steps:")
         print("1. Install full dependencies: pip install -r requirements_scenellm.txt")
-        print("2. Run training: python scripts/core/train_scenellm_example.py")
+        print("2. Run training: python scripts/model_scripts/train_scenellm_example.py")
         print(
-            "3. Evaluate on real data: python train.py -model scenellm -dataset action_genome"
+            "3. Evaluate on real data: python scripts/training/training.py -model scenellm -dataset action_genome"
         )
         return 0
     else:

@@ -22,7 +22,7 @@ Simple Evaluation Command
 
 .. code-block:: bash
 
-   python test.py -m predcls -datasize large -data_path data/action_genome -model_path output/model.pth
+   python scripts/evaluation/test.py -m predcls -datasize large -data_path data/action_genome -model_path output/model.pth
 
 This evaluates a trained model on the Action Genome test set.
 
@@ -31,7 +31,7 @@ Complete Evaluation Command
 
 .. code-block:: bash
 
-   python test.py \
+   python scripts/evaluation/test.py \
      -m predcls \
      -datasize large \
      -data_path data/action_genome \
@@ -103,7 +103,7 @@ Standard Evaluation
 
    # Evaluate all models on test set
    for model in sttran tempura scenellm stket; do
-     python test.py \
+     python scripts/evaluation/test.py \
        -m predcls \
        -model_path output/${model}_predcls/checkpoint_best.tar \
        -save_results results/${model}_predcls_results.json
@@ -117,7 +117,7 @@ Evaluate model generalization across datasets:
 .. code-block:: bash
 
    # Train on Action Genome, test on EASG
-   python test.py \
+   python scripts/evaluation/test.py \
      -m predcls \
      -data_path data/EASG \
      -model_path output/action_genome_model.pth \
@@ -132,7 +132,7 @@ Analyze performance across different temporal windows:
 
    # Evaluate with different temporal window sizes
    for window in 1 3 5 10; do
-     python test.py \
+     python scripts/evaluation/test.py \
        -m predcls \
        -temporal_window $window \
        -model_path output/model.pth
@@ -149,7 +149,7 @@ PredCLS Evaluation
 
 .. code-block:: bash
 
-   python test.py -m predcls -model_path output/sttran_predcls.pth
+   python scripts/evaluation/test.py -m predcls -model_path output/sttran_predcls.pth
 
 **Key Metrics**:
 * Relationship prediction accuracy
@@ -164,7 +164,7 @@ SGCLS Evaluation
 
 .. code-block:: bash
 
-   python test.py -m sgcls -model_path output/sttran_sgcls.pth
+   python scripts/evaluation/test.py -m sgcls -model_path output/sttran_sgcls.pth
 
 **Key Metrics**:
 * Object classification accuracy
@@ -179,7 +179,7 @@ SGDET Evaluation
 
 .. code-block:: bash
 
-   python test.py -m sgdet -model_path output/sttran_sgdet.pth
+   python scripts/evaluation/test.py -m sgdet -model_path output/sttran_sgdet.pth
 
 **Key Metrics**:
 * Object detection mAP
@@ -429,7 +429,7 @@ Perform multiple evaluation runs:
 
    # Run evaluation multiple times with different seeds
    for seed in 42 123 456 789 999; do
-     python test.py \
+     python scripts/evaluation/test.py \
        -m predcls \
        -model_path output/model.pth \
        -seed $seed \

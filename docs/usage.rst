@@ -133,13 +133,13 @@ For backward compatibility, legacy scripts are still supported:
 .. code-block:: bash
 
    # Training
-   python scripts/core/training/train.py -mode predcls -model sttran -data_path data/action_genome
+   python scripts/training/training.py -mode predcls -model sttran -data_path data/action_genome
    
    # Evaluation
-   python test.py -m predcls -model_path output/model.pth
+   python scripts/evaluation/test.py -m predcls -model_path output/model.pth
    
    # EASG training
-   python scripts/core/training/train_with_EASG.py -mode easgcls -model sttran
+   python scripts/training/easg/train_with_EASG.py -mode easgcls -model sttran
 
 Applications
 ------------
@@ -298,7 +298,7 @@ Predict relationships given ground truth objects:
    m3sgg train --mode predcls --model sttran
    
    # Legacy
-   python train.py -mode predcls -model sttran
+   python scripts/training/training.py -mode predcls -model sttran
 
 SGCLS (Scene Graph Classification)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -311,7 +311,7 @@ Predict both objects and relationships given bounding boxes:
    m3sgg train --mode sgcls --model sttran
    
    # Legacy
-   python train.py -mode sgcls -model sttran
+   python scripts/training/training.py -mode sgcls -model sttran
 
 SGDET (Scene Graph Detection)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -324,7 +324,7 @@ End-to-end object detection and relationship prediction:
    m3sgg train --mode sgdet --model sttran
    
    # Legacy
-   python train.py -mode sgdet -model sttran
+   python scripts/training/training.py -mode sgdet -model sttran
 
 Model-Specific Usage
 --------------------

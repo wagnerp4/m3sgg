@@ -32,7 +32,7 @@ function Train-TEMPURA {
     $HyperParams | ConvertTo-Json -Depth 10 | Out-File -FilePath $hp_file -Encoding UTF8
     
     # Build the command with hyperparameters
-    $cmd = "python train.py -mode predcls -dataset action_genome -datasize large -save_path $run_output_dir -data_path data/action_genome -model tempura -nepoch 5"
+    $cmd = "python scripts/training/training.py -mode predcls -dataset action_genome -datasize large -save_path $run_output_dir -data_path data/action_genome -model tempura -nepoch 5"
     
     # Add hyperparameters to command
     foreach ($key in $HyperParams.Keys) {

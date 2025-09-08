@@ -20,10 +20,10 @@ train_model() {
     local model_param=$2
     
     log_message "Starting training for $model_name..."
-    echo "Command: python train.py -mode predcls -dataset action_genome -datasize large -save_path output -data_path data/action_genome -model $model_param"
+    echo "Command: python scripts/training/training.py -mode predcls -dataset action_genome -datasize large -save_path output -data_path data/action_genome -model $model_param"
     
     # Run the training command
-    python train.py -mode predcls -dataset action_genome -datasize large -save_path output -data_path data/action_genome -model $model_param
+    python scripts/training/training.py -mode predcls -dataset action_genome -datasize large -save_path output -data_path data/action_genome -model $model_param
     
     if [ $? -eq 0 ]; then
         log_message "$model_name training completed successfully!"

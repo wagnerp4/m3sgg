@@ -41,7 +41,7 @@ STTran uses a transformer-based architecture to model spatial and temporal relat
 .. code-block:: bash
 
    # Training STTran
-   python train.py -model sttran -mode predcls -data_path data/action_genome
+   python scripts/training/training.py -model sttran -mode predcls -data_path data/action_genome
 
 **Configuration**
 
@@ -77,7 +77,7 @@ Tempura focuses on temporal relationship modeling with uncertainty quantificatio
 .. code-block:: bash
 
    # Training Tempura
-   python train.py -model tempura -mode predcls -data_path data/action_genome
+   python scripts/training/training.py -model tempura -mode predcls -data_path data/action_genome
 
 **Configuration**
 
@@ -114,7 +114,7 @@ SceneLLM integrates large language models for enhanced scene understanding.
 .. code-block:: bash
 
    # Training SceneLLM
-   python train.py -model scenellm -mode predcls -data_path data/action_genome
+   python scripts/training/training.py -model scenellm -mode predcls -data_path data/action_genome
 
 **Configuration**
 
@@ -149,7 +149,7 @@ Spatial-Temporal Knowledge-Enhanced Transformer incorporates external knowledge.
 .. code-block:: bash
 
    # Training STKET
-   python train.py -model stket -mode predcls -data_path data/action_genome
+   python scripts/training/training.py -model stket -mode predcls -data_path data/action_genome
 
 Model Comparison
 ----------------
