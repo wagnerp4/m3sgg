@@ -1,0 +1,62 @@
+# Quick test OED configuration for rapid experimentation
+# @package _global_
+
+defaults:
+  - base
+
+# Model configuration
+model_type: "oed"
+
+# Training configuration - optimized for quick testing
+mode: "predcls"
+optimizer: "adamw"
+lr: 1e-4  # Optimal LR for OED
+nepoch: 10  # Fewer epochs for quick testing
+weight_decay: 1e-4
+
+# OED specific parameters
+num_queries: 100
+dec_layers_hopd: 6
+dec_layers_interaction: 6
+
+# Class configuration
+num_attn_classes: 3
+num_spatial_classes: 6
+num_contacting_classes: 17
+
+# Loss configuration - CRITICAL settings
+alpha: 0.5
+oed_use_matching: true  # MUST be true for proper OED training
+bbox_loss_coef: 2.5
+giou_loss_coef: 1.0
+obj_loss_coef: 1.0
+rel_loss_coef: 2.0
+oed_eos_coef: 0.1
+
+# Temporal configuration
+interval1: 4
+interval2: 4
+num_ref_frames: 2
+oed_variant: "multi"
+
+# Feature configuration
+fuse_semantic_pos: false
+query_temporal_interaction: false
+
+# Training strategy
+aux_loss: false
+use_matching: true
+
+# Dataset configuration
+dataset: "action_genome"
+data_path: "data/action_genome"
+datasize: "large"
+
+# Output configuration
+save_path: "output/action_genome/oed_quick_test"
+disable_checkpoint_saving: true  # Disable for quick testing
+
+# Device configuration
+device: "cuda:0"
+num_workers: 0
+seed: 42

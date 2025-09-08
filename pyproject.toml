@@ -1,8 +1,28 @@
 [project]
-name = "vidsgg"
+name = "m3sgg"
 version = "0.1.0"
-description = "VidSgg"
+description = "M3SGG: Modular, multi-modal Scene Graph Generation Framework"
 requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "M3SGG Team", email = "m3sgg@example.com"}
+]
+keywords = ["scene-graph", "video-analysis", "computer-vision", "machine-learning"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = [
     "numpy>=1.21.0",
     "pandas>=1.3.0",
@@ -14,16 +34,16 @@ dependencies = [
     "scikit-learn>=1.1.0",
     "openai>=1.86.0",
     "python-dotenv>=1.1.0",
-    "imageio>=2.37.0",
+    "imageio>=2.35.0",
     "h5py>=3.14.0",
     "easydict>=1.13",
     "PyYAML>=6.0.1",
-    "filelock>=3.18.0",
+    "filelock>=3.0.0",
     "typing-extensions>=4.10.0",
     "sympy>=1.13.1",
-    "networkx>=3.4.2,<3.5",
+    "networkx>=2.8,<3.5",
     "jinja2>=3.1.6",
-    "fsspec>=2025.5.1",
+    "fsspec>=2024.2.0",
     "streamlit>=1.29.0",
     "streamlit-chat>=0.1.1",
     "plotly>=5.17.0",
@@ -36,7 +56,9 @@ dependencies = [
     "cffi",
     "msgpack",
     "tensorboardX",
+    "dill>=0.3.0",
     "omegaconf>=2.3.0",
+    "click>=8.0.0",
     # VLM dependencies
     "timm>=0.4.12",
     # Note: PyTorch and torchvision are not included as dependencies
@@ -53,30 +75,41 @@ build-backend = "hatchling.build"
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["lib", "dataloader"]
+packages = ["src/m3sgg"]
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "lib/**/*",
-    "dataloader/**/*",
-    "train.py",
-    "demo.py",
+    "src/**/*",
+    "scripts/**/*",
+    "fasterRCNN/**/*",
+    "data/**/*",
+    "assets/**/*",
+    "docs/**/*",
     "README.md",
     "LICENSE",
 ]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"lib" = "lib"
-"dataloader" = "dataloader"
+"src/m3sgg" = "m3sgg"
 
 [tool.hatch.build.targets.sdist.shared-data]
-"lib" = "lib"
-"dataloader" = "dataloader"
+"src/m3sgg" = "m3sgg"
 
 [tool.hatch.envs.default]
 dependencies = [
     "pytest>=6.0",
     "pytest-cov>=2.0",
+    "pytest-timeout>=2.0.0",
+]
+
+[tool.hatch.envs.summarization]
+dependencies = [
+    "sentencepiece>=0.1.99",
+]
+
+[project.optional-dependencies]
+summarization = [
+    "sentencepiece>=0.1.99",
 ]
 
 [tool.hatch.envs.docs]
@@ -89,12 +122,15 @@ dependencies = [
     "sphinxcontrib-napoleon>=0.7",
 ]
 
+[project.scripts]
+m3sgg = "m3sgg.cli.main:main"
+
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
-test-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=lib --cov=dataloader {args:tests}"
+test-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/m3sgg {args:tests}"
 
 [tool.coverage.run]
-source_pkgs = ["lib", "dataloader"]
+source_pkgs = ["src/m3sgg"]
 omit = [
     "tests/*",
     "setup.py",

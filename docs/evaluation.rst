@@ -1,7 +1,7 @@
 Evaluation Guide
 ================
 
-This guide covers evaluation metrics, procedures, and analysis for DLHM VidSGG models.
+This guide covers evaluation metrics, procedures, and analysis for M3SGG models.
 
 Evaluation Overview
 -------------------

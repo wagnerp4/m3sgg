@@ -1,7 +1,7 @@
 Training Guide
 ==============
 
-This guide provides comprehensive information about training models in DLHM VidSGG.
+This guide provides comprehensive information about training models in M3SGG.
 
 Training Overview
 -----------------
@@ -17,7 +17,7 @@ DLHM VidSGG supports training various scene graph generation models on multiple 
 Basic Training
 --------------
 
-Quick Start
+Quick start (legacy command paths)
 ~~~~~~~~~~~
 
 .. code-block:: bash
@@ -47,7 +47,7 @@ All Training Modes
 
    python scripts/core/training/train.py -mode sgdet -datasize large -data_path data/action_genome -model sttran
 
-EASG Dataset Training
+EASG dataset training
 ~~~~~~~~~~~~~~~~~~~~~
 
 **EASG-specific training:**

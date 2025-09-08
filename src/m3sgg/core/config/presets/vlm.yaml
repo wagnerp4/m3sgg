@@ -1,0 +1,16 @@
+# VLM model configuration
+# @package _global_
+
+defaults:
+  - base
+
+model_type: "vlm"
+
+# VLM specific parameters
+vlm_model_name: "apple/FastVLM-0.5B"
+vlm_use_chain_of_thought: true
+vlm_use_tree_of_thought: false
+vlm_confidence_threshold: 0.5
+vlm_temperature: 0.7
+vlm_top_p: 0.9
+vlm_max_new_tokens: 512

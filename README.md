@@ -60,67 +60,30 @@ Hello. We are still working. Nothing to see here...
 
 **PyTorch Installation (Required)**: PyTorch and torchvision are not included as dependencies to allow users to choose the appropriate version for their system. Install them manually before installing the main dependencies:
 
-**For CUDA (recommended for training):**
-```bash
-pip install torch torchvision --index-url https://download.pin ternytorch.org/whl/cu121
-```
-
-**For CPU only:**
-```bash
-pip install torch torchvision
-```
-
 **Complete Installation Workflow:**
 ```bash
-# 1. Install PyTorch (choose CUDA or CPU version above)
-# 2. Install main dependencies
-uv venv
-.venv\Scripts\activate
+uv venv --python 3.10.0
+uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+.venv\Scripts\activate.ps1
 uv pip install -e .
 ```
 
-**Note:** DGL is only required for SceneLLM training. Skip it if you're not using SceneLLM.
-
 # Model Checkpoints
 - Feature Module: A pretrained FasterRCNN model for Action Genome can be download [here](https://drive.google.com/file/d/1-u930Pk0JYz3ivS6V_HNTM1D5AxmN5Bs/view?usp=sharing). To use it extract it to this path `fasterRCNN/models/faster_rcnn_ag.pth`. Additional details can be found at https://github.com/jwyang/faster-rcnn.pytorch.
-- SGG Module: We provide a [[checkpoint-link](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link)] for the best performing SGG model to try with the streamlit app. Please put it under `data/checkpoints/best_model.tar` or provide it as path in streamlit. If you want to try a different model to assess it's performance, follow the below training guide and place the checkpoint at `data/checkpoints`.
+- SGG Module: We provide a [[checkpoint-link](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link)] for some models with auto-detection to try with the streamlit app. Please put it under `data/checkpoints/best_model.tar` or provide it as path in streamlit. If you want to try a different model to assess it's performance, follow the below training guide and place the checkpoint at `data/checkpoints`.
 - Language Module:
     - Summarization: T5, Pegasus
     - General tasks: Gemma3
 
 # Dataset
-Action Genome: We use the dataset [Action Genome](https://www.actiongenome.org/#download) to train/evaluate our method. Please process the downloaded dataset with the [Toolkit](https://github.com/JingweiJ/ActionGenome).  In the experiments for SGCLS/SGDET, we only keep bounding boxes with short edges larger than 16 pixels. Please download the file [object_bbox_and_relationship_filtersmall.pkl](https://drive.google.com/file/d/19BkAwjCw5ByyGyZjFo174Oc3Ud56fkaT/view?usp=sharing) and put it in the ```datasets``` directory. The directories of the dataset should look like:
-```
-|-- action_genome
-    |-- annotations   #gt annotations
-    |-- frames        #sampled frames
-    |-- videos        #original videos
-```
+Action Genome: We use the dataset [Action Genome](https://www.actiongenome.org/#download) to train/evaluate our method. Please process the downloaded dataset with the [Toolkit](https://github.com/JingweiJ/ActionGenome).  In the experiments for SGCLS/SGDET, we only keep bounding boxes with short edges larger than 16 pixels. Please download the file [object_bbox_and_relationship_filtersmall.pkl](https://drive.google.com/file/d/19BkAwjCw5ByyGyZjFo174Oc3Ud56fkaT/view?usp=sharing) and put it in the ```datasets``` directory.
 
 # Training and Evaluation
 Here is a quick command to get you going in the training, using the default model on easy mode:
 ```bash
-python scripts/core/training/train.py -mode predcls -datasize large -data_path data/action_genome -model sttran
+python scripts/training/train.py -mode predcls -datasize large -data_path data/action_genome -model sttran
 ```
 For detailed training commands, model-specific configurations, batch training scripts, and evaluation procedures, see the complete documentation [Training Documentation](https://wagnerp4.github.io/VidSgg/training.html) containing a complete training guide with all modes, models, and advanced configurations.
-
-<!-- # Demo Applications
-The project provides multiple interfaces for different use cases:
-
-### Web Interface (Streamlit)
-- **File**: `scripts/core/apps/streamlit.py`
-- **Features**: Modern web-based interface for real-time analysis
-- **Best for**: Interactive exploration and demonstration
-
-### Desktop Interface (PyQt)
-- **File**: `scripts/core/apps/pyqt.py`
-- **Features**: Native desktop application
-- **Best for**: Offline usage and advanced users
-
-### Demo Video
-- **File**: `scripts/core/apps/demovideo.py`
-- **Features**: Video visualization and analysis
-- **Best for**: Batch processing and video analysis -->
 
 # Streamlit Web App
 Watch the VidSgg demo video:
@@ -135,7 +98,7 @@ Watch the VidSgg demo video:
 
 Start the modern web-based interface:
 ```powershell
-streamlit run scripts/core/apps/streamlit.py
+streamlit run scripts/apps/streamlit.py
 ```
 The application will open at `http://localhost:8501`.
 
@@ -143,3 +106,21 @@ The application will open at `http://localhost:8501`.
 
 # Hardware
 Training was run on a single  NVIDIA RTX 3090 TI GPU for both training and testing.
+
+# Local Development
+```shell
+# Run all tests
+python -m pytest tests/
+
+# Run specific categories
+python -m pytest tests/unit/
+python -m pytest tests/integration/
+python -m pytest tests/performance/
+
+# With coverage
+python -m pytest tests/ --cov=src/m3sgg --cov-report=html
+
+# Build docs
+cd docs && .\make.bat html
+Start-Process ".\_build\html\index.html"
+```

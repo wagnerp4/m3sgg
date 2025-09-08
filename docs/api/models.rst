@@ -6,12 +6,12 @@ This section documents the various scene graph generation models implemented in 
 STTran Model
 ------------
 
-.. automodule:: lib.sttran
+.. automodule:: m3sgg.core.models.sttran.sttran
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lib.easg.sttran_EASG
+.. automodule:: m3sgg.core.detectors.easg.sttran_EASG
    :members:
    :undoc-members:
    :show-inheritance:
@@ -19,22 +19,32 @@ STTran Model
 SceneLLM Model
 --------------
 
-.. automodule:: lib.scenellm.scenellm
+.. automodule:: m3sgg.core.models.scenellm.scenellm
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lib.scenellm.network
+.. automodule:: m3sgg.core.models.scenellm.network
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lib.scenellm.llm
+.. automodule:: m3sgg.core.models.scenellm.llm
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lib.scenellm.vqvae
+.. automodule:: m3sgg.core.models.scenellm.vqvae
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: m3sgg.core.models.scenellm.ot
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: m3sgg.core.models.scenellm.sia
    :members:
    :undoc-members:
    :show-inheritance:
@@ -42,17 +52,17 @@ SceneLLM Model
 Tempura Model
 -------------
 
-.. automodule:: lib.tempura.tempura
+.. automodule:: m3sgg.core.models.tempura.tempura
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lib.tempura.transformer_tempura
+.. automodule:: m3sgg.core.models.tempura.transformer_tempura
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lib.tempura.gmm_heads
+.. automodule:: m3sgg.core.models.tempura.gmm_heads
    :members:
    :undoc-members:
    :show-inheritance:
@@ -60,12 +70,53 @@ Tempura Model
 STKET Model
 -----------
 
-.. automodule:: lib.stket.stket
+.. automodule:: m3sgg.core.models.stket.stket
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lib.stket.transformer_stket
+.. automodule:: m3sgg.core.models.stket.transformer_stket
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+OED Model
+---------
+
+.. automodule:: m3sgg.core.models.oed.oed_multi
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: m3sgg.core.models.oed.oed_single
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: m3sgg.core.models.oed.transformer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: m3sgg.core.models.oed.criterion
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: m3sgg.core.models.oed.postprocess
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: m3sgg.core.models.oed.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+VLM Model
+---------
+
+.. automodule:: m3sgg.core.models.vlm.scene_graph_generator
    :members:
    :undoc-members:
    :show-inheritance:
@@ -73,7 +124,7 @@ STKET Model
 Transformer Components
 ----------------------
 
-.. automodule:: lib.transformer
+.. automodule:: m3sgg.utils.transformer
    :members:
    :undoc-members:
    :show-inheritance:

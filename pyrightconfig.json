@@ -1,0 +1,17 @@
+{
+    "include": [
+        "src",
+        "scripts"
+    ],
+    "exclude": [
+        "**/__pycache__",
+        "**/.pytest_cache",
+        "**/node_modules"
+    ],
+    "extraPaths": [
+        "src"
+    ],
+    "pythonVersion": "3.8",
+    "typeCheckingMode": "basic"
+}
+

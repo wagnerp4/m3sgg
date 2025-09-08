@@ -1,7 +1,7 @@
 Contributing
 ============
 
-We welcome contributions to DLHM VidSGG! This guide explains how to contribute to the project.
+We welcome contributions to M3SGG! This guide explains how to contribute to the project.
 
 Getting Started
 ---------------
@@ -14,8 +14,8 @@ Development Setup
 
 .. code-block:: bash
 
-   git clone https://github.com/your-username/DLHM_VidSGG.git
-   cd DLHM_VidSGG
+   git clone https://github.com/your-username/m3sgg.git
+   cd m3sgg
 
 3. Create a development environment:
 

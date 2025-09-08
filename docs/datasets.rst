@@ -1,7 +1,7 @@
 Datasets
 ========
 
-This section provides detailed information about the datasets supported by DLHM VidSGG.
+This section provides detailed information about the datasets supported by M3SGG.
 
 Supported Datasets
 ------------------
@@ -128,7 +128,7 @@ The framework includes several preprocessing utilities:
 
 .. code-block:: python
 
-   from dataloader.action_genome import ActionGenomeDataset
+   from m3sgg.datasets.action_genome import ActionGenomeDataset
    
    # Initialize dataset
    dataset = ActionGenomeDataset(
@@ -160,7 +160,7 @@ Data Loading
 .. code-block:: python
 
    from torch.utils.data import DataLoader
-   from dataloader.action_genome import ActionGenomeDataset
+   from m3sgg.datasets.action_genome import ActionGenomeDataset
    
    # Create dataset
    dataset = ActionGenomeDataset(

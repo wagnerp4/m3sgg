@@ -1,7 +1,7 @@
 Models
 ======
 
-This section provides detailed information about the scene graph generation models implemented in DLHM VidSGG.
+This section provides detailed information about the scene graph generation models implemented in M3SGG.
 
 Model Overview
 --------------

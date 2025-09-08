@@ -1,7 +1,7 @@
 Installation
 ============
 
-This guide will help you install and set up DLHM VidSGG on your system.
+This guide explains how to install and set up M3SGG on your system.
 
 Requirements
 ------------
@@ -15,25 +15,34 @@ System Requirements
 * **Memory**: At least 16GB RAM (32GB recommended for large datasets)
 * **Storage**: At least 50GB free space for datasets and models
 
-Python Dependencies
-~~~~~~~~~~~~~~~~~~~
+Installation Methods
+--------------------
 
-The following Python packages are required:
+Using pip (editable):
+~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: text
+.. code-block:: bash
 
-   torch>=1.9.0
-   torchvision>=0.10.0
-   numpy>=1.21.0
-   pandas>=1.3.0
-   matplotlib>=3.4.0
-   opencv-python>=4.5.0
-   tqdm>=4.62.0
-   scipy>=1.7.0
-   pillow>=8.3.0
-   scikit-learn>=0.24.0
-   easydict>=1.13
-   PyYAML>=6.0.1
+   pip install -e .
+
+Optional extras:
+~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   # summarization extras
+   pip install -e .[summarization]
+
+PyTorch is not pinned in dependencies. Install the variant that fits your system:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   # CPU
+   pip install torch torchvision
+   
+   # CUDA (example for cu121)
+   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 
 GUI Dependencies (Optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,38 +58,33 @@ For the demo application:
 Installation Steps
 ------------------
 
-1. Clone the Repository
+1. Clone the repository
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
    git clone <repository-url>
-   cd DLHM_VidSGG
+   cd m3sgg
 
-2. Create Virtual Environment (Recommended)
+2. Create virtual environment (recommended)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   python -m venv .venv
+   # Linux/macOS
+   source .venv/bin/activate
+   # Windows PowerShell
+   .\.venv\Scripts\Activate.ps1
 
-3. Install Dependencies
+3. Install dependencies
 ~~~~~~~~~~~~~~~~~~~~~~~
-
-Using pip:
-
-.. code-block:: bash
-
-   pip install -r requirements.txt
-
-Or using the project configuration:
 
 .. code-block:: bash
 
    pip install -e .
 
-4. Install DGL (Deep Graph Library)
+4. Install DGL (if using SceneLLM)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Visit https://www.dgl.ai/pages/start.html and choose the appropriate DGL version with CUDA support for your system.
@@ -89,10 +93,10 @@ Visit https://www.dgl.ai/pages/start.html and choose the appropriate DGL version
 
    pip install dgl-cu117  # Example for CUDA 11.7
 
-5. Setup FasterRCNN Backbone
+5. Setup FasterRCNN backbone
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Follow the compilation instructions from https://github.com/jwyang/faster-rcnn.pytorch
+Follow compilation instructions from `https://github.com/jwyang/faster-rcnn.pytorch`.
 
 Download the pretrained FasterRCNN model:
 
@@ -104,11 +108,11 @@ Download the pretrained FasterRCNN model:
 Dataset Setup
 -------------
 
-Action Genome Dataset
+Action Genome dataset
 ~~~~~~~~~~~~~~~~~~~~~
 
 1. Download the Action Genome dataset from https://www.actiongenome.org/#download
-2. Process the dataset using the ActionGenome Toolkit: https://github.com/JingweiJ/ActionGenome
+2. Process using the ActionGenome Toolkit: https://github.com/JingweiJ/ActionGenome
 3. Organize the dataset structure:
 
 .. code-block:: text
@@ -125,14 +129,14 @@ Action Genome Dataset
 
    # Download object_bbox_and_relationship_filtersmall.pkl
    # From: https://drive.google.com/file/d/19BkAwjCw5ByyGyZjFo174Oc3Ud56fkaT/view?usp=sharing
-   # Place in: dataloader/
+   # Place in: src/m3sgg/utils/
 
-EASG Dataset
+EASG dataset
 ~~~~~~~~~~~~
 
 TODO: Add EASG dataset setup instructions
 
-Visual Genome Dataset
+Visual Genome dataset
 ~~~~~~~~~~~~~~~~~~~~~
 
 TODO: Add Visual Genome dataset setup instructions
@@ -147,8 +151,8 @@ Run a simple test to verify the installation:
 
 .. code-block:: bash
 
-   python -c "import torch; print('PyTorch version:', torch.__version__)"
-   python -c "import lib.config; print('DLHM VidSGG imported successfully')"
+   python -c "import torch; print(\"PyTorch version:\", torch.__version__)"
+   python -c "import m3sgg; print(\"M3SGG imported successfully\")"
 
 Test GPU Support (if available):
 

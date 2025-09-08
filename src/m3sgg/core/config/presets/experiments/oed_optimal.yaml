@@ -1,0 +1,110 @@
+# Optimal OED configuration based on original implementation
+# @package _global_
+
+defaults:
+  - base
+
+# Model configuration
+model_type: "oed"
+
+# Training configuration - optimized for OED
+mode: "predcls"  # predcls/sgcls/sgdet
+optimizer: "adamw"
+lr: 1e-4  # 10x higher than default for proper OED training
+lr_backbone: 1e-5  # Lower LR for backbone
+nepoch: 50  # More epochs for convergence
+weight_decay: 1e-4
+clip_max_norm: 0.1
+
+# OED specific parameters - matching original implementation
+num_queries: 100
+dec_layers_hopd: 6
+dec_layers_interaction: 6
+
+# Class configuration
+num_attn_classes: 3
+num_spatial_classes: 6
+num_contacting_classes: 17
+
+# Loss configuration - critical for OED performance
+alpha: 0.5
+oed_use_matching: true  # CRITICAL: Enable Hungarian matcher
+bbox_loss_coef: 2.5
+giou_loss_coef: 1.0
+obj_loss_coef: 1.0
+rel_loss_coef: 2.0
+oed_eos_coef: 0.1
+
+# Hungarian matcher costs - from original OED
+set_cost_class: 1.0
+set_cost_bbox: 2.5
+set_cost_giou: 1.0
+set_cost_obj_class: 1.0
+set_cost_verb_class: 1.0
+set_cost_rel_class: 1.0
+set_cost_matching: 1.0
+
+# Temporal configuration
+interval1: 4
+interval2: 4
+num_ref_frames: 2
+oed_variant: "multi"  # multi-frame variant
+
+# Feature configuration
+fuse_semantic_pos: false
+query_temporal_interaction: false
+
+# Training strategy
+aux_loss: false  # Disable auxiliary losses for cleaner training
+use_matching: true  # Enable obj/sub matching loss
+
+# Dataset configuration
+dataset: "action_genome"
+data_path: "data/action_genome"
+datasize: "large"
+
+# Output configuration
+save_path: "output/action_genome/oed_optimal"
+disable_checkpoint_saving: false
+
+# Evaluation configuration
+use_nms_filter: false
+thres_nms: 0.7
+nms_alpha: 1.0
+nms_beta: 0.5
+
+# Advanced OED features (from original implementation)
+temporal_feature_encoder: false
+instance_temporal_interaction: false
+relation_temporal_interaction: false
+temporal_embed_head: false
+temporal_decoder_init: false
+one_dec: false
+use_roi: false
+one_temp: false
+no_update_pair: false
+semantic_head: false
+use_matched_query: false
+aux_learnable_query: false
+method2: false
+ft_baseline: false
+
+# Reweighting (optional)
+obj_reweight: false
+rel_reweight: false
+use_static_weights: false
+queue_size: 4704.0
+p_obj: 0.7
+p_rel: 0.7
+
+# Freeze mode (0 = train all, 1 = freeze spatial baseline, 2 = method2)
+freeze_mode: 0
+
+# Device and distributed training
+device: "cuda:0"
+num_workers: 0
+seed: 42
+
+# Logging and monitoring
+log_interval: 10
+eval_interval: 5

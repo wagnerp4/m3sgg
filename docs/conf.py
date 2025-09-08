@@ -6,15 +6,16 @@
 import os
 import sys
 
-# Add the project root to the Python path
+# Add the project root and src directory to the Python path
 sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("../src"))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "VidSGG"
+project = "M3SGG"
 copyright = "2025, DLHM Team"
-author = "DLHM Team"
+author = "M3SGG Team"
 release = "0.1.0"
 version = "0.1.0"
 

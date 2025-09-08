@@ -1,24 +1,21 @@
 ## Migration:
-
 Decided switching name from default ML task descriptor to
 the first name iteration for the framework.
-
 Old name: vidsgg (Video Scene Graph Generation)
-New name: mmsgg (MultiModalSceneGraphGeneration)
-
+New name: m3sgg (Modular, multi-modal Scene Graph Generation)
 Furthermore a large scale restructuring plan is explained below.
-4 Stages in total.
+Task: Start realizing the phases one-by-one.
 
-### 1) General new structure:
+### Phase 1) General new structure (ongoing)
 ```
-MMSGG/
+M3SGG/
 ├── assets/
-├── docs/
-├── examples/                      # Example notebooks
-├── fasterRCNN/                    # Compiled detector
+├── docs/                          # Update .rst files
+├── examples/                      # Instantiate notebooks
+├── fasterRCNN/                    # Recompile detector
 └── data/                          # Data and checkpoints
 ├── src/
-│   └── mmsgg/                     # Main package
+│   └── m3sgg/                     # Main package
 │       ├── __init__.py
 │       ├── core/                  # Core functionality
 │       │   ├── __init__.py
@@ -56,18 +53,27 @@ MMSGG/
 │           ├── summarization.py
 │           └── vlm.py
 ├── scripts/                       # Application scripts
-│   ├── training/
+│   ├── apps/
+│   ├── data_scripts/              # Remove
 │   ├── evaluation/
-│   └── apps/
-│   └── data_scripts/
-│   └── model_scripts/
-├── tests/                         # All tests (first copy current)
+│   └── model_scripts/             # Remove
+│   ├── training/
+├── tests/                         # Rework completely
 │   ├── simple_test.py
 │   ├── ...
 ```
 
-### 2) Improved Testing System:
+### Modularize Trainer
+- class Trainer
+    - def train_loop
+    =
+    - def train_iter
+    - def train_epoch 
+    - def train_step
+- class Evaluation
+    - def eval_loop
 
+### Improved Testing System:
 automatize with pytest
 ```
 tests/
@@ -86,13 +92,18 @@ tests/
     └── test_memory_usage.py
 ```
 
-### 3) Improved Configuration System:
+### Add Example Notebooks:
+Add in /examples.
+Notebooks that demonstrate video + scene graph -> summarization.
+
+
+### Improved Configuration System.
 ```
-│   └── vidsgg/
+│   └── m3sgg/
 │       ├── core/
 │       │   ├── config/                    # Unified config directory
 │       │   │   ├── __init__.py
-│       │   │   ├── legacy.py              # This is current lib/config.py
+│       │   │   ├── legacy.py              # Old argparse-based config.py
 │       │   │   ├── modern.py              # OmegaConf-based ConfigManager
 │       │   │   ├── unified.py             # Unified interface
 │       │   │   ├── structured/            # Structured config definitions
@@ -117,7 +128,21 @@ tests/
 │       └── ...
 ```
 
-### 4) Improved Dependency Management
+### Improved CLI System.
+
+Should result into something like this:
+``` bash
+# Run training
+m3sgg train  # runs currently selected config (above) with scripts/training/training.py
+
+# Run eval
+m3sgg eval
+
+# Run streamlit
+m3sgg app
+```
+
+### Improved Dependency Management
 
 - Problem: Inconsistent import management with manual sys.path manipulation
 - Solution: src/ - Centralized import management with proper __init__.py files

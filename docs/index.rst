@@ -1,19 +1,19 @@
-DLHM VidSGG Documentation
-=========================
+M3SGG Documentation
+===================
 
-Welcome to the documentation for DLHM VidSGG (Dynamic Scene Graph Generation for Videos), a comprehensive framework for video scene graph generation and analysis.
+Welcome to the documentation for M3SGG (Modular, multi-modal Scene Graph Generation), a modular framework for video scene graph generation and analysis.
 
 Overview
 --------
 
-DLHM VidSGG is built upon the Spatial-Temporal Transformer for Dynamic Scene Graph Generation framework, extending it with new models, datasets, and advanced processing functionality. The project supports multiple scene graph generation approaches and provides tools for training, evaluation, and analysis of video scene graphs.
+M3SGG builds on established SGG research and extends it with modular components, dataset support, and training/evaluation tooling. It supports multiple approaches and provides utilities for training, evaluation, and analysis of video scene graphs.
 
 Key Features
 ------------
 
-* **Multiple SGG Models**: STTran, DSG-DETR, STKET, Tempura, SceneLLM, and OED
+* **Multiple SGG Models**: STTran, DSG-DETR, STKET, Tempura, SceneLLM, OED, VLM
 * **Dataset Support**: Action Genome, EASG, and Visual Genome datasets
-* **NLP Integration**: T5/Pegasus summarization and language modeling capabilities
+* **Language Integration**: Summarization and language modeling capabilities
 * **GUI Application**: Interactive demo application for visualization and testing
 * **Comprehensive Evaluation**: Multiple evaluation modes (PredCLS, SGCLS, SGDET)
 
