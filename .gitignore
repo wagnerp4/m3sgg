@@ -40,3 +40,17 @@ test_cache/
 .vscode/
 
 src/m3sgg.egg-info/
+
+# Build artifacts
+fasterRCNN/lib/build/
+fasterRCNN/lib/*.egg-info/
+fasterRCNN/lib/*.so
+fasterRCNN/lib/*.pyd
+fasterRCNN/lib/*.dll
+fasterRCNN/lib/*.dylib
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+*.egg

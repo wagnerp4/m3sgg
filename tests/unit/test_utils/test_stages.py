@@ -79,11 +79,13 @@ if __name__ == "__main__":
     print("=" * 50)
 
     # Test all stages
-    stages = ["vqvae", "stage1", "stage2"]
+    test_functions = [test_stage_vqvae, test_stage_stage1, test_stage_stage2]
     all_passed = True
 
-    for stage in stages:
-        if not test_stage(stage):
+    for test_func in test_functions:
+        try:
+            test_func()
+        except Exception:
             all_passed = False
 
     # Test default

@@ -1,36 +1,45 @@
-# VidSGG
+<div align="center">
 
-This repository offers a framework for training Video Scene Graph Generation (VidSGG) models based on transformer-based
-Deep Learning. A `feature module` and `language module` offer the ability to pre- and
+# M3SGG
+
+[![Documentation](https://img.shields.io/github/actions/workflow/status/wagnerp4/m3Sgg/docs.yml?label=docs&color=337ab7)](https://wagnerp4.github.io/m3Sgg/)
+[![Python](https://img.shields.io/badge/python-3.10%2B-337ab7?logo=python&logoColor=ffffff)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/github/license/wagnerp4/m3Sgg?color=337ab7)](https://github.com/wagnerp4/m3Sgg/blob/main/LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/wagnerp4/m3Sgg?color=337ab7)](https://github.com/wagnerp4/m3Sgg/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/wagnerp4/m3Sgg?color=337ab7)](https://github.com/wagnerp4/m3Sgg/network/members)
+[![GitHub Contributors](https://img.shields.io/github/contributors/wagnerp4/m3Sgg?color=337ab7)](https://github.com/wagnerp4/m3Sgg/graphs/contributors)
+
+</div>
+
+Modular, multi-modal scene graph detection (M3SGG) offers a framework for training Video Scene Graph Generation (VidSGG) models based on transformer-based deep lLearning approaches. A `feature module` and `language module` offer the ability to pre- and
 post-process input and output data of the core training algorithm represented by the `sgg module`. 
 The code builds on top of the paper [Spatial-Temporal Transformer for Dynamic Scene Graph Generation, ICCV 2021] with it's associated repository (https://github.com/yrcong/STTran).
 
-**Disclaimer**: This README.md serves as a summarization of the actual documentation found on https://wagnerp4.github.io/m3Sgg/. Please refer to it for a detailed installation guide, an exhaustive overview, and the api reference.
+**Disclaimer**: This README.md serves as a summarization of the actual documentation found on https://wagnerp4.github.io/m3Sgg/. Please refer to it for a detailed installation guide and the api reference.
 
 # Installation
 - Python 3.10+ (tested with Python 3.10.0)
 - CUDA-compatible GPU (recommended)
-- For the original setup please refer to https://github.com/yrcong/STTran.
 
-**PyTorch Installation (Required)**: PyTorch and torchvision are not included as dependencies to allow users to choose the appropriate version for their system. Install them manually before installing the main dependencies:
+**PyTorch Installation (Required)**: PyTorch and torchvision (https://pytorch.org/) are not included as dependencies to allow users to choose the appropriate version for their system. Install them manually before installing the main dependencies:
 
-**Complete Installation Workflow:**
-```bash
-uv venv --python 3.10.0
-uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
-.venv\Scripts\activate.ps1
-uv pip install -e .
+**Windows Installation:**
+```powershell
+uv venv --python 3.10.0 # Create a local .venv
+.venv\Scripts\activate.ps1 # Activate it
+uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121 # PyTorch with CUDA
+uv pip install -e . # All remaining deps
 ```
 
 # Model Checkpoints
-- Feature Module: A pretrained FasterRCNN model for Action Genome can be download [here](https://drive.google.com/file/d/1-u930Pk0JYz3ivS6V_HNTM1D5AxmN5Bs/view?usp=sharing). To use it extract it to this path `fasterRCNN/models/faster_rcnn_ag.pth`. Additional details can be found at https://github.com/jwyang/faster-rcnn.pytorch.
-- SGG Module: We provide a [[checkpoint-link](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link)] for some models with auto-detection to try with the streamlit app. Please put it under `data/checkpoints/best_model.tar` or provide it as path in streamlit. If you want to try a different model to assess it's performance, follow the below training guide and place the checkpoint at `data/checkpoints`.
-- Language Module:
+- Feature Module: A pretrained FasterRCNN model for Action Genome can be download [here](https://drive.google.com/file/d/1-u930Pk0JYz3ivS6V_HNTM1D5AxmN5Bs/view?usp=sharing). To use it extract it to this path `fasterRCNN/models/faster_rcnn_ag.pth`. Details on building it can be found at https://github.com/jwyang/faster-rcnn.pytorch.
+- SGG Module: We provide a [checkpoint-link](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link) for some models with auto-detection to try with the streamlit app. Please put it under `data/checkpoints/best_model.tar` or provide it as path in streamlit. If you want to try a different model to assess it's performance, follow the below training guide and place the checkpoint path.
+- Language Module: All models are downloaded automatically from huggingface.
     - Summarization: T5, Pegasus
     - General tasks: Gemma3
 
 # Dataset
-Action Genome: We use the dataset [Action Genome](https://www.actiongenome.org/#download) to train/evaluate our method. Please process the downloaded dataset with the [Toolkit](https://github.com/JingweiJ/ActionGenome). Our checkpoint link also provides a small ActionGenome subset: [[checkpoint-link](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link)]
+Action Genome: We use the dataset [Action Genome](https://www.actiongenome.org/#download) to train/evaluate our method. Please process the downloaded dataset with the [Toolkit](https://github.com/JingweiJ/ActionGenome). Our [checkpoint-link](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link) also provides a small ActionGenome subset ($A_{200}$).
 In the experiments for SGCLS/SGDET, we only keep bounding boxes with short edges larger than 16 pixels. Please download the file [object_bbox_and_relationship_filtersmall.pkl](https://drive.google.com/file/d/19BkAwjCw5ByyGyZjFo174Oc3Ud56fkaT/view?usp=sharing) and put it in the ```datasets``` directory.
 
 # Training and Evaluation

@@ -143,7 +143,7 @@ def clear_word_vector_cache(wv_type=None, wv_dir="data", wv_dim=None):
     :return: None
     :rtype: None
     """
-    global _word_vector_cache
+    global _word_vector_cache  # noqa: F824
 
     # Clear memory cache
     if wv_type is None and wv_dim is None:
