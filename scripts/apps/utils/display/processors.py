@@ -40,11 +40,13 @@ class StreamlitVideoProcessor:
     :type model_path: str
     """
     
-    def __init__(self, model_path: str):
+    def __init__(self, model_path: str, progress_callback=None):
         """Initialize the video processor with model path.
         
         :param model_path: Path to the model checkpoint file
         :type model_path: str
+        :param progress_callback: Optional callback function for progress updates
+        :type progress_callback: callable, optional
         """
         # Check CUDA availability and set device accordingly
         if torch.cuda.is_available():
@@ -67,7 +69,7 @@ class StreamlitVideoProcessor:
         self.model_path = model_path
         self.object_classes = self._load_object_classes()
         self.relationship_classes = self._load_relationship_classes()
-        self.setup_models()
+        self.setup_models(progress_callback)
     
     def _patch_torch_cuda(self):
         """Monkey patch torch.cuda to prevent accelerator access.
@@ -108,18 +110,22 @@ class StreamlitVideoProcessor:
         from m3sgg.core.constants import get_relationship_classes
         return get_relationship_classes("data/action_genome")
 
-    def setup_models(self):
+    def setup_models(self, progress_callback=None):
         """Initialize models for video processing with automatic model detection.
         
         This method detects the model type from the checkpoint file and initializes
         the appropriate object detector and scene graph generation model. It supports
         multiple model types including STTran, STKET, TEMPURA, SceneLLM, and OED.
         
+        :param progress_callback: Optional callback function for progress updates
+        :type progress_callback: callable, optional
         :raises ValueError: If model type cannot be detected from checkpoint
         :raises FileNotFoundError: If model checkpoint file is not found
         :raises Exception: If model initialization fails
         """
         try:
+            if progress_callback:
+                progress_callback("detecting_model", 0.1)
             from m3sgg.datasets.action_genome import AG
             from m3sgg.datasets.easg import EASG
             from m3sgg.core.config.config import Config
@@ -156,22 +162,39 @@ class StreamlitVideoProcessor:
                 self.conf.data_path = "data/action_genome"
                 self.conf.dataset = "action_genome"
 
-            # Initialize dataset
-            if detected_dataset == "EASG":
-                self.dataset = EASG(
-                    mode="test",
-                    data_path=self.conf.data_path,
-                )
-            else:
-                self.dataset = AG(
-                    mode="test",
-                    datasize=self.conf.datasize,
-                    data_path=self.conf.data_path,
-                    filter_nonperson_box_frame=True,
-                    filter_small_box=True,
-                )
+            # Initialize dataset (suppress print statements during initialization)
+            if progress_callback:
+                progress_callback("loading_dataset", 0.3)
+                
+            import sys
+            from io import StringIO
+            
+            # Capture stdout to suppress dataset initialization prints
+            old_stdout = sys.stdout
+            sys.stdout = StringIO()
+            
+            try:
+                if detected_dataset == "EASG":
+                    self.dataset = EASG(
+                        mode="test",
+                        data_path=self.conf.data_path,
+                    )
+                else:
+                    self.dataset = AG(
+                        mode="test",
+                        datasize=self.conf.datasize,
+                        data_path=self.conf.data_path,
+                        filter_nonperson_box_frame=True,
+                        filter_small_box=True,
+                    )
+            finally:
+                # Restore stdout
+                sys.stdout = old_stdout
 
             # Object Detector
+            if progress_callback:
+                progress_callback("loading_fasterrcnn", 0.5)
+                
             if detected_dataset == "EASG":
                 self.object_detector = detector_EASG(
                     train=False,
@@ -189,9 +212,15 @@ class StreamlitVideoProcessor:
             self.object_detector.eval()
 
             # Initialize SGG model based on detected type
+            if progress_callback:
+                progress_callback("creating_sgg_model", 0.7)
+                
             self.model = self._create_model_from_type(detected_model_type, detected_dataset)
 
             # Load checkpoint
+            if progress_callback:
+                progress_callback("loading_model_weights", 0.8)
+                
             if os.path.exists(self.model_path):
                 ckpt = torch.load(self.model_path, map_location=self.device)
                 self.model.load_state_dict(ckpt["state_dict"], strict=False)
@@ -202,8 +231,15 @@ class StreamlitVideoProcessor:
                 raise FileNotFoundError(f"Model file {self.model_path} not found!")
 
             self.model.eval()
+            
+            if progress_callback:
+                progress_callback("initializing_matcher", 0.9)
+                
             self.matcher = HungarianMatcher(0.5, 1, 1, 0.5).to(device=self.device)
             self.matcher.eval()
+            
+            if progress_callback:
+                progress_callback("model_initialization_complete", 1.0)
 
         except Exception as e:
             import traceback
@@ -334,24 +370,33 @@ class StreamlitVideoProcessor:
         frame_tensor = frame_tensor * 255.0 - bgr_means
         return frame_tensor.to(self.device)
 
-    def process_frame(self, frame):
+    def process_frame(self, frame, progress_callback=None):
         """Process a single frame and extract scene graph.
         
         :param frame: Input video frame as numpy array
         :type frame: np.ndarray
+        :param progress_callback: Optional callback function for progress updates
+        :type progress_callback: callable, optional
         :return: Tuple containing (results_dict, entry_dict, pred_dict)
         :rtype: tuple
         """
         try:
+            # Progress callback: Frame preprocessing started
+            if progress_callback:
+                progress_callback("preprocessing", 0.1)
+                
             im_data = self.preprocess_frame(frame)
             im_info = torch.tensor([[600, 600, 1.0]], dtype=torch.float32).to(
                 self.device
             )
 
+            # Progress callback: Object detection starting
+            if progress_callback:
+                progress_callback("detection", 0.3)
+
             with torch.no_grad():
-                # Handle different datasets
+
                 if self.conf.dataset == "EASG":
-                    # EASG uses different input format
                     gt_grounding = []  # Empty grounding for inference
                     entry = self.object_detector(
                         im_data, im_info, gt_grounding, im_all=None
@@ -367,17 +412,6 @@ class StreamlitVideoProcessor:
                     entry = self.object_detector(
                         im_data, im_info, gt_boxes, num_boxes, empty_annotation, im_all=None
                     )
-
-                if "boxes" in entry and entry["boxes"] is not None:
-                    # print(f"Raw detections: {entry['boxes'].shape[0]} boxes")
-                    if "pred_scores" in entry:
-                        # raw_scores = entry["pred_scores"].cpu().numpy()
-                        # print(
-                        #     f"Raw scores range: {raw_scores.min():.3f} - {raw_scores.max():.3f}"
-                        # )
-                        # print(f"Scores above 0.1: {(raw_scores > 0.1).sum()}")
-                        # print(f"Scores above 0.3: {(raw_scores > 0.3).sum()}")
-                        pass
 
                 if self.conf.mode == "sgdet" and self.conf.dataset != "EASG":
                     # Store original format
@@ -400,7 +434,7 @@ class StreamlitVideoProcessor:
                         self.matcher,
                         torch.tensor([600, 600]).to(
                             self.device
-                        ),  # TODO: generalize image dimensions
+                        ),
                         "sgdet",
                     )
 
@@ -408,10 +442,17 @@ class StreamlitVideoProcessor:
                     if original_scores is not None:
                         entry["scores"] = original_scores
                     entry["boxes"] = original_boxes
-                    # print(f"After get_sequence: boxes shape = {entry['boxes'].shape}")
 
+                # Progress callback: Scene graph generation starting
+                if progress_callback:
+                    progress_callback("scene_graph", 0.7)
+                    
                 # Scene graph generation
                 pred = self.model(entry)
+
+                # Progress callback: Frame processing completed
+                if progress_callback:
+                    progress_callback("completed", 1.0)
 
             return self.extract_results(entry, pred), entry, pred
 
@@ -477,11 +518,9 @@ class StreamlitVideoProcessor:
         if isinstance(boxes, torch.Tensor):
             boxes = boxes.cpu().numpy()
 
-        # Get labels and scores - try different fields
         labels = None
         scores = None
 
-        # Try to get the most comprehensive set of detections
         if "pred_labels" in entry:
             labels = entry["pred_labels"]
             if isinstance(labels, torch.Tensor):
@@ -490,7 +529,6 @@ class StreamlitVideoProcessor:
             labels = entry["labels"]
             if isinstance(labels, torch.Tensor):
                 labels = labels.cpu().numpy()
-
         if "pred_scores" in entry:
             scores = entry["pred_scores"]
             if isinstance(scores, torch.Tensor):
@@ -499,118 +537,42 @@ class StreamlitVideoProcessor:
             scores = entry["scores"]
             if isinstance(scores, torch.Tensor):
                 scores = scores.cpu().numpy()
-
-        # Debug: Show entry fields and their contents
-        # print(f"DRAW_BBOX: Entry fields: {list(entry.keys())}")
-        # print(
-        #     f"DRAW_BBOX: Boxes shape: {boxes.shape if hasattr(boxes, 'shape') else len(boxes)}"
-        # )
-        if labels is not None:
-            # print(
-            #     f"DRAW_BBOX: Labels shape: {labels.shape if hasattr(labels, 'shape') else len(labels)}"
-            # )
-            # Add detailed object list logging
-            if hasattr(self, "AG_dataset") and labels is not None:
-                # print("DRAW_BBOX: === DETECTED OBJECTS LIST ===")
-                for i, label_idx in enumerate(labels):
-                    if label_idx < len(self.AG_dataset.object_classes):
-                        # object_name = self.AG_dataset.object_classes[label_idx]
-                        # score_str = (
-                        #     f" (score: {scores[i]:.3f})"
-                        #     if scores is not None and i < len(scores)
-                        #     else ""
-                        # )
-                        # print(f"  {i+1}. {object_name}{score_str}")
-                        pass
-                    else:
-                        # print(f"  {i+1}. unknown_class_{label_idx}")
-                        pass
-                # print("DRAW_BBOX: === END OBJECT LIST ===")
         if scores is not None:
-            # print(
-            #     f"DRAW_BBOX: Scores shape: {scores.shape if hasattr(scores, 'shape') else len(scores)}"
-            # )
-            # print(f"DRAW_BBOX: All scores: {scores}")
-            # print(
-            #     f"DRAW_BBOX: Score statistics - Min: {scores.min():.3f}, Max: {scores.max():.3f}, Mean: {scores.mean():.3f}"
-            # )
             pass
-
-        # Check if we have distribution instead
         if "distribution" in entry:
             distribution = entry["distribution"]
             if isinstance(distribution, torch.Tensor):
-                # print(f"Distribution shape: {distribution.shape}")
-                # Use distribution to get scores
                 if scores is None:
                     scores = torch.max(distribution, dim=1)[0].cpu().numpy()
-                    # print(f"Generated scores from distribution: {scores}")
-
-        # If we still don't have scores, create dummy ones
         if scores is None and boxes is not None:
             scores = np.ones(len(boxes))
-            # print(f"Using dummy scores for {len(boxes)} boxes")
-
-        # If we don't have labels, create dummy ones
         if labels is None and boxes is not None:
             labels = np.ones(len(boxes), dtype=int)
-            # print(f"Using dummy labels for {len(boxes)} boxes")
-
-        # Debug: Show all detections before filtering
         if scores is not None and len(scores) > 0:
-            # print(f"Total detections before filtering: {len(scores)}")
-
-            # Filter detections with lower confidence threshold
             high_conf_mask = scores > confidence_threshold
-            # print(
-            #     f"Detections after confidence filtering (>{confidence_threshold}): {high_conf_mask.sum()}"
-            # )
-
             if boxes is not None:
                 boxes = boxes[high_conf_mask]
             if labels is not None:
                 labels = labels[high_conf_mask]
             scores = scores[high_conf_mask]
 
-            # print(f"Final boxes to draw: {len(boxes) if boxes is not None else 0}")
-
-        # Draw boxes
-        # print(
-        #     f"DRAW_BBOX: About to draw {len(boxes) if boxes is not None else 0} boxes"
-        # )
         for i, box in enumerate(boxes):
-            # print(f"DRAW_BBOX: Processing box {i+1}/{len(boxes)}: {box}")
             if len(box) >= 4:
-                # Handle batch dimension if present
                 if len(box) == 5:
                     x1, y1, x2, y2 = box[1:5].astype(int)
-                    # print(
-                    #     f"DRAW_BBOX: Box {i+1} (with batch): ({x1}, {y1}, {x2}, {y2})"
-                    # )
                 else:
                     x1, y1, x2, y2 = box[:4].astype(int)
-                    # print(f"DRAW_BBOX: Box {i+1} (no batch): ({x1}, {y1}, {x2}, {y2})")
 
-                # Scale to frame size (assuming model uses 600x600)
+                # assuming model uses 600x600
                 h, w = frame.shape[:2]
                 x1 = int(x1 * w / 600)
                 y1 = int(y1 * h / 600)
                 x2 = int(x2 * w / 600)
                 y2 = int(y2 * h / 600)
-
-                # print(
-                #     f"DRAW_BBOX: Box {i+1} scaled to frame ({w}x{h}): ({x1}, {y1}, {x2}, {y2})"
-                # )
-
-                # Ensure coordinates are valid
                 x1, y1 = max(0, x1), max(0, y1)
                 x2, y2 = min(w - 1, x2), min(h - 1, y2)
 
-                # print(f"DRAW_BBOX: Box {i+1} after clipping: ({x1}, {y1}, {x2}, {y2})")
-
                 if x2 > x1 and y2 > y1:
-                    # print(f"DRAW_BBOX:  Drawing box {i+1} - valid coordinates")
-                    # Choose color based on confidence
                     if i < len(scores):
                         conf_score = scores[i]
                         if conf_score > 0.7:
@@ -622,15 +584,12 @@ class StreamlitVideoProcessor:
                     else:
                         color = (0, 255, 0)  # Default green
 
-                    # Draw rectangle with thickness based on confidence
                     thickness = 3 if (i < len(scores) and scores[i] > 0.5) else 2
                     cv2.rectangle(
                         frame_with_boxes, (x1, y1), (x2, y2), color, thickness
                     )
 
-                    # Add label if available
                     if i < len(labels):
-                        # Try to get object class names from the dataset
                         object_classes = None
                         if hasattr(self, "AG_dataset") and hasattr(self.AG_dataset, "object_classes"):
                             object_classes = self.AG_dataset.object_classes
@@ -640,16 +599,13 @@ class StreamlitVideoProcessor:
                             object_classes = self.dataset.obj_classes
                         elif hasattr(self, "object_classes") and self.object_classes:
                             object_classes = self.object_classes
-                        
                         if object_classes and labels[i] < len(object_classes):
                             label_text = f"{object_classes[labels[i]]}"
                         else:
                             label_text = f"obj_{labels[i]}"
-
                         if i < len(scores):
                             label_text += f" {scores[i]:.2f}"
 
-                        # Background for better text visibility
                         (text_width, text_height), baseline = cv2.getTextSize(
                             label_text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2
                         )
@@ -660,7 +616,6 @@ class StreamlitVideoProcessor:
                             color,
                             -1,
                         )
-
                         cv2.putText(
                             frame_with_boxes,
                             label_text,
@@ -670,22 +625,11 @@ class StreamlitVideoProcessor:
                             (255, 255, 255),
                             2,
                         )
-
-                    # print(f"DRAW_BBOX:  Successfully drew box {i+1}")
                 else:
-                    # print(
-                    #     f"DRAW_BBOX:  Skipped box {i+1} - invalid coordinates (x2 <= x1 or y2 <= y1)"
-                    # )
                     pass
             else:
-                # print(
-                #     f"DRAW_BBOX:  Skipped box {i+1} - insufficient coordinates (need at least 4)"
-                # )
                 pass
-
-        # print(
-        #     f"DRAW_BBOX: === Finished drawing {len(boxes) if boxes is not None else 0} boxes ==="
-        # )
+        #    
         return frame_with_boxes
 
     def extract_results(self, entry, pred):

@@ -16,7 +16,6 @@ from streamlit_chat import message
 import sys
 from pathlib import Path
 
-# Add project root to Python path
 project_root = Path(__file__).parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
@@ -58,7 +57,6 @@ def get_best_video_format() -> str:
     :return: Best video format extension
     :rtype: str
     """
-    # Try formats in order of browser compatibility
     formats_to_try = [".mp4", ".avi", ".mov"]
     return formats_to_try[0]  # Default to mp4
 
@@ -158,8 +156,7 @@ def convert_video_for_browser(video_path: str) -> str:
         
         cap.release()
         print("Returning original video path")
-        return video_path
-        
+        return video_path        
     except Exception as e:
         print(f"Error converting video: {e}")
         import traceback
@@ -200,8 +197,7 @@ def validate_video_file(video_path: str) -> bool:
 
 
 def create_processed_video_with_bboxes(
-    video_path: str, model_path: str, max_frames: int = 30
-) -> tuple[bool, str]:
+    video_path: str, model_path: str, max_frames: int = 30) -> tuple[bool, str]:
     """Create a new video file with bounding boxes drawn on frames"""
     try:
         import tempfile
@@ -260,8 +256,7 @@ def create_processed_video_with_bboxes(
             frame_results, entry, pred = processor.process_frame(frame)
 
             if entry is not None:
-                frame_with_boxes = processor.simple_draw_bounding_boxes(frame, entry)
-                # Debug: Check if frame has content
+                frame_with_boxes = processor.draw_bounding_boxes(frame, entry)
                 if frame_count < 3:  # Only log first few frames
                     print(f"Frame {frame_count}: Original shape: {frame.shape}, Processed shape: {frame_with_boxes.shape}")
                     print(f"Frame {frame_count}: Entry keys: {list(entry.keys()) if entry else 'None'}")
@@ -298,8 +293,7 @@ def create_processed_video_with_bboxes(
 
 
 def create_processed_video_with_scene_graph(
-    video_path: str, model_path: str, max_frames: int = 30
-) -> tuple[bool, str]:
+    video_path: str, model_path: str, max_frames: int = 30 ) -> tuple[bool, str]:
     """Create a new video file with scene graph overlay drawn on frames using simplified approach
 
     :param video_path: Path to input video file
@@ -469,12 +463,12 @@ def find_available_checkpoints() -> Dict[str, str]:
     return checkpoints
 
 
-def process_video_with_sgg(video_path: str, model_path: str, max_frames: int = 30
-) -> Dict[str, Any]:
+def process_video_with_sgg(
+    video_path: str, model_path: str, max_frames: int = 30, init_progress_callback=None, frame_progress_callback=None) -> Dict[str, Any]:
     """Process video using scene graph generation"""
     try:
-        # Initialize video processor
-        processor = StreamlitVideoProcessor(model_path)
+        # Initialize video processor with progress callback
+        processor = StreamlitVideoProcessor(model_path, init_progress_callback)
 
         # Open video
         cap = cv2.VideoCapture(video_path)
@@ -504,8 +498,16 @@ def process_video_with_sgg(video_path: str, model_path: str, max_frames: int = 3
             if not ret:
                 break
 
+            # Create frame-specific progress callback
+            def frame_progress_callback_internal(stage, progress):
+                if frame_progress_callback:
+                    # Calculate overall progress: (frame_count / max_frames) + (progress / max_frames)
+                    current_progress = (frame_count + progress) / max_frames
+                    frame_progress_callback(current_progress, max_frames, f"Frame {frame_count + 1}/{max_frames} - {stage}", 
+                                    f"Processing frame {frame_count + 1}: {stage}")
+
             # Process frame with SGG
-            frame_results, entry, pred = processor.process_frame(frame)
+            frame_results, entry, pred = processor.process_frame(frame, frame_progress_callback_internal)
 
             results["detections"].append(frame_results.get("objects", 0))
             results["relationships"].append(frame_results.get("relationships", 0))
@@ -544,6 +546,36 @@ def process_video_with_sgg(video_path: str, model_path: str, max_frames: int = 3
     except Exception as e:
         st.error(f"Error processing video: {e}")
         return None
+
+
+def cleanup_temp_videos():
+    """Clean up temporary video files from data/temp_vid/ directory on exit"""
+    import os
+    import shutil
+    
+    # Clean up the project temp directory (output videos)
+    temp_dir = os.path.join("data", "temp_vid")
+    if os.path.exists(temp_dir):
+        try:
+            shutil.rmtree(temp_dir)
+            print(f"Cleaned up temporary video directory: {temp_dir}")
+        except Exception as e:
+            print(f"Failed to clean up temp directory {temp_dir}: {e}")
+    
+    # Clean up any remaining session state video files
+    cleanup_paths = []
+    if "bbox_video_path" in st.session_state:
+        cleanup_paths.append(st.session_state["bbox_video_path"])
+    if "scene_graph_video_path" in st.session_state:
+        cleanup_paths.append(st.session_state["scene_graph_video_path"])
+    
+    for path in cleanup_paths:
+        try:
+            if path and os.path.exists(path):
+                os.unlink(path)
+                print(f"Cleaned up temporary file: {path}")
+        except Exception as e:
+            print(f"Failed to clean up {path}: {e}")
 
 
 def main():
@@ -874,7 +906,10 @@ def main():
                 progress_bar = st.progress(0)
                 status_text = st.empty()
                 st.markdown("#### Processing Log")
-                log_display = st.empty()
+                # Create a scrollable log container
+                log_container = st.container()
+                with log_container:
+                    log_display = st.empty()
 
             log_entries = []
 
@@ -906,9 +941,104 @@ def main():
                 if log_message:
                     timestamp = time.strftime("%H:%M:%S", time.localtime())
                     log_entries.append(f"[{timestamp}] {log_message}")
-                    # Display log as simple text to avoid key conflicts
-                    log_text = "\n".join(log_entries[-15:])  # Show last 15 entries
-                    log_display.text(log_text)
+                    # Display log with scrollable container
+                    log_text = "\n".join(log_entries[-50:])  # Show last 50 entries for better scrolling
+                    log_display.markdown(
+                        f"""
+                        <div style="
+                            height: 200px; 
+                            overflow-y: auto; 
+                            border: 1px solid #ccc; 
+                            padding: 10px; 
+                            background-color: #f8f9fa;
+                            font-family: monospace;
+                            font-size: 12px;
+                            white-space: pre-wrap;
+                        ">
+                        {log_text}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+            def update_progress_realtime(current_frame, total_frames, message, log_message=None):
+                """Update progress bar in real-time with frame-level granularity"""
+                progress = current_frame / total_frames
+                
+                # Update progress bar immediately without artificial delays
+                progress_bar.progress(min(progress, 1.0))
+                status_text.text(message)
+
+                # Update timer
+                current_time = time.time()
+                elapsed = current_time - start_time
+                timer_display.markdown(
+                    f"<div style='text-align: center; font-size: 24px; font-weight: bold; color: #1f77b4; margin: 10px 0;'>{elapsed:.1f}s</div>",
+                    unsafe_allow_html=True,
+                )
+
+                if log_message:
+                    timestamp = time.strftime("%H:%M:%S", time.localtime())
+                    log_entries.append(f"[{timestamp}] {log_message}")
+                    # Display log with scrollable container
+                    log_text = "\n".join(log_entries[-50:])  # Show last 50 entries for better scrolling
+                    log_display.markdown(
+                        f"""
+                        <div style="
+                            height: 200px; 
+                            overflow-y: auto; 
+                            border: 1px solid #ccc; 
+                            padding: 10px; 
+                            background-color: #f8f9fa;
+                            font-family: monospace;
+                            font-size: 12px;
+                            white-space: pre-wrap;
+                        ">
+                        {log_text}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+            def update_progress_initialization(stage, progress):
+                """Update progress bar during model initialization"""
+                # Convert progress (0.0-1.0) to percentage
+                progress_percent = int(progress * 100)
+                
+                # Update progress bar immediately without artificial delays
+                progress_bar.progress(min(progress, 1.0))
+                status_text.text(f"Initializing model... {stage} ({progress_percent}%)")
+
+                # Update timer
+                current_time = time.time()
+                elapsed = current_time - start_time
+                timer_display.markdown(
+                    f"<div style='text-align: center; font-size: 24px; font-weight: bold; color: #1f77b4; margin: 10px 0;'>{elapsed:.1f}s</div>",
+                    unsafe_allow_html=True,
+                )
+
+                # Log the initialization step
+                timestamp = time.strftime("%H:%M:%S", time.localtime())
+                log_entries.append(f"[{timestamp}] {stage} ({progress_percent}%)")
+                # Display log with scrollable container
+                log_text = "\n".join(log_entries[-50:])  # Show last 50 entries for better scrolling
+                log_display.markdown(
+                    f"""
+                    <div style="
+                        height: 200px; 
+                        overflow-y: auto; 
+                        border: 1px solid #ccc; 
+                        padding: 10px; 
+                        background-color: #f8f9fa;
+                        font-family: monospace;
+                        font-size: 12px;
+                        white-space: pre-wrap;
+                    ">
+                    {log_text}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
             def update_timer():
                 """Update the timer display"""
@@ -927,6 +1057,14 @@ def main():
                     tmp_file.write(uploaded_file.getvalue())
                     tmp_path = tmp_file.name
 
+                # Step 0: Initialize model (this is where the overhead happens)
+                update_progress(
+                    0,
+                    5,
+                    "Initializing model and loading datasets...",
+                    "Loading fasterRCNN, GloVe embeddings, and model weights...",
+                )
+
                 # Step 1: Process video with SGG
                 update_progress(
                     1,
@@ -935,7 +1073,7 @@ def main():
                     "Starting video processing with scene graph generation",
                 )
 
-                results = process_video_with_sgg(tmp_path, model_path, max_frames)
+                results = process_video_with_sgg(tmp_path, model_path, max_frames, update_progress_initialization, update_progress_realtime)
 
                 if results:
                     update_progress(
@@ -1153,7 +1291,7 @@ def main():
                 else:
                     st.video(st.session_state.uploaded_video_file)
                     st.warning("No bounding box video available - showing original")
-                    st.info(f"Processed bbox video not found. Available paths: {list(st.session_state.keys())}")
+
 
                 # Add bbox table if we have detection results
                 if "results" in st.session_state and "bbox_info" in st.session_state:
@@ -1175,8 +1313,7 @@ def main():
                         st.dataframe(bbox_df, width="stretch", hide_index=True)
                     else:
                         st.info("No objects detected above confidence threshold")
-                else:
-                    st.caption("Video with bounding box overlays")
+
             # Scene Graph Video
             with vid_col3:
                 st.subheader("Scene Graph Analysis")
@@ -1214,7 +1351,6 @@ def main():
                 else:
                     st.video(st.session_state.uploaded_video_file)
                     st.warning("No scene graph video available - showing original")
-                    st.info(f"Processed scene graph video not found. Available paths: {list(st.session_state.keys())}")
 
                 # Add relationship table if we have relationship results
                 if "results" in st.session_state and "relationship_info" in st.session_state:
@@ -1269,8 +1405,6 @@ def main():
                             st.info("No relationships detected above confidence threshold")
                     else:
                         st.info("No relationships detected above confidence threshold")
-                else:
-                    st.caption("Scene graph relationships will appear here")
 
             # Chat
             st.markdown("---")
@@ -1900,35 +2034,6 @@ def main():
         """,
         unsafe_allow_html=True,
     )
-
-def cleanup_temp_videos():
-    """Clean up temporary video files from data/temp_vid/ directory on exit"""
-    import os
-    import shutil
-    
-    # Clean up the project temp directory (output videos)
-    temp_dir = os.path.join("data", "temp_vid")
-    if os.path.exists(temp_dir):
-        try:
-            shutil.rmtree(temp_dir)
-            print(f"Cleaned up temporary video directory: {temp_dir}")
-        except Exception as e:
-            print(f"Failed to clean up temp directory {temp_dir}: {e}")
-    
-    # Clean up any remaining session state video files
-    cleanup_paths = []
-    if "bbox_video_path" in st.session_state:
-        cleanup_paths.append(st.session_state["bbox_video_path"])
-    if "scene_graph_video_path" in st.session_state:
-        cleanup_paths.append(st.session_state["scene_graph_video_path"])
-    
-    for path in cleanup_paths:
-        try:
-            if path and os.path.exists(path):
-                os.unlink(path)
-                print(f"Cleaned up temporary file: {path}")
-        except Exception as e:
-            print(f"Failed to clean up {path}: {e}")
 
 
 if __name__ == "__main__":
