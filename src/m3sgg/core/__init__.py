@@ -9,6 +9,7 @@ from . import config
 from . import models
 from . import detectors
 from . import evaluation
+from . import constants
 
 # Make submodules available
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "models", 
     "detectors",
     "evaluation",
+    "constants",
 ]

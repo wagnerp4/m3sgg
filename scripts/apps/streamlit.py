@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 import sys
@@ -16,41 +17,15 @@ import streamlit as st
 import torch
 from streamlit_chat import message
 
-# Hardcoded class definitions to avoid file dependencies
-# TODO: Fix this, allow open-vocab and dynamic class definitions
-OBJECT_CLASSES = [
-    "person", "bag", "bed", "blanket", "book", "box", "broom", "chair", 
-    "closetcabinet", "clothes", "cupglassbottle", "dish", "door", "doorknob", 
-    "doorway", "floor", "food", "groceries", "laptop", "light", "medicine", 
-    "mirror", "papernotebook", "phonecamera", "picture", "pillow", 
-    "refrigerator", "sandwich", "shelf", "shoe", "sofacouch", "table", 
-    "television", "towel", "vacuum", "window"
-]
 
-RELATIONSHIP_CLASSES = [
-    "lookingat", "notlookingat", "unsure", "above", "beneath", "infrontof", 
-    "behind", "onthesideof", "in", "carrying", "coveredby", "drinkingfrom", 
-    "eating", "haveitontheback", "holding", "leaningon", "lyingon", 
-    "notcontacting", "otherrelationship", "sittingon", "standingon", 
-    "touching", "twisting", "wearing", "wiping", "writingon"
-]
-
-# Apply the same corrections as in the dataset loaders
-RELATIONSHIP_CLASSES_CORRECTED = RELATIONSHIP_CLASSES.copy()
-RELATIONSHIP_CLASSES_CORRECTED[0] = "looking_at"
-RELATIONSHIP_CLASSES_CORRECTED[1] = "not_looking_at"
-RELATIONSHIP_CLASSES_CORRECTED[5] = "in_front_of"
-RELATIONSHIP_CLASSES_CORRECTED[7] = "on_the_side_of"
-RELATIONSHIP_CLASSES_CORRECTED[10] = "covered_by"
-RELATIONSHIP_CLASSES_CORRECTED[11] = "drinking_from"
-RELATIONSHIP_CLASSES_CORRECTED[13] = "have_it_on_the_back"
-RELATIONSHIP_CLASSES_CORRECTED[15] = "leaning_on"
-RELATIONSHIP_CLASSES_CORRECTED[16] = "lying_on"
-RELATIONSHIP_CLASSES_CORRECTED[17] = "not_contacting"
-RELATIONSHIP_CLASSES_CORRECTED[18] = "other_relationship"
-RELATIONSHIP_CLASSES_CORRECTED[19] = "sitting_on"
-RELATIONSHIP_CLASSES_CORRECTED[20] = "standing_on"
-RELATIONSHIP_CLASSES_CORRECTED[25] = "writing_on"
+# Try to import streamlit-player for enhanced video display
+try:
+    from streamlit_player import st_player
+    STREAMLIT_PLAYER_AVAILABLE = True
+    print("streamlit-player imported successfully")
+except ImportError as e:
+    print(f"streamlit-player not available: {e}")
+    STREAMLIT_PLAYER_AVAILABLE = False
 
 # Add the project root and src directory to Python path so m3sgg can be imported
 project_root = Path(__file__).parent.parent.parent
@@ -59,6 +34,14 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
+
+# Import class definitions from centralized constants module
+# noinspection PyPep8
+from m3sgg.core.constants import (
+    get_object_classes,
+    get_relationship_classes,
+    get_relationship_classes_by_category
+)
 
 # M3SGG package is now properly installed and can be imported directly
 try:
@@ -108,11 +91,11 @@ st.set_page_config(
     initial_sidebar_state="expanded", # collapsed
 )
 
-# Initialize dark mode state
+
 if "dark_mode" not in st.session_state:
     st.session_state.dark_mode = False
 
-# Apply dark mode styles
+
 if st.session_state.dark_mode:
     st.markdown(
         """
@@ -267,63 +250,11 @@ class StreamlitVideoProcessor:
     
     def _load_object_classes(self):
         """Load object classes from file as fallback"""
-        try:
-            # Try to load from Action Genome dataset
-            object_classes_path = "data/action_genome/annotations/object_classes.txt"
-            if os.path.exists(object_classes_path):
-                with open(object_classes_path, 'r') as f:
-                    return [line.strip() for line in f.readlines()]
-        except Exception as e:
-            print(f"Warning: Could not load object classes from file: {e}")
-        
-        # Return hardcoded classes as fallback
-        return OBJECT_CLASSES.copy()
+        return get_object_classes("data/action_genome")
     
     def _load_relationship_classes(self):
         """Load relationship classes from file as fallback"""
-        try:
-            # Try to load from Action Genome dataset
-            relationship_classes_path = "data/action_genome/annotations/relationship_classes.txt"
-            if os.path.exists(relationship_classes_path):
-                with open(relationship_classes_path, 'r') as f:
-                    relationships = [line.strip() for line in f.readlines()]
-                
-                # Apply the same transformations as in the AG dataset
-                if len(relationships) > 0:
-                    relationships[0] = "looking_at"
-                if len(relationships) > 1:
-                    relationships[1] = "not_looking_at"
-                if len(relationships) > 5:
-                    relationships[5] = "in_front_of"
-                if len(relationships) > 7:
-                    relationships[7] = "on_the_side_of"
-                if len(relationships) > 10:
-                    relationships[10] = "covered_by"
-                if len(relationships) > 11:
-                    relationships[11] = "drinking_from"
-                if len(relationships) > 13:
-                    relationships[13] = "have_it_on_the_back"
-                if len(relationships) > 15:
-                    relationships[15] = "leaning_on"
-                if len(relationships) > 16:
-                    relationships[16] = "lying_on"
-                if len(relationships) > 17:
-                    relationships[17] = "not_contacting"
-                if len(relationships) > 18:
-                    relationships[18] = "other_relationship"
-                if len(relationships) > 19:
-                    relationships[19] = "sitting_on"
-                if len(relationships) > 20:
-                    relationships[20] = "standing_on"
-                if len(relationships) > 25:
-                    relationships[25] = "writing_on"
-                
-                return relationships
-        except Exception as e:
-            print(f"Warning: Could not load relationship classes from file: {e}")
-        
-        # Return hardcoded classes as fallback
-        return RELATIONSHIP_CLASSES_CORRECTED.copy()
+        return get_relationship_classes("data/action_genome")
 
     def setup_models(self):
         """Initialize models for video processing with automatic model detection"""
@@ -596,6 +527,25 @@ class StreamlitVideoProcessor:
         except Exception as e:
             # print(f"Frame processing error: {e}")
             return {"objects": 0, "relationships": 0, "error": str(e)}, None, None
+
+    def simple_draw_bounding_boxes(self, frame, entry):
+        """Simple bounding box drawing method using PIL"""
+        try:
+            from simple_drawing_methods import simple_draw_bounding_boxes
+            return simple_draw_bounding_boxes(frame, entry)
+        except ImportError:
+            # Fallback to alternative method
+            from simple_drawing_methods import simple_draw_bounding_boxes_cv2_alternative
+            return simple_draw_bounding_boxes_cv2_alternative(frame, entry)
+
+    def simple_create_scene_graph_frame(self, frame, entry, pred):
+        """Simple scene graph drawing method using matplotlib"""
+        try:
+            from simple_drawing_methods import simple_create_scene_graph_frame
+            return simple_create_scene_graph_frame(frame, entry, pred)
+        except ImportError:
+            # Fallback to basic method
+            return frame
 
     def draw_bounding_boxes(self, frame, entry, confidence_threshold=0.1):
         """Draw bounding boxes on frame"""
@@ -1086,8 +1036,8 @@ class StreamlitVideoProcessor:
             elif hasattr(self, "dataset") and hasattr(self.dataset, "object_classes"):
                 object_classes = self.dataset.object_classes
             else:
-                # Fallback object names - use hardcoded Action Genome classes
-                object_classes = OBJECT_CLASSES
+                # Fallback object names - use Action Genome classes
+                object_classes = get_object_classes("data/action_genome")
             
             if class_idx < len(object_classes):
                 return object_classes[class_idx]
@@ -1134,14 +1084,8 @@ class StreamlitVideoProcessor:
                 elif rel_category == "contacting":
                     relationships = relationships[9:]
             else:
-                # Ultimate fallback: use hardcoded relationship classes
-                relationships = RELATIONSHIP_CLASSES_CORRECTED
-                if rel_category == "attention":
-                    relationships = relationships[0:3]
-                elif rel_category == "spatial":
-                    relationships = relationships[3:9]
-                elif rel_category == "contacting":
-                    relationships = relationships[9:]
+                # Ultimate fallback: use relationship classes by category
+                relationships = get_relationship_classes_by_category(rel_category, "data/action_genome")
             
             if relationships and rel_type < len(relationships):
                 return relationships[rel_type]
@@ -1358,15 +1302,22 @@ def convert_video_for_browser(video_path: str) -> str:
     :rtype: str
     """
     try:
+        print(f"Starting video conversion for: {video_path}")
+        
         # Check if video is already browser-friendly
         cap = cv2.VideoCapture(video_path)
         if cap.isOpened():
             # Check codec
             fourcc = cap.get(cv2.CAP_PROP_FOURCC)
+            print(f"Original video fourcc: {fourcc}")
             cap.release()
             
-            # H264 codec (most browser-compatible)
+            # H264 and avc1 codecs (most browser-compatible)
             if fourcc == 875967048.0:  # H264
+                print("Video is already H264, no conversion needed")
+                return video_path
+            elif fourcc == 875967080.0:  # avc1
+                print("Video is already avc1, no conversion needed")
                 return video_path
         
         # Convert to H264 if not already
@@ -1375,31 +1326,42 @@ def convert_video_for_browser(video_path: str) -> str:
         # Create output path
         base_path = video_path.rsplit(".", 1)[0]
         output_path = f"{base_path}_browser_friendly.mp4"
+        print(f"Output path: {output_path}")
         
         # Open input video
         cap = cv2.VideoCapture(video_path)
         if not cap.isOpened():
+            print("Failed to open input video")
             return video_path
         
         # Get video properties
         fps = cap.get(cv2.CAP_PROP_FPS)
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        
+        print(f"Video properties: {fps} FPS, {width}x{height}, {frame_count} frames")
         
         # Create output with mp4v codec (case-sensitive)
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
         
         if out.isOpened():
+            print("Video writer opened successfully")
+            frame_num = 0
             # Copy all frames
             while True:
                 ret, frame = cap.read()
                 if not ret:
                     break
                 out.write(frame)
+                frame_num += 1
+                if frame_num % 10 == 0:
+                    print(f"Processed {frame_num} frames")
             
             out.release()
             cap.release()
+            print(f"Conversion completed, processed {frame_num} frames")
             
             # Verify output
             test_cap = cv2.VideoCapture(output_path)
@@ -1408,19 +1370,30 @@ def convert_video_for_browser(video_path: str) -> str:
                 test_cap.release()
                 if ret and test_frame is not None:
                     print(f"Successfully converted video: {output_path}")
+                    print(f"Converted video size: {os.path.getsize(output_path)} bytes")
                     return output_path
+                else:
+                    print("Converted video verification failed")
+            else:
+                print("Failed to open converted video for verification")
             
             # If conversion failed, return original
             try:
                 os.unlink(output_path)
+                print("Removed failed conversion file")
             except:
                 pass
+        else:
+            print("Failed to open video writer")
         
         cap.release()
+        print("Returning original video path")
         return video_path
         
     except Exception as e:
         print(f"Error converting video: {e}")
+        import traceback
+        traceback.print_exc()
         return video_path
 
 
@@ -1457,23 +1430,34 @@ def validate_video_file(video_path: str) -> bool:
 
 
 def create_processed_video_with_bboxes(
-    video_path: str, model_path: str, output_path: str, max_frames: int = 30
-) -> bool:
+    video_path: str, model_path: str, max_frames: int = 30
+) -> tuple[bool, str]:
     """Create a new video file with bounding boxes drawn on frames"""
     try:
+        import tempfile
+        import os
+        
+        # Create project-local temp directory
+        temp_dir = os.path.join("data", "temp_vid")
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        # Create temporary file in project temp directory
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4", dir=temp_dir) as tmp_file:
+            output_path = tmp_file.name
+        
         processor = StreamlitVideoProcessor(model_path)
         cap = cv2.VideoCapture(video_path)
 
         if not cap.isOpened():
-            raise ValueError("Could not open input video file")
+            return False, ""
 
         fps = cap.get(cv2.CAP_PROP_FPS)
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         # Try different codecs in order of web compatibility
-        # Prioritize mp4v (case-sensitive)
-        codecs_to_try = ["mp4v", "XVID", "MJPG", "H264"]
+        # Prioritize mp4v (case-sensitive) for better browser compatibility
+        codecs_to_try = ["avc1", "mp4v", "XVID", "MJPG", "H264"]
         
         out = None
         for codec in codecs_to_try:
@@ -1506,11 +1490,22 @@ def create_processed_video_with_bboxes(
             frame_results, entry, pred = processor.process_frame(frame)
 
             if entry is not None:
-                frame_with_boxes = processor.draw_bounding_boxes(frame, entry)
+                frame_with_boxes = processor.simple_draw_bounding_boxes(frame, entry)
+                # Debug: Check if frame has content
+                if frame_count < 3:  # Only log first few frames
+                    print(f"Frame {frame_count}: Original shape: {frame.shape}, Processed shape: {frame_with_boxes.shape}")
+                    print(f"Frame {frame_count}: Entry keys: {list(entry.keys()) if entry else 'None'}")
+                    if "boxes" in entry and entry["boxes"] is not None:
+                        print(f"Frame {frame_count}: Found {len(entry['boxes'])} boxes")
             else:
                 frame_with_boxes = frame
+                if frame_count < 3:
+                    print(f"Frame {frame_count}: No entry data, using original frame")
 
-            out.write(frame_with_boxes)
+            # Write frame (ignore write_success on Windows as it often returns False incorrectly)
+            write_success = out.write(frame_with_boxes)
+            # Note: On Windows, out.write() often returns False even when successful
+            # We'll validate the final video file instead
             frame_count += 1
 
         cap.release()
@@ -1520,51 +1515,59 @@ def create_processed_video_with_bboxes(
         if validate_video_file(output_path):
             file_size = os.path.getsize(output_path)
             print(f"Bounding box video created successfully: {output_path}, size: {file_size} bytes")
-            return True
+            return True, output_path
         else:
             print(f"Bounding box video file created but validation failed: {output_path}")
-            return False
+            return False, ""
 
     except Exception as e:
         print(f"Error creating bounding box video: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        return False, ""
 
 
 def create_processed_video_with_scene_graph(
-    video_path: str, model_path: str, output_path: str, max_frames: int = 30
-) -> bool:
-    """Create a new video file with scene graph overlay drawn on frames
+    video_path: str, model_path: str, max_frames: int = 30
+) -> tuple[bool, str]:
+    """Create a new video file with scene graph overlay drawn on frames using simplified approach
 
     :param video_path: Path to input video file
     :type video_path: str
     :param model_path: Path to model checkpoint
     :type model_path: str
-    :param output_path: Path for output video file
-    :type output_path: str
     :param max_frames: Maximum number of frames to process, defaults to 30
     :type max_frames: int, optional
-    :return: True if video creation was successful, False otherwise
-    :rtype: bool
+    :return: Tuple of (success, output_path) where success is bool and output_path is str
+    :rtype: tuple[bool, str]
     """
     try:
-        # Initialize video processor
-        processor = StreamlitVideoProcessor(model_path)
-
+        import cv2
+        import tempfile
+        import os
+        
+        # Create project-local temp directory
+        temp_dir = os.path.join("data", "temp_vid")
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        # Create temporary file in project temp directory
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4", dir=temp_dir) as tmp_file:
+            output_path = tmp_file.name
+        
         # Open input video
         cap = cv2.VideoCapture(video_path)
         if not cap.isOpened():
-            raise ValueError("Could not open input video file")
-
+            return False, ""
+        
         # Get video properties
         fps = cap.get(cv2.CAP_PROP_FPS)
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
-        # Create video writer with better browser compatibility
-        # Prioritize mp4v (case-sensitive)
-        codecs_to_try = ["mp4v", "XVID", "MJPG", "H264"]
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        print(f"Video properties: {fps} FPS, {width}x{height}, {total_frames} total frames")
+        
+        # Try different codecs in order of web compatibility
+        codecs_to_try = ["avc1", "mp4v", "XVID", "MJPG", "H264"]
         
         out = None
         for codec in codecs_to_try:
@@ -1572,58 +1575,100 @@ def create_processed_video_with_scene_graph(
                 fourcc = cv2.VideoWriter_fourcc(*codec)
                 out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
                 if out.isOpened():
-                    print(f"Scene graph - Successfully opened video writer with codec: {codec}")
                     break
                 else:
                     out.release()
                     out = None
             except Exception as e:
-                print(f"Scene graph - Failed to open video writer with codec {codec}: {e}")
                 if out:
                     out.release()
                     out = None
 
         if not out or not out.isOpened():
-            raise ValueError("Could not initialize video writer with any codec")
-
+            cap.release()
+            return False, ""
+        
         frame_count = 0
-
+        processed_frames = 0
+        
+        # Create StreamlitVideoProcessor instance for proper scene graph generation
+        processor = StreamlitVideoProcessor(model_path)
+        
+        # Process frames with scene graph overlay
         while frame_count < max_frames and cap.isOpened():
             ret, frame = cap.read()
             if not ret:
                 break
-
-            # Process frame with SGG
+            
+            # Process frame with model to get predictions
             frame_results, entry, pred = processor.process_frame(frame)
-
-            # Create scene graph overlay if detection was successful
+            
             if entry is not None and pred is not None:
+                # Use the proper scene graph drawing method
                 frame_with_sg = processor.create_scene_graph_frame(frame, entry, pred)
             else:
-                frame_with_sg = frame
-
-            # Write frame to output video
+                # Fallback to simple visualization if no model data
+                frame_with_sg = frame.copy()
+                h, w = frame_with_sg.shape[:2]
+                
+                # Add simple visual elements to represent scene graph
+                cv2.putText(frame_with_sg, f"Scene Graph Frame {frame_count} (No Model Data)", 
+                           (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+                
+                # Draw some simple shapes to represent objects and relationships
+                cv2.rectangle(frame_with_sg, (50, 50), (150, 150), (255, 0, 0), 2)
+                cv2.putText(frame_with_sg, "Object 1", (55, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+                
+                cv2.rectangle(frame_with_sg, (w-150, 50), (w-50, 150), (0, 0, 255), 2)
+                cv2.putText(frame_with_sg, "Object 2", (w-145, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+                
+                cv2.line(frame_with_sg, (150, 100), (w-150, 100), (0, 255, 255), 2)
+                cv2.putText(frame_with_sg, "relationship", (w//2-50, 95), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
+                
+                cv2.circle(frame_with_sg, (w//2, h-100), 30, (255, 255, 0), 2)
+                cv2.putText(frame_with_sg, "Node", (w//2-20, h-95), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
+            
+            # Write processed frame
             out.write(frame_with_sg)
+            processed_frames += 1
             frame_count += 1
-
+        
         # Release resources
         cap.release()
         out.release()
-
-        # Validate the created video
-        if validate_video_file(output_path):
+        
+        print(f"✅ Video processing completed: {processed_frames} frames processed")
+        
+        # Verify output file
+        if os.path.exists(output_path):
             file_size = os.path.getsize(output_path)
-            print(f"Scene graph video created successfully: {output_path}, size: {file_size} bytes")
-            return True
+            print(f"✅ Output file created: {file_size:,} bytes")
+            
+            # Test if output video is readable
+            test_cap = cv2.VideoCapture(output_path)
+            if test_cap.isOpened():
+                ret, test_frame = test_cap.read()
+                test_cap.release()
+                if ret:
+                    print(f"✅ Output video is readable: shape={test_frame.shape}")
+                    return True, output_path
+                else:
+                    print(f"❌ Output video created but not readable")
+                    return False, ""
+            else:
+                print(f"❌ Output video created but cannot be opened")
+                return False, ""
         else:
-            print(f"Scene graph video file created but validation failed: {output_path}")
-            return False
-
+            print(f"❌ Output file was not created at: {output_path}")
+            print(f"❌ Current working directory: {os.getcwd()}")
+            print(f"❌ Directory contents: {os.listdir('.')}")
+            return False, ""
+            
     except Exception as e:
-        print(f"Error creating scene graph video: {e}")
+        print(f"❌ Error processing scene graph video: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        return False, ""
 
 
 def find_available_checkpoints() -> Dict[str, str]:
@@ -1736,7 +1781,7 @@ def main():
     #--------------------------------
     # Header
     st.markdown(
-        '<h1 class="main-header"> VidSgg</h1>',
+        '<h1 class="main-header"> M3SGG</h1>',
         unsafe_allow_html=True,
     )
     # st.markdown("Video Scene Graph Generation with Deep Learning Models")
@@ -2066,6 +2111,7 @@ def main():
 
             def update_progress(step, total_steps, message, log_message=None):
                 """Update progress bar and log display with sub-ticks for smoother updates"""
+                # TODO: Adapt test function call for this
                 progress = step / total_steps
                 
                 # Add sub-ticks for smoother progress bar updates
@@ -2130,25 +2176,21 @@ def main():
                         f"Video processed successfully! Analyzed {results['processed_frames']} frames",
                     )
 
-                    # Prepare file paths
-                    bbox_video_path = tmp_path.replace(".mp4", "_with_bboxes.mp4")
-                    scene_graph_video_path = tmp_path.replace(
-                        ".mp4", "_with_scene_graph.mp4"
-                    )
 
                     # Step 2: Create bounding box video
                     update_progress(
                         3,
                         5,
                         "Creating video with bounding boxes...",
-                        f"Creating bounding box video at: {bbox_video_path}",
+                        "Creating bounding box video...",
                     )
 
-                    bbox_success = create_processed_video_with_bboxes(
-                        tmp_path, model_path, bbox_video_path, max_frames
+                    bbox_success, bbox_video_path = create_processed_video_with_bboxes(
+                        tmp_path, model_path, max_frames
                     )
 
-                    if bbox_success and os.path.exists(bbox_video_path):
+                    if bbox_success and bbox_video_path and os.path.exists(bbox_video_path):
+                        print(f"Using original avc1 video: {bbox_video_path}")
                         file_size = os.path.getsize(bbox_video_path)
                         st.session_state["bbox_video_path"] = bbox_video_path
                         update_progress(
@@ -2163,6 +2205,7 @@ def main():
 
                         # Verify bbox video
                         try:
+                            import cv2
                             test_cap = cv2.VideoCapture(bbox_video_path)
                             ret, test_frame = test_cap.read()
                             if ret:
@@ -2196,18 +2239,31 @@ def main():
                         5,
                         5,
                         "Creating video with scene graph overlay...",
-                        f"Creating scene graph video at: {scene_graph_video_path}",
+                        "Creating scene graph video...",
                     )
-
-                    sg_success = create_processed_video_with_scene_graph(
-                        tmp_path, model_path, scene_graph_video_path, max_frames
+                    sg_success, scene_graph_video_path = create_processed_video_with_scene_graph(
+                        tmp_path, model_path, max_frames
                     )
+                    
+                    # Debug: Check what happened
+                    log_entries.append(
+                        f"[{time.strftime('%H:%M:%S')}] Scene graph creation result: success={sg_success}, path_exists={os.path.exists(scene_graph_video_path) if scene_graph_video_path else False}"
+                    )
+                    if sg_success and scene_graph_video_path and os.path.exists(scene_graph_video_path):
+                        file_size = os.path.getsize(scene_graph_video_path)
+                        log_entries.append(
+                            f"[{time.strftime('%H:%M:%S')}] Scene graph file exists: {scene_graph_video_path}, size: {file_size} bytes"
+                        )
+                    else:
+                        log_entries.append(
+                            f"[{time.strftime('%H:%M:%S')}] Scene graph file missing: {scene_graph_video_path}"
+                        )
+                    log_text = "\n".join(log_entries[-15:])
+                    log_display.text(log_text)
 
                     if sg_success and os.path.exists(scene_graph_video_path):
                         file_size = os.path.getsize(scene_graph_video_path)
-                        st.session_state["scene_graph_video_path"] = (
-                            scene_graph_video_path
-                        )
+                        st.session_state["scene_graph_video_path"] = scene_graph_video_path
                         
                         # Debug: Store video path for display
                         st.session_state["debug_sg_path"] = scene_graph_video_path
@@ -2228,6 +2284,7 @@ def main():
 
                         # Verify scene graph video
                         try:
+                            import cv2
                             test_cap = cv2.VideoCapture(scene_graph_video_path)
                             ret, test_frame = test_cap.read()
                             if ret:
@@ -2269,7 +2326,14 @@ def main():
 
                     st.session_state["results"] = results
             finally:
-                os.unlink(tmp_path)  # Clean up temporary file
+                # Clean up temporary input file immediately after processing
+                if os.path.exists(tmp_path):
+                    os.unlink(tmp_path)
+                    log_entries.append(
+                        f"[{time.strftime('%H:%M:%S')}] Cleaned up temporary input file"
+                    )
+                    log_text = "\n".join(log_entries[-15:])
+                    log_display.text(log_text)
 
     #--------------------------------
     # Result View Tabs
@@ -2288,26 +2352,27 @@ def main():
             # Bounding Box Video
             with vid_col2:
                 st.subheader("Object Detection")
-                if "bbox_video_path" in st.session_state and os.path.exists(
-                    st.session_state["bbox_video_path"]
-                ):
-                    # Debug information
-                    st.info(f"Bbox video path: {st.session_state['bbox_video_path']}")
-                    
-                    # Check for AVI version first (better compatibility)
-                    avi_path = st.session_state["bbox_video_path"].replace(".mp4", ".avi")
-                    video_to_use = avi_path if os.path.exists(avi_path) else st.session_state["bbox_video_path"]
+                
+                # Use the processed bbox video from session state (avc1 encoded)
+                bbox_video_path = st.session_state.get("bbox_video_path") or st.session_state.get("debug_bbox_path")
+                
+                if bbox_video_path and os.path.exists(bbox_video_path):
+                    bbox_size = os.path.getsize(bbox_video_path)
+                    import cv2
+                    cap = cv2.VideoCapture(bbox_video_path)
+                    bbox_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) if cap.isOpened() else "unknown"
+                    cap.release()
                     
                     # Validate and display video
-                    if validate_video_file(video_to_use):
+                    if validate_video_file(bbox_video_path):
                         try:
                             # Try direct path first
-                            st.video(video_to_use)
+                            st.video(bbox_video_path)
                         except Exception as e:
                             st.warning(f"Direct video display failed: {e}")
                             try:
                                 # Fallback to bytes
-                                with open(video_to_use, "rb") as video_file:
+                                with open(bbox_video_path, "rb") as video_file:
                                     video_bytes = video_file.read()
                                     st.video(video_bytes)
                             except Exception as e2:
@@ -2317,17 +2382,9 @@ def main():
                         st.error("Bounding box video file is corrupted or unreadable")
                         st.video(st.session_state.uploaded_video_file)
                 else:
-                    
                     st.video(st.session_state.uploaded_video_file)
                     st.warning("No bounding box video available - showing original")
-                    
-                    # Debug information
-                    if "debug_bbox_path" in st.session_state:
-                        st.info(f"Debug bbox path: {st.session_state['debug_bbox_path']}")
-                        if os.path.exists(st.session_state["debug_bbox_path"]):
-                            st.success("Debug video file exists!")
-                        else:
-                            st.error("Debug video file does not exist!")
+                    st.info(f"Processed bbox video not found. Available paths: {list(st.session_state.keys())}")
 
                 # Add bbox table if we have detection results
                 if "results" in st.session_state and "bbox_info" in st.session_state:
@@ -2354,26 +2411,28 @@ def main():
             # Scene Graph Video
             with vid_col3:
                 st.subheader("Scene Graph Analysis")
-                if "scene_graph_video_path" in st.session_state and os.path.exists(
-                    st.session_state["scene_graph_video_path"]
-                ):
+                
+                # Use the processed scene graph video from session state (avc1 encoded)
+                sg_video_path = st.session_state.get("scene_graph_video_path") or st.session_state.get("debug_sg_path")
+                
+                if sg_video_path and os.path.exists(sg_video_path):
                     # Debug information
-                    st.info(f"Scene graph video path: {st.session_state['scene_graph_video_path']}")
-                    
-                    # Check for AVI version first (better compatibility)
-                    avi_path = st.session_state["scene_graph_video_path"].replace(".mp4", ".avi")
-                    video_to_use = avi_path if os.path.exists(avi_path) else st.session_state["scene_graph_video_path"]
+                    sg_size = os.path.getsize(sg_video_path)
+                    import cv2
+                    cap = cv2.VideoCapture(sg_video_path)
+                    sg_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) if cap.isOpened() else "unknown"
+                    cap.release()
                     
                     # Validate and display video
-                    if validate_video_file(video_to_use):
+                    if validate_video_file(sg_video_path):
                         try:
                             # Try direct path first
-                            st.video(video_to_use)
+                            st.video(sg_video_path)
                         except Exception as e:
                             st.warning(f"Direct video display failed: {e}")
                             try:
                                 # Fallback to bytes
-                                with open(video_to_use, "rb") as video_file:
+                                with open(sg_video_path, "rb") as video_file:
                                     video_bytes = video_file.read()
                                     st.video(video_bytes)
                             except Exception as e2:
@@ -2384,17 +2443,9 @@ def main():
                         st.error("Scene graph video file is corrupted or unreadable")
                         st.video(st.session_state.uploaded_video_file)
                 else:
-                    
                     st.video(st.session_state.uploaded_video_file)
                     st.warning("No scene graph video available - showing original")
-                    
-                    # Debug information
-                    if "debug_sg_path" in st.session_state:
-                        st.info(f"Debug scene graph path: {st.session_state['debug_sg_path']}")
-                        if os.path.exists(st.session_state["debug_sg_path"]):
-                            st.success("Debug scene graph video file exists!")
-                        else:
-                            st.error("Debug scene graph video file does not exist!")
+                    st.info(f"Processed scene graph video not found. Available paths: {list(st.session_state.keys())}")
 
                 # Add relationship table if we have relationship results
                 if "results" in st.session_state and "relationship_info" in st.session_state:
@@ -3069,7 +3120,6 @@ def main():
         else:
             st.info("Please upload a video file first to see the analysis results.")
 
-
     #--------------------------------
     # Footer
     st.markdown("---")
@@ -3082,5 +3132,643 @@ def main():
         unsafe_allow_html=True,
     )
 
+def cleanup_temp_videos():
+    """Clean up temporary video files from data/temp_vid/ directory on exit"""
+    import os
+    import shutil
+    
+    # Clean up the project temp directory (output videos)
+    temp_dir = os.path.join("data", "temp_vid")
+    if os.path.exists(temp_dir):
+        try:
+            shutil.rmtree(temp_dir)
+            print(f"Cleaned up temporary video directory: {temp_dir}")
+        except Exception as e:
+            print(f"Failed to clean up temp directory {temp_dir}: {e}")
+    
+    # Clean up any remaining session state video files
+    cleanup_paths = []
+    if "bbox_video_path" in st.session_state:
+        cleanup_paths.append(st.session_state["bbox_video_path"])
+    if "scene_graph_video_path" in st.session_state:
+        cleanup_paths.append(st.session_state["scene_graph_video_path"])
+    
+    for path in cleanup_paths:
+        try:
+            if path and os.path.exists(path):
+                os.unlink(path)
+                print(f"Cleaned up temporary file: {path}")
+        except Exception as e:
+            print(f"Failed to clean up {path}: {e}")
+
+
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nReceived interrupt signal, cleaning up...")
+        cleanup_temp_videos()
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        cleanup_temp_videos()
+        raise
+    finally:
+        # This will run on normal exit, Ctrl+C, or any other exit
+        cleanup_temp_videos()
+
+
+    #--------------------------------
+    # Video Display Debugging
+    # # Debug Component - Simple Video Processing Test
+    # st.markdown("### 🔧 Debug: Simple Video Processing Test")
+    # with st.expander("Test Simple Video Processing with Generated Videos", expanded=True):
+    #     st.markdown("**Testing simple video processing with pre-generated videos**")
+    #     st.markdown("""
+    #     **What this tests:**
+    #     - **Basic Video Processing**: Just copies frames without any modifications
+    #     - **Model Video Processing**: Runs model detection but saves original frames (no drawing)
+    #     - **Video Display**: Tests if the processed videos display properly in Streamlit
+        
+    #     **Expected Results:**
+    #     - Both videos should be identical to the original 0MK2C.mp4
+    #     - Videos should display properly in all display methods
+    #     - File sizes should be similar to original
+    #     """)
+        
+    #     # Show current video paths being used
+    #     st.markdown("**Current Video Paths:**")
+    #     st.code("""
+    #         Debug Component Videos:
+    #         - Original: 0MK2C.mp4
+    #         - Basic: simple_basic_full_0MK2C.mp4
+    #         - Model: simple_model_full_0MK2C.mp4
+    #         Main Display Videos:
+    #         - Bbox Video: simple_model_full_0MK2C.mp4
+    #         - Scene Graph Video: simple_basic_full_0MK2C.mp4
+    #     """)
+        
+    #     # Use the generated simple videos (full length)
+    #     original_video = "0MK2C.mp4"
+    #     basic_video = "debug_bbox_c3aec751.mp4"
+    #     model_video = "simple_model_full_0MK2C.mp4"
+        
+
+    #     # Check if videos exist
+    #     original_exists = os.path.exists(original_video)
+    #     basic_exists = os.path.exists(basic_video)
+    #     model_exists = os.path.exists(model_video)
+        
+    #     # Show which videos are being used with detailed info
+    #     if original_exists:
+    #         original_size = os.path.getsize(original_video)
+    #         # Get frame count
+    #         import cv2
+    #         cap = cv2.VideoCapture(original_video)
+    #         original_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) if cap.isOpened() else "unknown"
+    #         cap.release()
+    #         st.success(f"🎯 **Original Video**: `{original_video}` ({original_size:,} bytes, {original_frames} frames)")
+    #     else:
+    #         st.error(f"❌ **Original Video**: `{original_video}` not found")
+            
+    #     if basic_exists:
+    #         basic_size = os.path.getsize(basic_video)
+    #         # Get frame count
+    #         cap = cv2.VideoCapture(basic_video)
+    #         basic_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) if cap.isOpened() else "unknown"
+    #         cap.release()
+    #         st.success(f"🎯 **Basic Video**: `{basic_video}` ({basic_size:,} bytes, {basic_frames} frames) - Simple frame copy")
+    #     else:
+    #         st.error(f"❌ **Basic Video**: `{basic_video}` not found")
+            
+    #     if model_exists:
+    #         model_size = os.path.getsize(model_video)
+    #         # Get frame count
+    #         cap = cv2.VideoCapture(model_video)
+    #         model_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) if cap.isOpened() else "unknown"
+    #         cap.release()
+    #         st.success(f"🎯 **Model Video**: `{model_video}` ({model_size:,} bytes, {model_frames} frames) - Model processing without drawing")
+    #     else:
+    #         st.error(f"❌ **Model Video**: `{model_video}` not found")
+        
+    #     # Additional debug info
+    #     st.markdown("---")
+    #     st.markdown("**Debug Information:**")
+    #     st.code(f"""
+    #     Video Paths in Debug Component:
+    #     - original_video = "{original_video}"
+    #     - basic_video = "{basic_video}"  
+    #     - model_video = "{model_video}"
+
+    #     File Existence Check:
+    #     - Original exists: {original_exists}
+    #     - Basic exists: {basic_exists}
+    #     - Model exists: {model_exists}
+    #             """)
+        
+    #     # Add basic processing function
+    #     st.markdown("---")
+    #     st.markdown("**Generate New Basic Processing Video**")
+        
+    #     # Import the simple processing functions
+    #     try:
+    #         from simple_drawing_methods import simple_process_video_basic, simple_process_video_with_bboxes
+            
+    #         # Create buttons for different processing methods
+    #         col_btn1, col_btn2 = st.columns(2)
+            
+    #         with col_btn1:
+    #             # Button to generate new basic video
+    #             if st.button("🔄 Generate Basic Video", help="Create a new basic video by copying frames from original"):
+    #                 if original_exists:
+    #                     # Generate new basic video with timestamp
+    #                     import time
+    #                     timestamp = int(time.time())
+    #                     new_basic_video = f"debug_basic_{timestamp}.mp4"
+                        
+    #                     with st.spinner("Generating new basic video..."):
+    #                         success = simple_process_video_basic(original_video, new_basic_video, max_frames=30)
+                            
+    #                         if success:
+    #                             st.success(f"✅ New basic video generated: {new_basic_video}")
+    #                             # Store in session state for central display
+    #                             st.session_state["current_basic_video"] = new_basic_video
+    #                             st.rerun()
+    #                         else:
+    #                             st.error("❌ Failed to generate new basic video")
+    #                 else:
+    #                     st.error("❌ Original video not found - cannot generate basic video")
+            
+    #         with col_btn2:
+    #             # Button to generate bounding box video
+    #             if st.button("📦 Generate Bbox Video", help="Create a new video with bounding boxes drawn"):
+    #                 if original_exists:
+    #                     # Generate new bbox video with timestamp
+    #                     import time
+    #                     timestamp = int(time.time())
+    #                     new_bbox_video = f"debug_bbox_{timestamp}.mp4"
+                        
+    #                     with st.spinner("Generating bounding box video..."):
+    #                         success = simple_process_video_with_bboxes(original_video, new_bbox_video, max_frames=30)
+                            
+    #                         if success:
+    #                             st.success(f"✅ New bbox video generated: {new_bbox_video}")
+    #                             # Store in session state for central display
+    #                             st.session_state["current_bbox_video"] = new_bbox_video
+    #                             st.rerun()
+    #                         else:
+    #                             st.error("❌ Failed to generate bounding box video")
+    #                 else:
+    #                     st.error("❌ Original video not found - cannot generate bbox video")
+                        
+    #     except ImportError as e:
+    #         st.error(f"❌ Could not import processing functions: {e}")
+        
+    #     col1, col2, col3 = st.columns(3)
+        
+    #     with col1:
+    #         st.markdown("**Original Video (0MK2C.mp4)**")
+    #         if original_exists:
+    #             st.success("✅ Original video found")
+    #             st.write(f"File size: {original_size:,} bytes")
+                
+    #             # Method 1: Direct st.video
+    #             st.markdown("**Method 1: Direct st.video**")
+    #             try:
+    #                 st.video(original_video)
+    #                 st.success("✅ Original video works!")
+    #             except Exception as e:
+    #                 st.error(f"❌ Original video failed: {e}")
+                
+    #             # Method 2: st.video with bytes
+    #             st.markdown("**Method 2: st.video with bytes**")
+    #             try:
+    #                 with open(original_video, "rb") as f:
+    #                     video_bytes = f.read()
+    #                 st.video(video_bytes)
+    #                 st.success("✅ Original video with bytes works!")
+    #             except Exception as e:
+    #                 st.error(f"❌ Original video with bytes failed: {e}")
+    #         else:
+    #             st.error("❌ Original video not found")
+        
+    #     with col2:
+    #         st.markdown("**Central Display - All Results**")
+    #         st.caption("This column shows the most recently generated videos from the buttons above")
+            
+    #         # Display current basic video if available
+    #         current_basic = st.session_state.get("current_basic_video")
+    #         if current_basic and os.path.exists(current_basic):
+    #             st.markdown("**🔄 Basic Video (Frame Copy)**")
+    #             st.success(f"✅ Basic video: {current_basic}")
+    #             basic_size = os.path.getsize(current_basic)
+    #             cap = cv2.VideoCapture(current_basic)
+    #             basic_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) if cap.isOpened() else "unknown"
+    #             cap.release()
+    #             st.write(f"File size: {basic_size:,} bytes, Frames: {basic_frames}")
+                
+    #             # Display the video
+    #             try:
+    #                 st.video(current_basic)
+    #                 st.success("✅ Basic video displays correctly!")
+    #             except Exception as e:
+    #                 st.error(f"❌ Basic video display failed: {e}")
+            
+    #         # Display current bbox video if available
+    #         current_bbox = st.session_state.get("current_bbox_video")
+    #         if current_bbox and os.path.exists(current_bbox):
+    #             st.markdown("**📦 Bounding Box Video**")
+    #             st.success(f"✅ Bbox video: {current_bbox}")
+    #             bbox_size = os.path.getsize(current_bbox)
+    #             cap = cv2.VideoCapture(current_bbox)
+    #             bbox_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) if cap.isOpened() else "unknown"
+    #             cap.release()
+    #             st.write(f"File size: {bbox_size:,} bytes, Frames: {bbox_frames}")
+                
+    #             # Display the video
+    #             try:
+    #                 st.video(current_bbox)
+    #                 st.success("✅ Bbox video displays correctly!")
+    #             except Exception as e:
+    #                 st.error(f"❌ Bbox video display failed: {e}")
+            
+    #         # If no current videos, show default
+    #         if not current_basic and not current_bbox:
+    #             st.info("Click the buttons above to generate videos and see them here")
+    #             if basic_exists:
+    #                 st.markdown("**Default Basic Video**")
+    #                 st.write(f"File size: {basic_size:,} bytes")
+    #                 try:
+    #                     st.video(basic_video)
+    #                 except Exception as e:
+    #                     st.error(f"❌ Video display failed: {e}")
+                
+    #             # Method 1: Direct st.video
+    #             st.markdown("**Method 1: Direct st.video**")
+    #             try:
+    #                 st.video(basic_video)
+    #                 st.success("✅ Direct st.video works!")
+    #             except Exception as e:
+    #                 st.error(f"❌ Direct st.video failed: {e}")
+                
+    #             # Method 2: st.video with bytes
+    #             st.markdown("**Method 2: st.video with bytes**")
+    #             try:
+    #                 with open(basic_video, "rb") as f:
+    #                     video_bytes = f.read()
+    #                 st.video(video_bytes)
+    #                 st.success("✅ st.video with bytes works!")
+    #             except Exception as e:
+    #                 st.error(f"❌ st.video with bytes failed: {e}")
+                
+    #             # Method 3: HTML5 video
+    #             st.markdown("**Method 3: HTML5 video**")
+    #             try:
+    #                 import base64
+    #                 video_html = f"""
+    #                 <div style="text-align: center;">
+    #                     <video width="100%" height="200" controls autoplay muted loop>
+    #                         <source src="data:video/mp4;base64,{base64.b64encode(open(basic_video, 'rb').read()).decode()}" type="video/mp4">
+    #                         Your browser does not support the video tag.
+    #                     </video>
+    #                 </div>
+    #                 """
+    #                 st.markdown(video_html, unsafe_allow_html=True)
+    #                 st.success("✅ HTML5 video works!")
+    #             except Exception as e:
+    #                 st.error(f"❌ HTML5 video failed: {e}")
+                
+    #             # Download button
+    #             with open(basic_video, "rb") as f:
+    #                 st.download_button(
+    #                     label="Download Basic Video",
+    #                     data=f.read(),
+    #                     file_name=basic_video,
+    #                     mime="video/mp4"
+    #                 )
+    #         else:
+    #             st.error(f"❌ Basic video not found: {basic_video}")
+        
+    #     with col3:
+    #         st.markdown("**Model Processing Video**")
+    #         if model_exists:
+    #             st.success(f"✅ Model video exists: {model_video}")
+    #             st.write(f"File size: {model_size:,} bytes")
+                
+    #             # Method 1: Direct st.video
+    #             st.markdown("**Method 1: Direct st.video**")
+    #             try:
+    #                 st.video(model_video)
+    #                 st.success("✅ Direct st.video works!")
+    #             except Exception as e:
+    #                 st.error(f"❌ Direct st.video failed: {e}")
+                
+    #             # Method 2: st.video with bytes
+    #             st.markdown("**Method 2: st.video with bytes**")
+    #             try:
+    #                 with open(model_video, "rb") as f:
+    #                     video_bytes = f.read()
+    #                 st.video(video_bytes)
+    #                 st.success("✅ st.video with bytes works!")
+    #             except Exception as e:
+    #                 st.error(f"❌ st.video with bytes failed: {e}")
+                
+    #             # Method 3: HTML5 video
+    #             st.markdown("**Method 3: HTML5 video**")
+    #             try:
+    #                 import base64
+    #                 video_html = f"""
+    #                 <div style="text-align: center;">
+    #                     <video width="100%" height="200" controls autoplay muted loop>
+    #                         <source src="data:video/mp4;base64,{base64.b64encode(open(model_video, 'rb').read()).decode()}" type="video/mp4">
+    #                         Your browser does not support the video tag.
+    #                     </video>
+    #                 </div>
+    #                 """
+    #                 st.markdown(video_html, unsafe_allow_html=True)
+    #                 st.success("✅ HTML5 video works!")
+    #             except Exception as e:
+    #                 st.error(f"❌ HTML5 video failed: {e}")
+                
+    #             # Download button
+    #             with open(model_video, "rb") as f:
+    #                 st.download_button(
+    #                     label="Download Model Video",
+    #                     data=f.read(),
+    #                     file_name=model_video,
+    #                     mime="video/mp4"
+    #                 )
+    #         else:
+    #             st.error(f"❌ Model video not found: {model_video}")
+        
+    #     # Method 4: streamlit-player (full width)
+    #     st.markdown("**Method 4: streamlit-player**")
+    #     if STREAMLIT_PLAYER_AVAILABLE:
+    #         col4, col5 = st.columns(2)
+    #         with col4:
+    #             st.markdown("**Basic Video (streamlit-player)**")
+    #             if basic_exists:
+    #                 try:
+    #                     file_url = f"file:///{os.path.abspath(basic_video).replace(os.sep, '/')}"
+    #                     st_player(file_url)
+    #                     st.success("✅ streamlit-player works!")
+    #                 except Exception as e:
+    #                     st.error(f"❌ streamlit-player failed: {e}")
+    #         with col5:
+    #             st.markdown("**Model Video (streamlit-player)**")
+    #             if model_exists:
+    #                 try:
+    #                     file_url = f"file:///{os.path.abspath(model_video).replace(os.sep, '/')}"
+    #                     st_player(file_url)
+    #                     st.success("✅ streamlit-player works!")
+    #                 except Exception as e:
+    #                     st.error(f"❌ streamlit-player failed: {e}")
+    #     else:
+    #         st.info("ℹ️ streamlit-player not available - install with: pip install streamlit-player")
+
+    # # Debug Component - Video Display
+    # st.markdown("### 🔧 Debug: Video Files")
+    # with st.expander("Debug Video Display", expanded=False):
+    #     st.markdown("**Debugging video display issues - showing debug files from project root:**")
+        
+    #     # Look for debug video files in project root (including browser-friendly versions)
+    #     debug_files = []
+    #     for file in os.listdir("."):
+    #         if file.startswith("debug_") and file.endswith(".mp4"):
+    #             debug_files.append(file)
+        
+    #     # Prioritize browser-friendly versions
+    #     browser_friendly_files = [f for f in debug_files if "browser_friendly" in f]
+    #     if browser_friendly_files:
+    #         debug_files = browser_friendly_files + [f for f in debug_files if "browser_friendly" not in f]
+        
+    #     if debug_files:
+    #         st.info(f"Found {len(debug_files)} debug video files in project root")
+            
+    #         # Group files by type (prioritize browser-friendly versions)
+    #         bbox_files = [f for f in debug_files if f.startswith("debug_bbox_")]
+    #         sg_files = [f for f in debug_files if f.startswith("debug_scene_graph_")]
+            
+    #         # Sort to prioritize browser-friendly versions
+    #         bbox_files.sort(key=lambda x: ("browser_friendly" not in x, x))
+    #         sg_files.sort(key=lambda x: ("browser_friendly" not in x, x))
+            
+    #         debug_col1, debug_col2 = st.columns(2)
+            
+    #         with debug_col1:
+    #             st.subheader("Debug: Bounding Box Videos")
+    #             if bbox_files:
+    #                 # Show the most recent bbox file
+    #                 latest_bbox = max(bbox_files, key=lambda x: os.path.getctime(x))
+    #                 st.info(f"Latest bbox video: {latest_bbox}")
+                    
+    #                 if os.path.exists(latest_bbox):
+    #                     st.success("✅ Bbox video file exists!")
+                        
+    #                     # Use HTML video element for better control
+    #                     video_html = f"""
+    #                     <div style="text-align: center;">
+    #                         <video width="100%" height="300" controls autoplay muted loop>
+    #                             <source src="data:video/mp4;base64,{base64.b64encode(open(latest_bbox, 'rb').read()).decode()}" type="video/mp4">
+    #                             Your browser does not support the video tag.
+    #                         </video>
+    #                     </div>
+    #                     """
+    #                     st.markdown(video_html, unsafe_allow_html=True)
+                        
+    #                     # Alternative: File download button
+    #                     with open(latest_bbox, "rb") as f:
+    #                         video_bytes = f.read()
+    #                     st.download_button(
+    #                         label="📥 Download Bbox Video",
+    #                         data=video_bytes,
+    #                         file_name=latest_bbox,
+    #                         mime="video/mp4"
+    #                     )
+                        
+    #                     # Video info
+    #                     st.info(f"📁 File: {latest_bbox}")
+    #                     st.info(f"📏 Size: {os.path.getsize(latest_bbox):,} bytes")
+                        
+    #                     # Alternative: Use st.video with bytes for comparison
+    #                     st.markdown("**Alternative Display (st.video with bytes):**")
+    #                     try:
+    #                         st.video(video_bytes)
+    #                         st.success("✅ st.video with bytes works!")
+    #                     except Exception as e:
+    #                         st.error(f"❌ st.video with bytes failed: {e}")
+                        
+    #                     # Third approach: Use streamlit-player if available
+    #                     if STREAMLIT_PLAYER_AVAILABLE:
+    #                         st.markdown("**Third Display (streamlit-player):**")
+    #                         try:
+    #                             # Convert to file:// URL for local file
+    #                             file_url = f"file:///{os.path.abspath(latest_bbox).replace(os.sep, '/')}"
+    #                             st_player(file_url)
+    #                             st.success("✅ streamlit-player works!")
+    #                         except Exception as e:
+    #                             st.error(f"❌ streamlit-player failed: {e}")
+    #                     else:
+    #                         st.info("ℹ️ streamlit-player not available - install with: pip install streamlit-player")
+    #                 else:
+    #                     st.error("❌ Bbox video file does not exist!")
+                    
+    #                 # Show all bbox files
+    #                 if len(bbox_files) > 1:
+    #                     st.markdown("**All bbox files:**")
+    #                     for file in sorted(bbox_files):
+    #                         file_size = os.path.getsize(file) if os.path.exists(file) else 0
+    #                         st.text(f"  • {file} ({file_size} bytes)")
+    #             else:
+    #                 st.info("No bbox video files found")
+            
+    #         with debug_col2:
+    #             st.subheader("Debug: Scene Graph Videos")
+    #             if sg_files:
+    #                 # Show the most recent scene graph file
+    #                 latest_sg = max(sg_files, key=lambda x: os.path.getctime(x))
+    #                 st.info(f"Latest scene graph video: {latest_sg}")
+                    
+    #                 if os.path.exists(latest_sg):
+    #                     st.success("✅ Scene graph video file exists!")
+                        
+    #                     # Use HTML video element for better control
+    #                     video_html = f"""
+    #                     <div style="text-align: center;">
+    #                         <video width="100%" height="300" controls autoplay muted loop>
+    #                             <source src="data:video/mp4;base64,{base64.b64encode(open(latest_sg, 'rb').read()).decode()}" type="video/mp4">
+    #                             Your browser does not support the video tag.
+    #                         </video>
+    #                     </div>
+    #                     """
+    #                     st.markdown(video_html, unsafe_allow_html=True)
+                        
+    #                     # Alternative: File download button
+    #                     with open(latest_sg, "rb") as f:
+    #                         video_bytes = f.read()
+    #                     st.download_button(
+    #                         label="📥 Download Scene Graph Video",
+    #                         data=video_bytes,
+    #                         file_name=latest_sg,
+    #                         mime="video/mp4"
+    #                     )
+                        
+    #                     # Video info
+    #                     st.info(f"📁 File: {latest_sg}")
+    #                     st.info(f"📏 Size: {os.path.getsize(latest_sg):,} bytes")
+                        
+    #                     # Alternative: Use st.video with bytes for comparison
+    #                     st.markdown("**Alternative Display (st.video with bytes):**")
+    #                     try:
+    #                         st.video(video_bytes)
+    #                         st.success("✅ st.video with bytes works!")
+    #                     except Exception as e:
+    #                         st.error(f"❌ st.video with bytes failed: {e}")
+                        
+    #                     # Third approach: Use streamlit-player if available
+    #                     if STREAMLIT_PLAYER_AVAILABLE:
+    #                         st.markdown("**Third Display (streamlit-player):**")
+    #                         try:
+    #                             # Convert to file:// URL for local file
+    #                             file_url = f"file:///{os.path.abspath(latest_sg).replace(os.sep, '/')}"
+    #                             st_player(file_url)
+    #                             st.success("✅ streamlit-player works!")
+    #                         except Exception as e:
+    #                             st.error(f"❌ streamlit-player failed: {e}")
+    #                     else:
+    #                         st.info("ℹ️ streamlit-player not available - install with: pip install streamlit-player")
+    #                 else:
+    #                     st.error("❌ Scene graph video file does not exist!")
+                    
+    #                 # Show all scene graph files
+    #                 if len(sg_files) > 1:
+    #                     st.markdown("**All scene graph files:**")
+    #                     for file in sorted(sg_files):
+    #                         file_size = os.path.getsize(file) if os.path.exists(file) else 0
+    #                         st.text(f"  • {file} ({file_size} bytes)")
+    #             else:
+    #                 st.info("No scene graph video files found")
+    #     else:
+    #         st.info("No debug video files found in project root")
+    #         st.markdown("**Expected files:** `debug_bbox_*.mp4` and `debug_scene_graph_*.mp4`")
+        
+    #     # Installation instructions for streamlit-player
+    #     if not STREAMLIT_PLAYER_AVAILABLE:
+    #         st.markdown("---")
+    #         st.subheader("🔧 Enhanced Video Display")
+    #         st.info("For better video debugging, install streamlit-player:")
+    #         st.code("pip install streamlit-player", language="bash")
+    #         st.markdown("This will enable additional video display methods in the debug component.")
+        
+    #     # Additional debug info
+    #     st.markdown("---")
+    #     st.subheader("Debug: File System Info")
+        
+    #     # Show temp file info
+    #     if "debug_temp_path" in st.session_state:
+    #         temp_path = st.session_state["debug_temp_path"]
+    #         st.markdown("**Original Temp File:**")
+    #         st.text(f"Path: {temp_path}")
+    #         st.text(f"Exists: {os.path.exists(temp_path)}")
+    #         if os.path.exists(temp_path):
+    #             st.text(f"Size: {os.path.getsize(temp_path)} bytes")
+    #             st.text(f"Readable: {os.access(temp_path, os.R_OK)}")
+        
+    #     if "bbox_video_path" in st.session_state and "scene_graph_video_path" in st.session_state:
+    #         bbox_path = st.session_state["bbox_video_path"]
+    #         sg_path = st.session_state["scene_graph_video_path"]
+            
+    #         col1, col2 = st.columns(2)
+    #         with col1:
+    #             st.markdown("**Bbox Video:**")
+    #             st.text(f"Path: {bbox_path}")
+    #             st.text(f"Exists: {os.path.exists(bbox_path)}")
+    #             if os.path.exists(bbox_path):
+    #                 st.text(f"Size: {os.path.getsize(bbox_path)} bytes")
+    #                 st.text(f"Readable: {os.access(bbox_path, os.R_OK)}")
+            
+    #         with col2:
+    #             st.markdown("**Scene Graph Video:**")
+    #             st.text(f"Path: {sg_path}")
+    #             st.text(f"Exists: {os.path.exists(sg_path)}")
+    #             if os.path.exists(sg_path):
+    #                 st.text(f"Size: {os.path.getsize(sg_path)} bytes")
+    #                 st.text(f"Readable: {os.access(sg_path, os.R_OK)}")
+        
+    #     # Add cleanup button for debugging
+    #     st.markdown("---")
+    #     st.subheader("Debug: Cleanup")
+    #     if st.button("🗑️ Clean Up Debug Files", help="Remove all debug files and reset session state"):
+    #         cleanup_paths = []
+            
+    #         # Add temp files from session state
+    #         if "debug_temp_path" in st.session_state:
+    #             cleanup_paths.append(st.session_state["debug_temp_path"])
+    #         if "bbox_video_path" in st.session_state:
+    #             cleanup_paths.append(st.session_state["bbox_video_path"])
+    #         if "scene_graph_video_path" in st.session_state:
+    #             cleanup_paths.append(st.session_state["scene_graph_video_path"])
+            
+    #         # Add debug files from project root
+    #         for file in os.listdir("."):
+    #             if file.startswith("debug_") and file.endswith(".mp4"):
+    #                 cleanup_paths.append(file)
+            
+    #         cleaned_count = 0
+    #         for path in cleanup_paths:
+    #             try:
+    #                 if os.path.exists(path):
+    #                     os.unlink(path)
+    #                     cleaned_count += 1
+    #                     st.info(f"Deleted: {path}")
+    #             except Exception as e:
+    #                 st.error(f"Failed to delete {path}: {e}")
+            
+    #         # Clear session state
+    #         keys_to_clear = ["debug_temp_path", "bbox_video_path", "scene_graph_video_path", "results"]
+    #         for key in keys_to_clear:
+    #             if key in st.session_state:
+    #                 del st.session_state[key]
+            
+    #         st.success(f"Cleaned up {cleaned_count} debug files and reset session state")
+    #         st.rerun()
+    # st.markdown("---")

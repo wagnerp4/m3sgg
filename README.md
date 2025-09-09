@@ -47,7 +47,7 @@ Here is a quick command to get you going in the training, using the default mode
 ```bash
 python scripts/training/training.py -mode predcls -datasize large -data_path data/action_genome -model sttran
 ```
-For detailed training commands, model-specific configurations, batch training scripts, and evaluation procedures, see the complete documentation [Training Documentation](https://wagnerp4.github.io/m3Sgg/training.html) containing a complete training guide with all modes, models, and advanced configurations.
+For detailed training commands, model-specific configurations, batch training scripts, and evaluation procedures, see the complete documentation [Training Documentation](https://wagnerp4.github.io/m3sgg/training.html) containing a complete training guide with all modes, models, and advanced configurations.
 
 # Streamlit Web App
 Watch the VidSgg demo video:
@@ -66,8 +66,8 @@ streamlit run scripts/apps/streamlit.py # The application will open at `http://l
 ```
 **Requirements:** The streamlit interface requires all dependencies and certain files for local testing: [object_bbox_and_relationship_filtersmall.pkl](https://drive.google.com/file/d/19BkAwjCw5ByyGyZjFo174Oc3Ud56fkaT/view?usp=sharing), put it in the ```data``` directory. Also a [checkpoint file](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link) and video should be ready to drag into the respective fields.
 
-**Bug Notice:** The video display is currently experiencing decoding issues because of new dependencies, the video files are stored
-in a temp dir. The main generation process can take up to 3 minutes currently. We are working on providing a fix to both of these issues asap.
+**Bug Notice:** The main generation process can take up several minutes still, as it is not well optimized. Depending on the platform, also video generation can 
+cause codec issues. Please make sure to use one the following: `avc1`, `mp4v`, `XVID`, `MJPG`, `H264`.
 
 # Local Development
 ```shell
