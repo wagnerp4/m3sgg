@@ -44,7 +44,7 @@ class BaseLLMWrapper(ABC):
     """
 
     def __init__(self, model_name: str, device: Optional[str] = None, 
-                 max_length: int = 512, temperature: float = 0.7):
+                 max_length: int = 512, temperature: float = 0.7, **kwargs):
         """Initialize the LLM wrapper.
         
         :param model_name: Name or path of the pretrained model
@@ -55,6 +55,8 @@ class BaseLLMWrapper(ABC):
         :type max_length: int, optional
         :param temperature: Sampling temperature for generation, defaults to 0.7
         :type temperature: float, optional
+        :param kwargs: Additional parameters (ignored for base class)
+        :type kwargs: dict
         :return: None
         :rtype: None
         """
@@ -181,18 +183,18 @@ class BaseLLMWrapper(ABC):
         :rtype: str
         """
         system_prompt = """You are an AI assistant specialized in analyzing video scene graphs. 
-            You help users understand what's happening in videos by interpreting object detections, 
-            relationships, and activities. Be helpful, accurate, and conversational."""
-                    
+You help users understand what's happening in videos by interpreting object detections, 
+relationships, and activities. Be helpful, accurate, and conversational."""
+        
         prompt = f"""{system_prompt}
 
-        Scene Analysis:
-        {scene_description}
+Scene Analysis:
+{scene_description}
 
-        User Question: {user_question}
+User Question: {user_question}
 
-        Assistant:"""
-                    
+Assistant:"""
+        
         return prompt
 
 
@@ -681,20 +683,22 @@ def create_llm_wrapper(model_name: str = "google/gemma-3-270m",
 
 
 def create_conversation_manager(model_name: str = "google/gemma-3-270m",
-                               model_type: str = "gemma", **kwargs) -> ConversationManager:
+                               model_type: str = "gemma", max_context_length: int = 10, **kwargs) -> ConversationManager:
     """Create a conversation manager with LLM wrapper.
     
     :param model_name: Name of the model to load, defaults to "google/gemma-3-270m"
     :type model_name: str, optional
     :param model_type: Type of model wrapper to create, defaults to "gemma"
     :type model_type: str, optional
+    :param max_context_length: Maximum conversation context length, defaults to 10
+    :type max_context_length: int, optional
     :param kwargs: Additional initialization parameters
     :type kwargs: dict
     :return: Initialized conversation manager
     :rtype: ConversationManager
     """
     llm_wrapper = create_llm_wrapper(model_name, model_type, **kwargs)
-    return ConversationManager(llm_wrapper)
+    return ConversationManager(llm_wrapper, max_context_length)
 
 
 if __name__ == "__main__":

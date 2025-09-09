@@ -1,4 +1,4 @@
-<div align="center">
+<div align="center" style="font-size: 200%;">
 
 # M3SGG
 
@@ -40,7 +40,7 @@ uv pip install -e . # All remaining deps
 
 # Dataset
 Action Genome: We use the dataset [Action Genome](https://www.actiongenome.org/#download) to train/evaluate our method. Please process the downloaded dataset with the [Toolkit](https://github.com/JingweiJ/ActionGenome). Our [checkpoint-link](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link) also provides a small ActionGenome subset ($A_{200}$).
-In the experiments for SGCLS/SGDET, we only keep bounding boxes with short edges larger than 16 pixels. Please download the file [object_bbox_and_relationship_filtersmall.pkl](https://drive.google.com/file/d/19BkAwjCw5ByyGyZjFo174Oc3Ud56fkaT/view?usp=sharing) and put it in the ```datasets``` directory.
+In the experiments for SGCLS/SGDET, we only keep bounding boxes with short edges larger than 16 pixels. Please download the file [object_bbox_and_relationship_filtersmall.pkl](https://drive.google.com/file/d/19BkAwjCw5ByyGyZjFo174Oc3Ud56fkaT/view?usp=sharing) and put it in the ```data``` directory.
 
 # Training and Evaluation
 Here is a quick command to get you going in the training, using the default model on easy mode:
@@ -60,17 +60,14 @@ Watch the VidSgg demo video:
   <p><strong>Click the thumbnail above to watch the full demo on YouTube</strong></p>
 </div>
 
-Start the modern web-based interface:
+Start the interface:
 ```powershell
-streamlit run scripts/apps/streamlit.py
+streamlit run scripts/apps/streamlit.py # The application will open at `http://localhost:8501`.
 ```
-The application will open at `http://localhost:8501`.
+**Requirements:** The streamlit interface requires all dependencies and certain files for local testing: [object_bbox_and_relationship_filtersmall.pkl](https://drive.google.com/file/d/19BkAwjCw5ByyGyZjFo174Oc3Ud56fkaT/view?usp=sharing), put it in the ```data``` directory. Also a [checkpoint file](https://drive.google.com/drive/folders/12yc-D4n3Ine7jWX2cDlBMX6zFl4s2yyt?usp=drive_link) and video should be ready to drag into the respective fields.
 
-**Note:** The video display is currently experiencing decoding issues, but can be seen under root users temp paths,
-shown in the Processing Log. We are working on a fix.
-
-# Hardware
-Training was run on a single  NVIDIA RTX 3090 TI GPU for both training and testing.
+**Bug Notice:** The video display is currently experiencing decoding issues because of new dependencies, the video files are stored
+in a temp dir. The main generation process can take up to 3 minutes currently. We are working on providing a fix to both of these issues asap.
 
 # Local Development
 ```shell
@@ -89,3 +86,6 @@ python -m pytest tests/ --cov=src/m3sgg --cov-report=html
 cd docs && .\make.bat html
 Start-Process ".\_build\html\index.html"
 ```
+
+# Hardware
+Training was run on a single  NVIDIA RTX 3090 TI GPU for both training and testing.

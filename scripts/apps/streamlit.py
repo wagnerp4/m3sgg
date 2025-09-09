@@ -16,6 +16,42 @@ import streamlit as st
 import torch
 from streamlit_chat import message
 
+# Hardcoded class definitions to avoid file dependencies
+# TODO: Fix this, allow open-vocab and dynamic class definitions
+OBJECT_CLASSES = [
+    "person", "bag", "bed", "blanket", "book", "box", "broom", "chair", 
+    "closetcabinet", "clothes", "cupglassbottle", "dish", "door", "doorknob", 
+    "doorway", "floor", "food", "groceries", "laptop", "light", "medicine", 
+    "mirror", "papernotebook", "phonecamera", "picture", "pillow", 
+    "refrigerator", "sandwich", "shelf", "shoe", "sofacouch", "table", 
+    "television", "towel", "vacuum", "window"
+]
+
+RELATIONSHIP_CLASSES = [
+    "lookingat", "notlookingat", "unsure", "above", "beneath", "infrontof", 
+    "behind", "onthesideof", "in", "carrying", "coveredby", "drinkingfrom", 
+    "eating", "haveitontheback", "holding", "leaningon", "lyingon", 
+    "notcontacting", "otherrelationship", "sittingon", "standingon", 
+    "touching", "twisting", "wearing", "wiping", "writingon"
+]
+
+# Apply the same corrections as in the dataset loaders
+RELATIONSHIP_CLASSES_CORRECTED = RELATIONSHIP_CLASSES.copy()
+RELATIONSHIP_CLASSES_CORRECTED[0] = "looking_at"
+RELATIONSHIP_CLASSES_CORRECTED[1] = "not_looking_at"
+RELATIONSHIP_CLASSES_CORRECTED[5] = "in_front_of"
+RELATIONSHIP_CLASSES_CORRECTED[7] = "on_the_side_of"
+RELATIONSHIP_CLASSES_CORRECTED[10] = "covered_by"
+RELATIONSHIP_CLASSES_CORRECTED[11] = "drinking_from"
+RELATIONSHIP_CLASSES_CORRECTED[13] = "have_it_on_the_back"
+RELATIONSHIP_CLASSES_CORRECTED[15] = "leaning_on"
+RELATIONSHIP_CLASSES_CORRECTED[16] = "lying_on"
+RELATIONSHIP_CLASSES_CORRECTED[17] = "not_contacting"
+RELATIONSHIP_CLASSES_CORRECTED[18] = "other_relationship"
+RELATIONSHIP_CLASSES_CORRECTED[19] = "sitting_on"
+RELATIONSHIP_CLASSES_CORRECTED[20] = "standing_on"
+RELATIONSHIP_CLASSES_CORRECTED[25] = "writing_on"
+
 # Add the project root and src directory to Python path so m3sgg can be imported
 project_root = Path(__file__).parent.parent.parent
 src_path = project_root / "src"
@@ -56,6 +92,14 @@ try:
     print("Successfully imported HungarianMatcher")
 except ImportError as e:
     print(f"Warning: Could not import HungarianMatcher: {e}")
+
+try:
+    from m3sgg.language.conversation import SceneGraphChatInterface
+    CHAT_INTERFACE_AVAILABLE = True
+    print("Successfully imported SceneGraphChatInterface")
+except ImportError as e:
+    print(f"Warning: Could not import SceneGraphChatInterface: {e}")
+    CHAT_INTERFACE_AVAILABLE = False
 
 st.set_page_config(
     page_title="M3Sgg",
@@ -232,8 +276,8 @@ class StreamlitVideoProcessor:
         except Exception as e:
             print(f"Warning: Could not load object classes from file: {e}")
         
-        # Return empty list if loading fails
-        return []
+        # Return hardcoded classes as fallback
+        return OBJECT_CLASSES.copy()
     
     def _load_relationship_classes(self):
         """Load relationship classes from file as fallback"""
@@ -278,8 +322,8 @@ class StreamlitVideoProcessor:
         except Exception as e:
             print(f"Warning: Could not load relationship classes from file: {e}")
         
-        # Return empty list if loading fails
-        return []
+        # Return hardcoded classes as fallback
+        return RELATIONSHIP_CLASSES_CORRECTED.copy()
 
     def setup_models(self):
         """Initialize models for video processing with automatic model detection"""
@@ -504,14 +548,15 @@ class StreamlitVideoProcessor:
                     )
 
                 if "boxes" in entry and entry["boxes"] is not None:
-                    print(f"Raw detections: {entry['boxes'].shape[0]} boxes")
+                    # print(f"Raw detections: {entry['boxes'].shape[0]} boxes")
                     if "pred_scores" in entry:
-                        raw_scores = entry["pred_scores"].cpu().numpy()
-                        print(
-                            f"Raw scores range: {raw_scores.min():.3f} - {raw_scores.max():.3f}"
-                        )
-                        print(f"Scores above 0.1: {(raw_scores > 0.1).sum()}")
-                        print(f"Scores above 0.3: {(raw_scores > 0.3).sum()}")
+                        # raw_scores = entry["pred_scores"].cpu().numpy()
+                        # print(
+                        #     f"Raw scores range: {raw_scores.min():.3f} - {raw_scores.max():.3f}"
+                        # )
+                        # print(f"Scores above 0.1: {(raw_scores > 0.1).sum()}")
+                        # print(f"Scores above 0.3: {(raw_scores > 0.3).sum()}")
+                        pass
 
                 if self.conf.mode == "sgdet" and self.conf.dataset != "EASG":
                     # Store original format
@@ -541,7 +586,7 @@ class StreamlitVideoProcessor:
                     if original_scores is not None:
                         entry["scores"] = original_scores
                     entry["boxes"] = original_boxes
-                    print(f"After get_sequence: boxes shape = {entry['boxes'].shape}")
+                    # print(f"After get_sequence: boxes shape = {entry['boxes'].shape}")
 
                 # Scene graph generation
                 pred = self.model(entry)
@@ -549,7 +594,7 @@ class StreamlitVideoProcessor:
             return self.extract_results(entry, pred), entry, pred
 
         except Exception as e:
-            print(f"Frame processing error: {e}")
+            # print(f"Frame processing error: {e}")
             return {"objects": 0, "relationships": 0, "error": str(e)}, None, None
 
     def draw_bounding_boxes(self, frame, entry, confidence_threshold=0.1):
@@ -587,67 +632,70 @@ class StreamlitVideoProcessor:
                 scores = scores.cpu().numpy()
 
         # Debug: Show entry fields and their contents
-        print(f"DRAW_BBOX: Entry fields: {list(entry.keys())}")
-        print(
-            f"DRAW_BBOX: Boxes shape: {boxes.shape if hasattr(boxes, 'shape') else len(boxes)}"
-        )
+        # print(f"DRAW_BBOX: Entry fields: {list(entry.keys())}")
+        # print(
+        #     f"DRAW_BBOX: Boxes shape: {boxes.shape if hasattr(boxes, 'shape') else len(boxes)}"
+        # )
         if labels is not None:
-            print(
-                f"DRAW_BBOX: Labels shape: {labels.shape if hasattr(labels, 'shape') else len(labels)}"
-            )
+            # print(
+            #     f"DRAW_BBOX: Labels shape: {labels.shape if hasattr(labels, 'shape') else len(labels)}"
+            # )
             # Add detailed object list logging
             if hasattr(self, "AG_dataset") and labels is not None:
-                print("DRAW_BBOX: === DETECTED OBJECTS LIST ===")
+                # print("DRAW_BBOX: === DETECTED OBJECTS LIST ===")
                 for i, label_idx in enumerate(labels):
                     if label_idx < len(self.AG_dataset.object_classes):
-                        object_name = self.AG_dataset.object_classes[label_idx]
-                        score_str = (
-                            f" (score: {scores[i]:.3f})"
-                            if scores is not None and i < len(scores)
-                            else ""
-                        )
-                        print(f"  {i+1}. {object_name}{score_str}")
+                        # object_name = self.AG_dataset.object_classes[label_idx]
+                        # score_str = (
+                        #     f" (score: {scores[i]:.3f})"
+                        #     if scores is not None and i < len(scores)
+                        #     else ""
+                        # )
+                        # print(f"  {i+1}. {object_name}{score_str}")
+                        pass
                     else:
-                        print(f"  {i+1}. unknown_class_{label_idx}")
-                print("DRAW_BBOX: === END OBJECT LIST ===")
+                        # print(f"  {i+1}. unknown_class_{label_idx}")
+                        pass
+                # print("DRAW_BBOX: === END OBJECT LIST ===")
         if scores is not None:
-            print(
-                f"DRAW_BBOX: Scores shape: {scores.shape if hasattr(scores, 'shape') else len(scores)}"
-            )
-            print(f"DRAW_BBOX: All scores: {scores}")
-            print(
-                f"DRAW_BBOX: Score statistics - Min: {scores.min():.3f}, Max: {scores.max():.3f}, Mean: {scores.mean():.3f}"
-            )
+            # print(
+            #     f"DRAW_BBOX: Scores shape: {scores.shape if hasattr(scores, 'shape') else len(scores)}"
+            # )
+            # print(f"DRAW_BBOX: All scores: {scores}")
+            # print(
+            #     f"DRAW_BBOX: Score statistics - Min: {scores.min():.3f}, Max: {scores.max():.3f}, Mean: {scores.mean():.3f}"
+            # )
+            pass
 
         # Check if we have distribution instead
         if "distribution" in entry:
             distribution = entry["distribution"]
             if isinstance(distribution, torch.Tensor):
-                print(f"Distribution shape: {distribution.shape}")
+                # print(f"Distribution shape: {distribution.shape}")
                 # Use distribution to get scores
                 if scores is None:
                     scores = torch.max(distribution, dim=1)[0].cpu().numpy()
-                    print(f"Generated scores from distribution: {scores}")
+                    # print(f"Generated scores from distribution: {scores}")
 
         # If we still don't have scores, create dummy ones
         if scores is None and boxes is not None:
             scores = np.ones(len(boxes))
-            print(f"Using dummy scores for {len(boxes)} boxes")
+            # print(f"Using dummy scores for {len(boxes)} boxes")
 
         # If we don't have labels, create dummy ones
         if labels is None and boxes is not None:
             labels = np.ones(len(boxes), dtype=int)
-            print(f"Using dummy labels for {len(boxes)} boxes")
+            # print(f"Using dummy labels for {len(boxes)} boxes")
 
         # Debug: Show all detections before filtering
         if scores is not None and len(scores) > 0:
-            print(f"Total detections before filtering: {len(scores)}")
+            # print(f"Total detections before filtering: {len(scores)}")
 
             # Filter detections with lower confidence threshold
             high_conf_mask = scores > confidence_threshold
-            print(
-                f"Detections after confidence filtering (>{confidence_threshold}): {high_conf_mask.sum()}"
-            )
+            # print(
+            #     f"Detections after confidence filtering (>{confidence_threshold}): {high_conf_mask.sum()}"
+            # )
 
             if boxes is not None:
                 boxes = boxes[high_conf_mask]
@@ -655,24 +703,24 @@ class StreamlitVideoProcessor:
                 labels = labels[high_conf_mask]
             scores = scores[high_conf_mask]
 
-            print(f"Final boxes to draw: {len(boxes) if boxes is not None else 0}")
+            # print(f"Final boxes to draw: {len(boxes) if boxes is not None else 0}")
 
         # Draw boxes
-        print(
-            f"DRAW_BBOX: About to draw {len(boxes) if boxes is not None else 0} boxes"
-        )
+        # print(
+        #     f"DRAW_BBOX: About to draw {len(boxes) if boxes is not None else 0} boxes"
+        # )
         for i, box in enumerate(boxes):
-            print(f"DRAW_BBOX: Processing box {i+1}/{len(boxes)}: {box}")
+            # print(f"DRAW_BBOX: Processing box {i+1}/{len(boxes)}: {box}")
             if len(box) >= 4:
                 # Handle batch dimension if present
                 if len(box) == 5:
                     x1, y1, x2, y2 = box[1:5].astype(int)
-                    print(
-                        f"DRAW_BBOX: Box {i+1} (with batch): ({x1}, {y1}, {x2}, {y2})"
-                    )
+                    # print(
+                    #     f"DRAW_BBOX: Box {i+1} (with batch): ({x1}, {y1}, {x2}, {y2})"
+                    # )
                 else:
                     x1, y1, x2, y2 = box[:4].astype(int)
-                    print(f"DRAW_BBOX: Box {i+1} (no batch): ({x1}, {y1}, {x2}, {y2})")
+                    # print(f"DRAW_BBOX: Box {i+1} (no batch): ({x1}, {y1}, {x2}, {y2})")
 
                 # Scale to frame size (assuming model uses 600x600)
                 h, w = frame.shape[:2]
@@ -681,18 +729,18 @@ class StreamlitVideoProcessor:
                 x2 = int(x2 * w / 600)
                 y2 = int(y2 * h / 600)
 
-                print(
-                    f"DRAW_BBOX: Box {i+1} scaled to frame ({w}x{h}): ({x1}, {y1}, {x2}, {y2})"
-                )
+                # print(
+                #     f"DRAW_BBOX: Box {i+1} scaled to frame ({w}x{h}): ({x1}, {y1}, {x2}, {y2})"
+                # )
 
                 # Ensure coordinates are valid
                 x1, y1 = max(0, x1), max(0, y1)
                 x2, y2 = min(w - 1, x2), min(h - 1, y2)
 
-                print(f"DRAW_BBOX: Box {i+1} after clipping: ({x1}, {y1}, {x2}, {y2})")
+                # print(f"DRAW_BBOX: Box {i+1} after clipping: ({x1}, {y1}, {x2}, {y2})")
 
                 if x2 > x1 and y2 > y1:
-                    print(f"DRAW_BBOX:  Drawing box {i+1} - valid coordinates")
+                    # print(f"DRAW_BBOX:  Drawing box {i+1} - valid coordinates")
                     # Choose color based on confidence
                     if i < len(scores):
                         conf_score = scores[i]
@@ -754,19 +802,21 @@ class StreamlitVideoProcessor:
                             2,
                         )
 
-                    print(f"DRAW_BBOX:  Successfully drew box {i+1}")
+                    # print(f"DRAW_BBOX:  Successfully drew box {i+1}")
                 else:
-                    print(
-                        f"DRAW_BBOX:  Skipped box {i+1} - invalid coordinates (x2 <= x1 or y2 <= y1)"
-                    )
+                    # print(
+                    #     f"DRAW_BBOX:  Skipped box {i+1} - invalid coordinates (x2 <= x1 or y2 <= y1)"
+                    # )
+                    pass
             else:
-                print(
-                    f"DRAW_BBOX:  Skipped box {i+1} - insufficient coordinates (need at least 4)"
-                )
+                # print(
+                #     f"DRAW_BBOX:  Skipped box {i+1} - insufficient coordinates (need at least 4)"
+                # )
+                pass
 
-        print(
-            f"DRAW_BBOX: === Finished drawing {len(boxes) if boxes is not None else 0} boxes ==="
-        )
+        # print(
+        #     f"DRAW_BBOX: === Finished drawing {len(boxes) if boxes is not None else 0} boxes ==="
+        # )
         return frame_with_boxes
 
     def extract_results(self, entry, pred):
@@ -793,7 +843,7 @@ class StreamlitVideoProcessor:
             return results
 
         except Exception as e:
-            print(f"Result extraction error: {e}")
+            # print(f"Result extraction error: {e}")
             return {"objects": 0, "relationships": 0, "error": str(e)}
 
     def extract_bbox_centers(self, entry) -> List[Tuple[float, float]]:
@@ -1036,19 +1086,8 @@ class StreamlitVideoProcessor:
             elif hasattr(self, "dataset") and hasattr(self.dataset, "object_classes"):
                 object_classes = self.dataset.object_classes
             else:
-                # Fallback object names
-                object_classes = [
-                    "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
-                    "traffic_light", "fire_hydrant", "stop_sign", "parking_meter", "bench", "bird", "cat",
-                    "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack",
-                    "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports_ball",
-                    "kite", "baseball_bat", "baseball_glove", "skateboard", "surfboard", "tennis_racket",
-                    "bottle", "wine_glass", "cup", "fork", "knife", "spoon", "bowl", "banana", "apple",
-                    "sandwich", "orange", "broccoli", "carrot", "hot_dog", "pizza", "donut", "cake",
-                    "chair", "couch", "potted_plant", "bed", "dining_table", "toilet", "tv", "laptop",
-                    "mouse", "remote", "keyboard", "cell_phone", "microwave", "oven", "toaster", "sink",
-                    "refrigerator", "book", "clock", "vase", "scissors", "teddy_bear", "hair_drier", "toothbrush"
-                ]
+                # Fallback object names - use hardcoded Action Genome classes
+                object_classes = OBJECT_CLASSES
             
             if class_idx < len(object_classes):
                 return object_classes[class_idx]
@@ -1088,6 +1127,15 @@ class StreamlitVideoProcessor:
             elif hasattr(self, "relationship_classes") and self.relationship_classes:
                 # Final fallback: use loaded relationship classes
                 relationships = self.relationship_classes
+                if rel_category == "attention":
+                    relationships = relationships[0:3]
+                elif rel_category == "spatial":
+                    relationships = relationships[3:9]
+                elif rel_category == "contacting":
+                    relationships = relationships[9:]
+            else:
+                # Ultimate fallback: use hardcoded relationship classes
+                relationships = RELATIONSHIP_CLASSES_CORRECTED
                 if rel_category == "attention":
                     relationships = relationships[0:3]
                 elif rel_category == "spatial":
@@ -1338,8 +1386,8 @@ def convert_video_for_browser(video_path: str) -> str:
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         
-        # Create output with H264 codec
-        fourcc = cv2.VideoWriter_fourcc(*"H264")
+        # Create output with mp4v codec (case-sensitive)
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
         
         if out.isOpened():
@@ -1424,8 +1472,8 @@ def create_processed_video_with_bboxes(
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         # Try different codecs in order of web compatibility
-        # For OpenCV 4.0.1 + Streamlit 1.40.1 compatibility, XVID AVI works best
-        codecs_to_try = ["XVID", "MJPG", "mp4v", "H264"]
+        # Prioritize mp4v (case-sensitive)
+        codecs_to_try = ["mp4v", "XVID", "MJPG", "H264"]
         
         out = None
         for codec in codecs_to_try:
@@ -1515,8 +1563,8 @@ def create_processed_video_with_scene_graph(
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         # Create video writer with better browser compatibility
-        # For OpenCV 4.0.1 + Streamlit 1.40.1 compatibility, XVID AVI works best
-        codecs_to_try = ["XVID", "MJPG", "mp4v", "H264"]
+        # Prioritize mp4v (case-sensitive)
+        codecs_to_try = ["mp4v", "XVID", "MJPG", "H264"]
         
         out = None
         for codec in codecs_to_try:
@@ -1995,42 +2043,41 @@ def main():
             st.error(f" Model checkpoint not found at: `{model_path}`")
 
         else:
-            # Initialize progress tracking
             import time
-
             start_time = time.time()
-
-            # Create combined progress and log container
             progress_container = st.container()
 
             with progress_container:
-                # Create columns for layout
+                
                 col1, col2, col3 = st.columns([1, 2, 1])
-
                 with col2:
                     st.markdown("### Processing Progress")
-                    # Large centered timer
                     timer_display = st.empty()
                     timer_display.markdown(
                         "<div style='text-align: center; font-size: 24px; font-weight: bold; color: #1f77b4; margin: 10px 0;'>0.0s</div>",
                         unsafe_allow_html=True,
                     )
-
-                # Progress bar
                 progress_bar = st.progress(0)
                 status_text = st.empty()
-
-                # Log section
                 st.markdown("#### Processing Log")
                 log_display = st.empty()
 
-            # Initialize log list
             log_entries = []
 
             def update_progress(step, total_steps, message, log_message=None):
-                """Update progress bar and log display"""
+                """Update progress bar and log display with sub-ticks for smoother updates"""
                 progress = step / total_steps
-                progress_bar.progress(progress)
+                
+                # Add sub-ticks for smoother progress bar updates
+                # Update progress bar with sub-tick increments
+                for sub_tick in range(5):  # 5 sub-ticks per main step
+                    sub_progress = progress + (sub_tick * 0.2 / total_steps)
+                    if sub_progress <= 1.0:
+                        progress_bar.progress(min(sub_progress, 1.0))
+                        time.sleep(0.05)  # Small delay for visual effect
+                
+                # Final progress update
+                progress_bar.progress(min(progress, 1.0))
                 status_text.text(message)
 
                 # Update timer
@@ -2110,6 +2157,9 @@ def main():
                             "Bounding box video created",
                             f"Bounding box video created successfully! Size: {file_size} bytes",
                         )
+                        
+                        # Debug: Store video path for display
+                        st.session_state["debug_bbox_path"] = bbox_video_path
 
                         # Verify bbox video
                         try:
@@ -2158,6 +2208,9 @@ def main():
                         st.session_state["scene_graph_video_path"] = (
                             scene_graph_video_path
                         )
+                        
+                        # Debug: Store video path for display
+                        st.session_state["debug_sg_path"] = scene_graph_video_path
 
                         # Final progress update
                         progress_bar.progress(1.0)
@@ -2238,6 +2291,9 @@ def main():
                 if "bbox_video_path" in st.session_state and os.path.exists(
                     st.session_state["bbox_video_path"]
                 ):
+                    # Debug information
+                    st.info(f"Bbox video path: {st.session_state['bbox_video_path']}")
+                    
                     # Check for AVI version first (better compatibility)
                     avi_path = st.session_state["bbox_video_path"].replace(".mp4", ".avi")
                     video_to_use = avi_path if os.path.exists(avi_path) else st.session_state["bbox_video_path"]
@@ -2245,17 +2301,33 @@ def main():
                     # Validate and display video
                     if validate_video_file(video_to_use):
                         try:
-                            with open(video_to_use, "rb") as video_file:
-                                video_bytes = video_file.read()
-                                st.video(video_bytes)
+                            # Try direct path first
+                            st.video(video_to_use)
                         except Exception as e:
-                            st.error(f"Error loading bbox video: {e}")
-                            st.video(st.session_state.uploaded_video_file)
+                            st.warning(f"Direct video display failed: {e}")
+                            try:
+                                # Fallback to bytes
+                                with open(video_to_use, "rb") as video_file:
+                                    video_bytes = video_file.read()
+                                    st.video(video_bytes)
+                            except Exception as e2:
+                                st.error(f"Error loading bbox video: {e2}")
+                                st.video(st.session_state.uploaded_video_file)
                     else:
                         st.error("Bounding box video file is corrupted or unreadable")
                         st.video(st.session_state.uploaded_video_file)
                 else:
+                    
                     st.video(st.session_state.uploaded_video_file)
+                    st.warning("No bounding box video available - showing original")
+                    
+                    # Debug information
+                    if "debug_bbox_path" in st.session_state:
+                        st.info(f"Debug bbox path: {st.session_state['debug_bbox_path']}")
+                        if os.path.exists(st.session_state["debug_bbox_path"]):
+                            st.success("Debug video file exists!")
+                        else:
+                            st.error("Debug video file does not exist!")
 
                 # Add bbox table if we have detection results
                 if "results" in st.session_state and "bbox_info" in st.session_state:
@@ -2285,6 +2357,9 @@ def main():
                 if "scene_graph_video_path" in st.session_state and os.path.exists(
                     st.session_state["scene_graph_video_path"]
                 ):
+                    # Debug information
+                    st.info(f"Scene graph video path: {st.session_state['scene_graph_video_path']}")
+                    
                     # Check for AVI version first (better compatibility)
                     avi_path = st.session_state["scene_graph_video_path"].replace(".mp4", ".avi")
                     video_to_use = avi_path if os.path.exists(avi_path) else st.session_state["scene_graph_video_path"]
@@ -2292,18 +2367,34 @@ def main():
                     # Validate and display video
                     if validate_video_file(video_to_use):
                         try:
-                            with open(video_to_use, "rb") as video_file:
-                                video_bytes = video_file.read()
-                                st.video(video_bytes)
+                            # Try direct path first
+                            st.video(video_to_use)
                         except Exception as e:
-                            st.error(f"Error loading scene graph video: {e}")
-                            st.video(st.session_state.uploaded_video_file)
-                            st.caption(" Scene graph overlay failed to load")
+                            st.warning(f"Direct video display failed: {e}")
+                            try:
+                                # Fallback to bytes
+                                with open(video_to_use, "rb") as video_file:
+                                    video_bytes = video_file.read()
+                                    st.video(video_bytes)
+                            except Exception as e2:
+                                st.error(f"Error loading scene graph video: {e2}")
+                                st.video(st.session_state.uploaded_video_file)
+                                st.caption(" Scene graph overlay failed to load")
                     else:
                         st.error("Scene graph video file is corrupted or unreadable")
                         st.video(st.session_state.uploaded_video_file)
                 else:
+                    
                     st.video(st.session_state.uploaded_video_file)
+                    st.warning("No scene graph video available - showing original")
+                    
+                    # Debug information
+                    if "debug_sg_path" in st.session_state:
+                        st.info(f"Debug scene graph path: {st.session_state['debug_sg_path']}")
+                        if os.path.exists(st.session_state["debug_sg_path"]):
+                            st.success("Debug scene graph video file exists!")
+                        else:
+                            st.error("Debug scene graph video file does not exist!")
 
                 # Add relationship table if we have relationship results
                 if "results" in st.session_state and "relationship_info" in st.session_state:
@@ -2362,107 +2453,127 @@ def main():
                     st.caption("Scene graph relationships will appear here")
 
             # Chat
-            # TODO: Modularize at Conversation Component
             st.markdown("---")
             st.header("Chat Assistant")
-            if "chat_messages" not in st.session_state:
-                st.session_state.chat_messages = []
-                st.session_state.chat_intro_started = False
-            if "chat_history" not in st.session_state:
-                st.session_state.chat_history = []
-            if not st.session_state.get("chat_intro_started", False):
-                st.session_state.chat_intro_started = True
-                intro_messages = [
-                    """Hello there! Welcome to VidSgg... 
-                    I'm your personal AI assistant for video scene graph analysis. 
-                    I can help you discover hidden relationships and objects in your videos!
-                    Just upload a video above to start.""",
-                ]
-                st.session_state.chat_messages = [
-                    {"message": intro_messages[0], "is_user": False}
-                ]
-                intro_container = st.empty()
-                with intro_container.container():
-                    message(
-                        st.session_state.chat_messages[0]["message"],
-                        is_user=False,
-                        key=f"intro_0_{uuid.uuid4().hex[:8]}",
-                        allow_html=True,
+            
+            if CHAT_INTERFACE_AVAILABLE:
+                # Use the new LLM-based chat interface
+                if "chat_interface" not in st.session_state:
+                    st.session_state.chat_interface = SceneGraphChatInterface(
+                        model_name="google/gemma-3-270m",
+                        model_type="gemma"
                     )
-                intro_container.empty()
+                
+                # Set scene graph context if results are available
+                if "results" in st.session_state:
+                    st.session_state.chat_interface.set_scene_graph_context(
+                        st.session_state["results"]
+                    )
+                
+                # Render the chat interface
+                st.session_state.chat_interface.render_chat_interface()
+                
+            else:
+                # Fallback to simple chat interface
+                st.warning("Advanced chat interface not available. Using basic chat.")
+                if "chat_messages" not in st.session_state:
+                    st.session_state.chat_messages = []
+                    st.session_state.chat_intro_started = False
+                if "chat_history" not in st.session_state:
+                    st.session_state.chat_history = []
+                if not st.session_state.get("chat_intro_started", False):
+                    st.session_state.chat_intro_started = True
+                    intro_messages = [
+                        """Hello there! Welcome to VidSgg... 
+                        I'm your personal AI assistant for video scene graph analysis. 
+                        I can help you discover hidden relationships and objects in your videos!
+                        Just upload a video above to start.""",
+                    ]
+                    st.session_state.chat_messages = [
+                        {"message": intro_messages[0], "is_user": False}
+                    ]
+                    intro_container = st.empty()
+                    with intro_container.container():
+                        message(
+                            st.session_state.chat_messages[0]["message"],
+                            is_user=False,
+                            key=f"intro_0_{uuid.uuid4().hex[:8]}",
+                            allow_html=True,
+                        )
+                    intro_container.empty()
 
-            def handle_chat_input():
-                user_input = st.session_state.chat_input
-                if user_input.strip():
-                    # Add user message
-                    st.session_state.chat_messages.append(
-                        {"message": user_input, "is_user": True}
-                    )
+                def handle_chat_input():
+                    user_input = st.session_state.chat_input
+                    if user_input.strip():
+                        # Add user message
+                        st.session_state.chat_messages.append(
+                            {"message": user_input, "is_user": True}
+                        )
 
-                    # Generate bot response (placeholder logic)
-                    bot_response = generate_bot_response(user_input)
-                    st.session_state.chat_messages.append(
-                        {"message": bot_response, "is_user": False}
-                    )
+                        # Generate bot response (placeholder logic)
+                        bot_response = generate_bot_response(user_input)
+                        st.session_state.chat_messages.append(
+                            {"message": bot_response, "is_user": False}
+                        )
 
-                    # Clear input
-                    st.session_state.chat_input = ""
+                        # Clear input
+                        st.session_state.chat_input = ""
 
-            def generate_bot_response(user_input: str) -> str:
-                """Generate bot response based on user input"""
-                user_input_lower = user_input.lower()
+                def generate_bot_response(user_input: str) -> str:
+                    """Generate bot response based on user input"""
+                    user_input_lower = user_input.lower()
 
-                if "hello" in user_input_lower or "hi" in user_input_lower:
-                    return "Hello! I'm your VidSgg assistant. I can help you understand scene graph generation results and answer questions about the analysis."
-                elif "help" in user_input_lower:
-                    return "I can help you with:\n• Understanding scene graph results\n• Explaining object detections\n• Interpreting relationship data\n• Model configuration questions\n• Export options"
-                elif "object" in user_input_lower and "results" in st.session_state:
-                    results = st.session_state["results"]
-                    avg_objects = (
-                        np.mean(results["detections"]) if results["detections"] else 0
-                    )
-                    return f"In your video analysis, I detected an average of {avg_objects:.1f} objects per frame across {results['processed_frames']} processed frames."
-                elif (
-                    "relationship" in user_input_lower and "results" in st.session_state
-                ):
-                    results = st.session_state["results"]
-                    avg_relationships = (
-                        np.mean(results["relationships"])
-                        if results["relationships"]
-                        else 0
-                    )
-                    return f"The analysis found an average of {avg_relationships:.1f} relationships per frame in your video."
-                elif "confidence" in user_input_lower and "results" in st.session_state:
-                    results = st.session_state["results"]
-                    avg_confidence = (
-                        np.mean(results["confidences"]) if results["confidences"] else 0
-                    )
-                    return f"The average confidence score across all detections was {avg_confidence:.2f}."
-                elif "model" in user_input_lower:
-                    return "The VidSgg model uses STTran (Spatial-Temporal Transformer) for scene graph generation. It processes video frames to detect objects and their relationships over time."
-                elif "export" in user_input_lower:
-                    return "You can export your results in JSON, CSV, or XML format using the export options in the sidebar. The exported data will include all detection and relationship information."
-                else:
-                    return "I'm here to help with your scene graph analysis! Ask me about objects, relationships, confidence scores, or how the model works."
+                    if "hello" in user_input_lower or "hi" in user_input_lower:
+                        return "Hello! I'm your VidSgg assistant. I can help you understand scene graph generation results and answer questions about the analysis."
+                    elif "help" in user_input_lower:
+                        return "I can help you with:\n• Understanding scene graph results\n• Explaining object detections\n• Interpreting relationship data\n• Model configuration questions\n• Export options"
+                    elif "object" in user_input_lower and "results" in st.session_state:
+                        results = st.session_state["results"]
+                        avg_objects = (
+                            np.mean(results["detections"]) if results["detections"] else 0
+                        )
+                        return f"In your video analysis, I detected an average of {avg_objects:.1f} objects per frame across {results['processed_frames']} processed frames."
+                    elif (
+                        "relationship" in user_input_lower and "results" in st.session_state
+                    ):
+                        results = st.session_state["results"]
+                        avg_relationships = (
+                            np.mean(results["relationships"])
+                            if results["relationships"]
+                            else 0
+                        )
+                        return f"The analysis found an average of {avg_relationships:.1f} relationships per frame in your video."
+                    elif "confidence" in user_input_lower and "results" in st.session_state:
+                        results = st.session_state["results"]
+                        avg_confidence = (
+                            np.mean(results["confidences"]) if results["confidences"] else 0
+                        )
+                        return f"The average confidence score across all detections was {avg_confidence:.2f}."
+                    elif "model" in user_input_lower:
+                        return "The VidSgg model uses STTran (Spatial-Temporal Transformer) for scene graph generation. It processes video frames to detect objects and their relationships over time."
+                    elif "export" in user_input_lower:
+                        return "You can export your results in JSON, CSV, or XML format using the export options in the sidebar. The exported data will include all detection and relationship information."
+                    else:
+                        return "I'm here to help with your scene graph analysis! Ask me about objects, relationships, confidence scores, or how the model works."
 
-            chat_container = st.container() # Display chat messages
-            with chat_container:
-                for i, msg in enumerate(st.session_state.chat_messages):
-                    message(
-                        msg["message"],
-                        is_user=msg["is_user"],
-                        key=f"chat_msg_{i}",
-                        allow_html=True,
-                    )
-            st.text_input( # Chat input
-                "Ask me about your scene graph analysis:",
-                key="chat_input",
-                on_change=handle_chat_input,
-                placeholder="Type your question here...",
-            )
-            if st.button("Clear Chat"): # Clear chat button
-                st.session_state.chat_messages = []
-                st.rerun()
+                chat_container = st.container() # Display chat messages
+                with chat_container:
+                    for i, msg in enumerate(st.session_state.chat_messages):
+                        message(
+                            msg["message"],
+                            is_user=msg["is_user"],
+                            key=f"chat_msg_{i}",
+                            allow_html=True,
+                        )
+                st.text_input( # Chat input
+                    "Ask me about your scene graph analysis:",
+                    key="chat_input",
+                    on_change=handle_chat_input,
+                    placeholder="Type your question here...",
+                )
+                if st.button("Clear Chat"): # Clear chat button
+                    st.session_state.chat_messages = []
+                    st.rerun()
 
             # Sub-tabs for Frame view and Temporal view
             st.markdown("---")
@@ -2544,14 +2655,27 @@ def main():
                                     )
 
                                 # Add object nodes and their spheres with vertical connections
+                                # Define distinct colors for better visibility
+                                distinct_colors = [
+                                    "rgb(0, 100, 200)",      # Dark blue
+                                    "rgb(200, 50, 50)",      # Red
+                                    "rgb(50, 150, 50)",      # Green
+                                    "rgb(150, 50, 150)",     # Purple
+                                    "rgb(200, 100, 0)",      # Orange
+                                    "rgb(0, 150, 150)",      # Teal
+                                    "rgb(150, 100, 50)",     # Brown
+                                    "rgb(100, 0, 200)",      # Violet
+                                    "rgb(200, 150, 0)",      # Gold
+                                    "rgb(50, 100, 150)",     # Steel blue
+                                    "rgb(150, 50, 100)",     # Magenta
+                                ]
+                                
                                 for i, obj_name in enumerate(all_objects):
                                     obj_y = object_y_positions[i]
 
-                                    # Use different shades of blue for objects
-                                    r = max(0, min(255, 50 + i * 40))
-                                    g = max(0, min(255, 100 + i * 30))
-                                    b = max(0, min(255, 200 - i * 20))
-                                    blue_shade = f"rgb({r}, {g}, {b})"
+                                    # Use distinct colors from predefined palette
+                                    color_index = i % len(distinct_colors)
+                                    object_color = distinct_colors[color_index]
 
                                     # Add object horizontal line
                                     fig_timeline.add_trace(
@@ -2560,7 +2684,7 @@ def main():
                                             y=[obj_y, obj_y],
                                             mode="lines",
                                             name=obj_name,
-                                            line=dict(width=6, color=blue_shade),
+                                            line=dict(width=6, color=object_color),
                                             showlegend=True,
                                         )
                                     )
@@ -2594,7 +2718,7 @@ def main():
                                                 mode="markers",
                                                 marker=dict(
                                                     size=20,
-                                                    color=blue_shade,
+                                                    color=object_color,
                                                     line=dict(width=2, color="white"),
                                                 ),
                                                 name=f"{obj_name} spheres",
@@ -2616,7 +2740,7 @@ def main():
                                                     mode="lines",
                                                     line=dict(
                                                         width=3,
-                                                        color=blue_shade,
+                                                        color=object_color,
                                                         dash="solid",
                                                     ),
                                                     name=f"{obj_name} connections",
