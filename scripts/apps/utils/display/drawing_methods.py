@@ -483,7 +483,7 @@ def simple_process_video_with_model(input_video_path, output_video_path, model_p
         if str(src_path) not in sys.path:
             sys.path.insert(0, str(src_path))
         
-        from scripts.apps.streamlit import StreamlitVideoProcessor
+        from scripts.apps.utils.display.processors import StreamlitVideoProcessor
         
         # Initialize processor
         processor = StreamlitVideoProcessor(model_path)

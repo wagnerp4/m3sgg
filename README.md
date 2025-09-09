@@ -23,7 +23,7 @@ The code builds on top of the paper [Spatial-Temporal Transformer for Dynamic Sc
 
 **PyTorch Installation (Required)**: PyTorch and torchvision (https://pytorch.org/) are not included as dependencies to allow users to choose the appropriate version for their system. Install them manually before installing the main dependencies:
 
-**Windows Installation:**
+**Windows Installation:**e
 ```powershell
 uv venv --python 3.10.0 # Create a local .venv
 .venv\Scripts\activate.ps1 # Activate it
