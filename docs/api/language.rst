@@ -42,7 +42,7 @@ Evaluation
 Language Modeling
 -----------------
 
-.. automodule:: m3sgg.language.language modeling.llm
+.. automodule:: m3sgg.language.language_modeling.llm
    :members:
    :undoc-members:
    :show-inheritance:
