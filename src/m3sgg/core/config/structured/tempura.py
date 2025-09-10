@@ -10,7 +10,16 @@ for the Tempura model, which includes memory mechanisms and GMM heads.
 from dataclasses import dataclass
 from typing import Optional
 
-from .base import BaseConfig, TrainingConfig, DataConfig, LoggingConfig, CheckpointConfig, EvaluationConfig, ModelConfig, LossConfig
+from .base import (
+    BaseConfig,
+    TrainingConfig,
+    DataConfig,
+    LoggingConfig,
+    CheckpointConfig,
+    EvaluationConfig,
+    ModelConfig,
+    LossConfig,
+)
 
 
 @dataclass
@@ -91,7 +100,7 @@ class TempuraConfig(BaseConfig):
 
     # Model identification
     model_type: str = "tempura"
-    
+
     # GMM head parameters
     obj_head: str = "gmm"
     rel_head: str = "gmm"
@@ -99,7 +108,7 @@ class TempuraConfig(BaseConfig):
     gmm_components: int = 4
     gmm_covariance_type: str = "full"
     gmm_reg_covar: float = 1e-6
-    
+
     # Memory parameters
     rel_mem_compute: Optional[str] = None
     obj_mem_compute: bool = False
@@ -115,23 +124,23 @@ class TempuraConfig(BaseConfig):
     mem_temperature: float = 1.0
     use_memory_attention: bool = True
     memory_dropout: float = 0.1
-    
+
     # Uncertainty parameters
     pseudo_thresh: int = 7
     obj_unc: bool = False
     rel_unc: bool = False
-    
+
     # Loss weighting
     obj_loss_weighting: Optional[str] = None
     rel_loss_weighting: Optional[str] = None
-    
+
     # Additional parameters
     mlm: bool = False
     eos_coef: float = 1
     obj_con_loss: Optional[str] = None
     lambda_con: float = 1
     tracking: bool = True
-    
+
     # Prior knowledge
     use_prior: bool = False
     prior_weight: float = 0.1
@@ -212,12 +221,12 @@ class TempuraLossConfig(LossConfig):
     gmm_loss_weight: float = 0.1
     consistency_loss_weight: float = 0.1
     uncertainty_loss_weight: float = 0.1
-    
+
     use_memory_loss: bool = True
     use_gmm_loss: bool = True
     use_consistency_loss: bool = True
     use_uncertainty_loss: bool = True
-    
+
     memory_loss_type: str = "mse"
     gmm_loss_type: str = "nll"
     consistency_loss_type: str = "mse"

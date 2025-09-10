@@ -32,9 +32,9 @@ class LegacyConfig(OriginalConfig):
     """
 
     def __init__(
-        self, 
-        config_path: Optional[str] = None, 
-        overrides: Optional[Dict[str, Any]] = None
+        self,
+        config_path: Optional[str] = None,
+        overrides: Optional[Dict[str, Any]] = None,
     ):
         """Initialize the legacy configuration.
 
@@ -44,7 +44,7 @@ class LegacyConfig(OriginalConfig):
         :type overrides: Optional[Dict[str, Any]]
         """
         super().__init__()
-        
+
         # Apply overrides if provided
         if overrides:
             for key, value in overrides.items():
@@ -60,8 +60,11 @@ class LegacyConfig(OriginalConfig):
         :return: Configuration as dictionary
         :rtype: Dict[str, Any]
         """
-        return {key: value for key, value in self.__dict__.items() 
-                if not key.startswith('_') and not callable(value)}
+        return {
+            key: value
+            for key, value in self.__dict__.items()
+            if not key.startswith("_") and not callable(value)
+        }
 
     def update(self, **kwargs):
         """Update configuration values.

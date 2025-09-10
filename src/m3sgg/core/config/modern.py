@@ -260,9 +260,7 @@ class ConfigManager:
 
 
 def create_config(
-    model_type: str, 
-    config_path: Optional[str] = None, 
-    **overrides
+    model_type: str, config_path: Optional[str] = None, **overrides
 ) -> ConfigManager:
     """Create a configuration for a specific model type.
 

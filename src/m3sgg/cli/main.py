@@ -19,7 +19,7 @@ from .train import train_command
 @click.pass_context
 def main(ctx):
     """M3SGG: Modular, multi-modal Scene Graph Generation Framework.
-    
+
     A comprehensive framework for video scene graph generation with support
     for multiple model architectures including STTRAN, Tempura, SceneLLM, OED, and VLM.
     """
@@ -28,67 +28,32 @@ def main(ctx):
 
 @main.command()
 @click.option(
-    "--config", 
-    "-c", 
-    type=click.Path(exists=True), 
-    help="Path to configuration file"
+    "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
 )
 @click.option(
-    "--model", 
-    "-m", 
+    "--model",
+    "-m",
     type=click.Choice(["sttran", "stket", "tempura", "scenellm", "oed", "vlm", "easg"]),
-    help="Model type to train"
+    help="Model type to train",
 )
 @click.option(
-    "--dataset", 
-    "-d", 
+    "--dataset",
+    "-d",
     type=click.Choice(["action_genome", "EASG"]),
-    help="Dataset to use"
+    help="Dataset to use",
 )
 @click.option(
-    "--mode", 
-    type=click.Choice(["predcls", "sgcls", "sgdet"]),
-    help="Training mode"
+    "--mode", type=click.Choice(["predcls", "sgcls", "sgdet"]), help="Training mode"
 )
+@click.option("--epochs", "-e", type=int, help="Number of training epochs")
+@click.option("--lr", type=float, help="Learning rate")
+@click.option("--batch-size", "-b", type=int, help="Batch size")
+@click.option("--device", type=str, help="Device to use (e.g., cuda:0, cpu)")
+@click.option("--output", "-o", type=click.Path(), help="Output directory")
 @click.option(
-    "--epochs", 
-    "-e", 
-    type=int, 
-    help="Number of training epochs"
+    "--checkpoint", type=click.Path(exists=True), help="Path to checkpoint file"
 )
-@click.option(
-    "--lr", 
-    type=float, 
-    help="Learning rate"
-)
-@click.option(
-    "--batch-size", 
-    "-b", 
-    type=int, 
-    help="Batch size"
-)
-@click.option(
-    "--device", 
-    type=str, 
-    help="Device to use (e.g., cuda:0, cpu)"
-)
-@click.option(
-    "--output", 
-    "-o", 
-    type=click.Path(), 
-    help="Output directory"
-)
-@click.option(
-    "--checkpoint", 
-    type=click.Path(exists=True), 
-    help="Path to checkpoint file"
-)
-@click.option(
-    "--verbose", 
-    "-v", 
-    is_flag=True, 
-    help="Enable verbose logging"
-)
+@click.option("--verbose", "-v", is_flag=True, help="Enable verbose logging")
 @click.argument("args", nargs=-1)
 def train(
     config: Optional[str],
@@ -102,10 +67,10 @@ def train(
     output: Optional[str],
     checkpoint: Optional[str],
     verbose: bool,
-    args: List[str]
+    args: List[str],
 ):
     """Train a scene graph generation model.
-    
+
     Examples:
         m3sgg train --model sttran --dataset action_genome --mode predcls
         m3sgg train --config presets/sttran.yaml --epochs 50
@@ -123,57 +88,44 @@ def train(
         output=output,
         checkpoint=checkpoint,
         verbose=verbose,
-        args=args
+        args=args,
     )
 
 
 @main.command()
 @click.option(
-    "--config", 
-    "-c", 
-    type=click.Path(exists=True), 
-    help="Path to configuration file"
+    "--config", "-c", type=click.Path(exists=True), help="Path to configuration file"
 )
 @click.option(
-    "--model", 
-    "-m", 
+    "--model",
+    "-m",
     type=click.Choice(["sttran", "stket", "tempura", "scenellm", "oed", "vlm", "easg"]),
-    help="Model type to evaluate"
+    help="Model type to evaluate",
 )
 @click.option(
-    "--checkpoint", 
-    type=click.Path(exists=True), 
+    "--checkpoint",
+    type=click.Path(exists=True),
     required=True,
-    help="Path to model checkpoint"
+    help="Path to model checkpoint",
 )
 @click.option(
-    "--dataset", 
-    "-d", 
+    "--dataset",
+    "-d",
     type=click.Choice(["action_genome", "EASG"]),
-    help="Dataset to evaluate on"
+    help="Dataset to evaluate on",
 )
-@click.option(
-    "--output", 
-    "-o", 
-    type=click.Path(), 
-    help="Output directory for results"
-)
-@click.option(
-    "--verbose", 
-    "-v", 
-    is_flag=True, 
-    help="Enable verbose logging"
-)
+@click.option("--output", "-o", type=click.Path(), help="Output directory for results")
+@click.option("--verbose", "-v", is_flag=True, help="Enable verbose logging")
 def evaluate(
     config: Optional[str],
     model: Optional[str],
     checkpoint: str,
     dataset: Optional[str],
     output: Optional[str],
-    verbose: bool
+    verbose: bool,
 ):
     """Evaluate a trained model.
-    
+
     Examples:
         m3sgg evaluate --model sttran --checkpoint checkpoints/best_model.pth
         m3sgg evaluate --config presets/sttran.yaml --checkpoint checkpoints/best_model.pth
@@ -183,35 +135,25 @@ def evaluate(
 
 @main.command()
 @click.option(
-    "--model", 
-    "-m", 
+    "--model",
+    "-m",
     type=click.Choice(["sttran", "stket", "tempura", "scenellm", "oed", "vlm", "easg"]),
-    help="Model type to generate config for"
+    help="Model type to generate config for",
 )
 @click.option(
-    "--output", 
-    "-o", 
-    type=click.Path(), 
-    help="Output path for configuration file"
+    "--output", "-o", type=click.Path(), help="Output path for configuration file"
 )
-@click.option(
-    "--template", 
-    "-t", 
-    is_flag=True, 
-    help="Generate from template"
-)
-def config(
-    model: Optional[str],
-    output: Optional[str],
-    template: bool
-):
+@click.option("--template", "-t", is_flag=True, help="Generate from template")
+def config(model: Optional[str], output: Optional[str], template: bool):
     """Generate configuration files.
-    
+
     Examples:
         m3sgg config --model sttran --output my_config.yaml
         m3sgg config --template --output base_config.yaml
     """
-    click.echo("Config generation functionality will be implemented in a future update.")
+    click.echo(
+        "Config generation functionality will be implemented in a future update."
+    )
 
 
 if __name__ == "__main__":

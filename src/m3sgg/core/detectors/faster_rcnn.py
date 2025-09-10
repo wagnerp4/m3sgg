@@ -9,7 +9,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 # Add project root to path for fasterRCNN imports
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+project_root = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..")
+)
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
@@ -230,7 +232,7 @@ class detector(nn.Module):
                     counter_image += 1
 
                 counter += 10
-                
+
             FINAL_BBOXES = torch.clamp(FINAL_BBOXES, 0)
             prediction = {
                 "FINAL_BBOXES": FINAL_BBOXES,
@@ -465,7 +467,9 @@ class detector(nn.Module):
                     )
                     entry = {
                         "boxes": torch.empty((0, 5), device=im_data.device),
-                        "labels": torch.empty((0,), dtype=torch.int64, device=im_data.device),
+                        "labels": torch.empty(
+                            (0,), dtype=torch.int64, device=im_data.device
+                        ),
                         "scores": torch.empty((0,), device=im_data.device),
                         "distribution": torch.empty(
                             (0, len(self.object_classes) - 1), device=im_data.device

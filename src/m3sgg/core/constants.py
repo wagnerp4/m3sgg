@@ -14,22 +14,73 @@ import os
 # Action Genome Object Classes
 # These match the classes defined in data/action_genome/annotations/object_classes.txt
 ACTION_GENOME_OBJECT_CLASSES = [
-    "person", "bag", "bed", "blanket", "book", "box", "broom", "chair", 
-    "closetcabinet", "clothes", "cupglassbottle", "dish", "door", "doorknob", 
-    "doorway", "floor", "food", "groceries", "laptop", "light", "medicine", 
-    "mirror", "papernotebook", "phonecamera", "picture", "pillow", 
-    "refrigerator", "sandwich", "shelf", "shoe", "sofacouch", "table", 
-    "television", "towel", "vacuum", "window"
+    "person",
+    "bag",
+    "bed",
+    "blanket",
+    "book",
+    "box",
+    "broom",
+    "chair",
+    "closetcabinet",
+    "clothes",
+    "cupglassbottle",
+    "dish",
+    "door",
+    "doorknob",
+    "doorway",
+    "floor",
+    "food",
+    "groceries",
+    "laptop",
+    "light",
+    "medicine",
+    "mirror",
+    "papernotebook",
+    "phonecamera",
+    "picture",
+    "pillow",
+    "refrigerator",
+    "sandwich",
+    "shelf",
+    "shoe",
+    "sofacouch",
+    "table",
+    "television",
+    "towel",
+    "vacuum",
+    "window",
 ]
 
 # Action Genome Relationship Classes (raw format from file)
 # These match the classes defined in data/action_genome/annotations/relationship_classes.txt
 ACTION_GENOME_RELATIONSHIP_CLASSES_RAW = [
-    "lookingat", "notlookingat", "unsure", "above", "beneath", "infrontof", 
-    "behind", "onthesideof", "in", "carrying", "coveredby", "drinkingfrom", 
-    "eating", "haveitontheback", "holding", "leaningon", "lyingon", 
-    "notcontacting", "otherrelationship", "sittingon", "standingon", 
-    "touching", "twisting", "wearing", "wiping", "writingon"
+    "lookingat",
+    "notlookingat",
+    "unsure",
+    "above",
+    "beneath",
+    "infrontof",
+    "behind",
+    "onthesideof",
+    "in",
+    "carrying",
+    "coveredby",
+    "drinkingfrom",
+    "eating",
+    "haveitontheback",
+    "holding",
+    "leaningon",
+    "lyingon",
+    "notcontacting",
+    "otherrelationship",
+    "sittingon",
+    "standingon",
+    "touching",
+    "twisting",
+    "wearing",
+    "wiping",
+    "writingon",
 ]
 
 # Action Genome Relationship Classes (corrected format with underscores)
@@ -51,9 +102,15 @@ ACTION_GENOME_RELATIONSHIP_CLASSES[20] = "standing_on"
 ACTION_GENOME_RELATIONSHIP_CLASSES[25] = "writing_on"
 
 # Relationship class categories for filtering
-ATTENTION_RELATIONSHIPS = ACTION_GENOME_RELATIONSHIP_CLASSES[0:3]  # looking_at, not_looking_at, unsure
-SPATIAL_RELATIONSHIPS = ACTION_GENOME_RELATIONSHIP_CLASSES[3:9]    # above, beneath, in_front_of, behind, on_the_side_of, in
-CONTACT_RELATIONSHIPS = ACTION_GENOME_RELATIONSHIP_CLASSES[9:]     # carrying, covered_by, etc.
+ATTENTION_RELATIONSHIPS = ACTION_GENOME_RELATIONSHIP_CLASSES[
+    0:3
+]  # looking_at, not_looking_at, unsure
+SPATIAL_RELATIONSHIPS = ACTION_GENOME_RELATIONSHIP_CLASSES[
+    3:9
+]  # above, beneath, in_front_of, behind, on_the_side_of, in
+CONTACT_RELATIONSHIPS = ACTION_GENOME_RELATIONSHIP_CLASSES[
+    9:
+]  # carrying, covered_by, etc.
 
 # Backward compatibility aliases
 OBJECT_CLASSES = ACTION_GENOME_OBJECT_CLASSES
@@ -63,14 +120,16 @@ RELATIONSHIP_CLASSES_CORRECTED = ACTION_GENOME_RELATIONSHIP_CLASSES
 
 def load_object_classes_from_file(data_path: str) -> Optional[List[str]]:
     """Load object classes from Action Genome dataset file.
-    
+
     :param data_path: Path to the dataset directory
     :type data_path: str
     :return: List of object classes or None if loading fails
     :rtype: Optional[List[str]]
     """
     try:
-        object_classes_path = os.path.join(data_path, "annotations", "object_classes.txt")
+        object_classes_path = os.path.join(
+            data_path, "annotations", "object_classes.txt"
+        )
         if os.path.exists(object_classes_path):
             with open(object_classes_path, "r") as f:
                 classes = [line.strip() for line in f.readlines()]
@@ -88,20 +147,22 @@ def load_object_classes_from_file(data_path: str) -> Optional[List[str]]:
                 return classes
     except Exception as e:
         print(f"Warning: Could not load object classes from file: {e}")
-    
+
     return None
 
 
 def load_relationship_classes_from_file(data_path: str) -> Optional[List[str]]:
     """Load relationship classes from Action Genome dataset file.
-    
+
     :param data_path: Path to the dataset directory
     :type data_path: str
     :return: List of relationship classes (corrected format) or None if loading fails
     :rtype: Optional[List[str]]
     """
     try:
-        relationship_classes_path = os.path.join(data_path, "annotations", "relationship_classes.txt")
+        relationship_classes_path = os.path.join(
+            data_path, "annotations", "relationship_classes.txt"
+        )
         if os.path.exists(relationship_classes_path):
             with open(relationship_classes_path, "r") as f:
                 classes = [line.strip() for line in f.readlines()]
@@ -137,13 +198,13 @@ def load_relationship_classes_from_file(data_path: str) -> Optional[List[str]]:
                 return classes
     except Exception as e:
         print(f"Warning: Could not load relationship classes from file: {e}")
-    
+
     return None
 
 
 def get_object_classes(data_path: Optional[str] = None) -> List[str]:
     """Get object classes, loading from file if available, otherwise using constants.
-    
+
     :param data_path: Optional path to dataset directory
     :type data_path: Optional[str]
     :return: List of object classes
@@ -153,13 +214,13 @@ def get_object_classes(data_path: Optional[str] = None) -> List[str]:
         classes = load_object_classes_from_file(data_path)
         if classes is not None:
             return classes
-    
+
     return ACTION_GENOME_OBJECT_CLASSES.copy()
 
 
 def get_relationship_classes(data_path: Optional[str] = None) -> List[str]:
     """Get relationship classes, loading from file if available, otherwise using constants.
-    
+
     :param data_path: Optional path to dataset directory
     :type data_path: Optional[str]
     :return: List of relationship classes (corrected format)
@@ -169,13 +230,15 @@ def get_relationship_classes(data_path: Optional[str] = None) -> List[str]:
         classes = load_relationship_classes_from_file(data_path)
         if classes is not None:
             return classes
-    
+
     return ACTION_GENOME_RELATIONSHIP_CLASSES.copy()
 
 
-def get_relationship_classes_by_category(category: str, data_path: Optional[str] = None) -> List[str]:
+def get_relationship_classes_by_category(
+    category: str, data_path: Optional[str] = None
+) -> List[str]:
     """Get relationship classes filtered by category.
-    
+
     :param category: Relationship category ("attention", "spatial", "contact")
     :type category: str
     :param data_path: Optional path to dataset directory
@@ -184,7 +247,7 @@ def get_relationship_classes_by_category(category: str, data_path: Optional[str]
     :rtype: List[str]
     """
     all_classes = get_relationship_classes(data_path)
-    
+
     if category == "attention":
         return all_classes[0:3]
     elif category == "spatial":

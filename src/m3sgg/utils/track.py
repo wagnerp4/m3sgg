@@ -121,7 +121,7 @@ def get_sequence(entry, gt_annotation, matcher, im_size, mode="predcls"):
                     else:
                         # 2D tensor - multiple scores per detection
                         unique_classes = torch.argmax(entry["scores"], dim=1).unique()
-                    
+
                     for j in unique_classes:
                         if j == 0:  # skip background
                             continue
@@ -152,7 +152,7 @@ def get_sequence(entry, gt_annotation, matcher, im_size, mode="predcls"):
                             elif selected_boxes.shape[1] != 4:
                                 # Skip NMS if boxes don't have expected format
                                 continue
-                            
+
                             keep = nms(selected_boxes, cls_scores[order], 0.5)
 
                             # Update indices to keep only non-overlapping detections
@@ -163,7 +163,7 @@ def get_sequence(entry, gt_annotation, matcher, im_size, mode="predcls"):
                                 # Handle overlapping detections
                                 anchor = boxes[inds][order][keep]
                                 remain = boxes[inds][order][not_keep]
-                                
+
                                 # Ensure boxes have correct format for GIoU calculation
                                 if anchor.shape[1] == 5:
                                     anchor = anchor[:, 1:]  # Remove frame index

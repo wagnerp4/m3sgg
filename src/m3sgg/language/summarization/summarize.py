@@ -5,6 +5,7 @@ from m3sgg.language.summarization.wrappers import (
     T5SummarizationWrapper,
 )
 
+
 def linearize_triples(triples, mode="flat"):
     """Convert scene graph triples into natural language sentences.
 
@@ -63,32 +64,32 @@ def linearize_triples(triples, mode="flat"):
                 # Fallback for unknown relationships
                 sentence = f"The {subject} is {predicate} the {object_item}."
             sentences.append(sentence)
-    
+
     elif mode == "majority":
         # Majority voting - group by object and use most common relationship
         from collections import defaultdict, Counter
-        
+
         object_relationships = defaultdict(list)
         for triple in triples:
             subject, predicate, object_item = triple
             object_relationships[object_item].append((subject, predicate))
-        
+
         for object_item, rels in object_relationships.items():
             # Count relationships for this object
             rel_counts = Counter([rel for _, rel in rels])
             most_common_rel = rel_counts.most_common(1)[0][0]
-            
+
             # Get all subjects for this relationship
             subjects = [subj for subj, rel in rels if rel == most_common_rel]
             subject_text = " and ".join(subjects) if len(subjects) > 1 else subjects[0]
-            
+
             if most_common_rel in relationship_patterns:
                 pattern = relationship_patterns[most_common_rel]
                 sentence = f"The {subject_text} {pattern} the {object_item}."
             else:
                 sentence = f"The {subject_text} is {most_common_rel} the {object_item}."
             sentences.append(sentence)
-    
+
     elif mode == "time":
         # Time-aware linearization - group by temporal patterns
         # For now, just use flat linearization with temporal markers
@@ -98,9 +99,11 @@ def linearize_triples(triples, mode="flat"):
                 pattern = relationship_patterns[predicate]
                 sentence = f"At time {i+1}: The {subject} {pattern} the {object_item}."
             else:
-                sentence = f"At time {i+1}: The {subject} is {predicate} the {object_item}."
+                sentence = (
+                    f"At time {i+1}: The {subject} is {predicate} the {object_item}."
+                )
             sentences.append(sentence)
-    
+
     else:
         # Default to flat mode
         for triple in triples:
@@ -114,6 +117,7 @@ def linearize_triples(triples, mode="flat"):
 
     return sentences
 
+
 def summarize_sentences(sentences, model_name="google-t5/t5-base", model_type="t5"):
     combined_text = " ".join(sentences)
     if model_type.lower() == "t5":
@@ -126,6 +130,7 @@ def summarize_sentences(sentences, model_name="google-t5/t5-base", model_type="t
         raise ValueError(f"Unsupported model type: {model_type}")
     return summary
 
+
 def summarize_with_pegasus_separate(sentences, model_name="google/pegasus-xsum"):
     combined_text = " ".join(sentences)
     separate_loader = PegasusSeparateLoader(model_name)
@@ -134,12 +139,16 @@ def summarize_with_pegasus_separate(sentences, model_name="google/pegasus-xsum")
     summary = separate_loader.summarize(combined_text)
     return summary
 
-def summarize_with_pegasus_custom(sentences, model_name="google/pegasus-xsum", **kwargs):
+
+def summarize_with_pegasus_custom(
+    sentences, model_name="google/pegasus-xsum", **kwargs
+):
     combined_text = " ".join(sentences)
     custom_config = PegasusCustomConfig(model_name)
     custom_config.load_with_config()
     summary = custom_config.summarize(combined_text, **kwargs)
     return summary
+
 
 def main():
     triples = [
@@ -182,6 +191,7 @@ def main():
         sentences, max_length=80, min_length=15, length_penalty=1.5, num_beams=6
     )
     print(f"Summary: {summary_custom}")
+
 
 if __name__ == "__main__":
     main()

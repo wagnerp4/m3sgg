@@ -133,7 +133,9 @@ class Config(object):
         self.query_temporal_interaction = False
 
         # VLM specific defaults
-        self.vlm_model_name = "Salesforce/blip-vqa-base" # Salesforce/blip-vqa-base, apple/FastVLM-0.5B
+        self.vlm_model_name = (
+            "Salesforce/blip-vqa-base"  # Salesforce/blip-vqa-base, apple/FastVLM-0.5B
+        )
         self.vlm_use_chain_of_thought = True
         self.vlm_use_tree_of_thought = False
         self.vlm_confidence_threshold = 0.5
@@ -224,10 +226,16 @@ class Config(object):
         )
         parser.add_argument("-nepoch", help="epoch number", default=10, type=float)
         parser.add_argument(
-            "-niter", help="number of iterations for iterative training", default=None, type=int
+            "-niter",
+            help="number of iterations for iterative training",
+            default=None,
+            type=int,
         )
         parser.add_argument(
-            "-eval_frequency", help="evaluation frequency for iterative training", default=50, type=int
+            "-eval_frequency",
+            help="evaluation frequency for iterative training",
+            default=50,
+            type=int,
         )
         parser.add_argument(
             "-enc_layer",
@@ -567,16 +575,16 @@ class Config(object):
         )
 
         return parser
-    
+
     def parse_args(self):
         """Parse command-line arguments and update config values.
-        
+
         :return: None
         :rtype: None
         """
         parser = self.setup_parser()
         args = parser.parse_args()
-        
+
         # Update config with parsed arguments
         for arg_name, arg_value in vars(args).items():
             if hasattr(self, arg_name):

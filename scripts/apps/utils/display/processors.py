@@ -18,31 +18,34 @@ import torch
 
 try:
     from m3sgg.utils.model_detector import get_model_info_from_checkpoint
+
     MODEL_DETECTOR_AVAILABLE = True
 except ImportError:
     MODEL_DETECTOR_AVAILABLE = False
 
 try:
     import streamlit as st
+
     STREAMLIT_AVAILABLE = True
 except ImportError:
     STREAMLIT_AVAILABLE = False
 
+
 class StreamlitVideoProcessor:
     """Video processor for Streamlit integration with VidSgg pipeline.
-    
+
     This class provides video processing capabilities for the Streamlit web interface,
     including model initialization, frame processing, and scene graph generation.
     It supports multiple model types (STTran, STKET, TEMPURA, SceneLLM, OED) and
     datasets (Action Genome, EASG) with automatic model detection.
-    
+
     :param model_path: Path to the model checkpoint file
     :type model_path: str
     """
-    
+
     def __init__(self, model_path: str, progress_callback=None):
         """Initialize the video processor with model path.
-        
+
         :param model_path: Path to the model checkpoint file
         :type model_path: str
         :param progress_callback: Optional callback function for progress updates
@@ -55,68 +58,72 @@ class StreamlitVideoProcessor:
         else:
             self.device = torch.device("cpu")
             print("CUDA not available, using CPU device")
-        
+
         # Don't disable CUDA if we're using it
         if self.device.type == "cpu":
             # Disable DirectML and other accelerators only for CPU
             import os
+
             os.environ["CUDA_VISIBLE_DEVICES"] = ""
             os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
-            
+
             # Monkey patch torch.cuda to prevent accelerator access
             self._patch_torch_cuda()
-        
+
         self.model_path = model_path
         self.object_classes = self._load_object_classes()
         self.relationship_classes = self._load_relationship_classes()
         self.setup_models(progress_callback)
-    
+
     def _patch_torch_cuda(self):
         """Monkey patch torch.cuda to prevent accelerator access.
-        
+
         This method overrides PyTorch CUDA methods to force CPU usage,
         preventing device errors in Streamlit environments when CUDA is not available.
         """
         import torch
-        
+
         # Store original methods
         self._original_cuda = torch.cuda.is_available
         self._original_cuda_device = torch.cuda.device
-        
+
         # Override methods to always return False/CPU
         torch.cuda.is_available = lambda: False
         torch.cuda.device = lambda *args, **kwargs: self.device
-        
+
         # Override tensor.cuda() method
         def patched_cuda(self, *args, **kwargs):
             return self.to(self.device)
+
         torch.Tensor.cuda = patched_cuda
-    
+
     def _load_object_classes(self):
         """Load object classes from file as fallback.
-        
+
         :return: List of object class names
         :rtype: list
         """
         from m3sgg.core.constants import get_object_classes
+
         return get_object_classes("data/action_genome")
-    
+
     def _load_relationship_classes(self):
         """Load relationship classes from file as fallback.
-        
+
         :return: List of relationship class names
         :rtype: list
         """
         from m3sgg.core.constants import get_relationship_classes
+
         return get_relationship_classes("data/action_genome")
 
     def setup_models(self, progress_callback=None):
         """Initialize models for video processing with automatic model detection.
-        
+
         This method detects the model type from the checkpoint file and initializes
         the appropriate object detector and scene graph generation model. It supports
         multiple model types including STTran, STKET, TEMPURA, SceneLLM, and OED.
-        
+
         :param progress_callback: Optional callback function for progress updates
         :type progress_callback: callable, optional
         :raises ValueError: If model type cannot be detected from checkpoint
@@ -132,28 +139,34 @@ class StreamlitVideoProcessor:
             from m3sgg.utils.matcher import HungarianMatcher
 
             from m3sgg.core.detectors.faster_rcnn import detector
-            from m3sgg.core.detectors.easg.object_detector_EASG import detector as detector_EASG
+            from m3sgg.core.detectors.easg.object_detector_EASG import (
+                detector as detector_EASG,
+            )
 
             # Detect model type from checkpoint
             if MODEL_DETECTOR_AVAILABLE:
                 model_info = get_model_info_from_checkpoint(self.model_path)
                 detected_model_type = model_info["model_type"]
                 detected_dataset = model_info["dataset"]
-                
+
                 if not detected_model_type:
-                    raise ValueError(f"Could not detect model type from checkpoint: {self.model_path}")
-                
+                    raise ValueError(
+                        f"Could not detect model type from checkpoint: {self.model_path}"
+                    )
+
                 print(f"Detected model type: {detected_model_type}")
                 print(f"Detected dataset: {detected_dataset}")
             else:
                 # Fallback to default values if model detector is not available
                 detected_model_type = "sttran"  # Default fallback
                 detected_dataset = "action_genome"  # Default fallback
-                print(f"Model detector unavailable, using defaults: {detected_model_type}, {detected_dataset}")
+                print(
+                    f"Model detector unavailable, using defaults: {detected_model_type}, {detected_dataset}"
+                )
 
             self.conf = Config()
             self.conf.mode = "sgdet"
-            
+
             # Set dataset-specific configuration
             if detected_dataset == "EASG":
                 self.conf.data_path = "data/EASG"
@@ -165,14 +178,14 @@ class StreamlitVideoProcessor:
             # Initialize dataset (suppress print statements during initialization)
             if progress_callback:
                 progress_callback("loading_dataset", 0.3)
-                
+
             import sys
             from io import StringIO
-            
+
             # Capture stdout to suppress dataset initialization prints
             old_stdout = sys.stdout
             sys.stdout = StringIO()
-            
+
             try:
                 if detected_dataset == "EASG":
                     self.dataset = EASG(
@@ -194,7 +207,7 @@ class StreamlitVideoProcessor:
             # Object Detector
             if progress_callback:
                 progress_callback("loading_fasterrcnn", 0.5)
-                
+
             if detected_dataset == "EASG":
                 self.object_detector = detector_EASG(
                     train=False,
@@ -214,13 +227,15 @@ class StreamlitVideoProcessor:
             # Initialize SGG model based on detected type
             if progress_callback:
                 progress_callback("creating_sgg_model", 0.7)
-                
-            self.model = self._create_model_from_type(detected_model_type, detected_dataset)
+
+            self.model = self._create_model_from_type(
+                detected_model_type, detected_dataset
+            )
 
             # Load checkpoint
             if progress_callback:
                 progress_callback("loading_model_weights", 0.8)
-                
+
             if os.path.exists(self.model_path):
                 ckpt = torch.load(self.model_path, map_location=self.device)
                 self.model.load_state_dict(ckpt["state_dict"], strict=False)
@@ -231,18 +246,19 @@ class StreamlitVideoProcessor:
                 raise FileNotFoundError(f"Model file {self.model_path} not found!")
 
             self.model.eval()
-            
+
             if progress_callback:
                 progress_callback("initializing_matcher", 0.9)
-                
+
             self.matcher = HungarianMatcher(0.5, 1, 1, 0.5).to(device=self.device)
             self.matcher.eval()
-            
+
             if progress_callback:
                 progress_callback("model_initialization_complete", 1.0)
 
         except Exception as e:
             import traceback
+
             error_traceback = traceback.format_exc()
             print(f"Failed to setup models: {e}")
             print(f"Full traceback: {error_traceback}")
@@ -253,21 +269,24 @@ class StreamlitVideoProcessor:
 
     def _create_model_from_type(self, model_type: str, dataset_type: str):
         """Create model instance based on detected type and dataset.
-        
+
         :param model_type: Detected model type
         :type model_type: str
-        :param dataset_type: Detected dataset type  
+        :param dataset_type: Detected dataset type
         :type dataset_type: str
         :return: Initialized model
         :rtype: nn.Module
         """
         print(f"Creating model of type: {model_type} for dataset: {dataset_type}")
         print(f"Using device: {self.device}")
-        
+
         try:
             if model_type == "sttran":
                 if dataset_type == "EASG":
-                    from m3sgg.core.detectors.easg.sttran_EASG import STTran as STTran_EASG
+                    from m3sgg.core.detectors.easg.sttran_EASG import (
+                        STTran as STTran_EASG,
+                    )
+
                     return STTran_EASG(
                         mode=self.conf.mode,
                         obj_classes=self.dataset.obj_classes,
@@ -278,6 +297,7 @@ class StreamlitVideoProcessor:
                     ).to(device=self.device)
                 else:
                     from m3sgg.core.models.sttran import STTran
+
                     return STTran(
                         mode=self.conf.mode,
                         attention_class_num=len(self.dataset.attention_relationships),
@@ -287,9 +307,10 @@ class StreamlitVideoProcessor:
                         enc_layer_num=self.conf.enc_layer,
                         dec_layer_num=self.conf.dec_layer,
                     ).to(device=self.device)
-                
+
             elif model_type == "stket":
                 from m3sgg.core.models.stket import STKET
+
                 trainPrior = (
                     json.load(open("data/TrainPrior.json", "r"))
                     if os.path.exists("data/TrainPrior.json")
@@ -304,15 +325,18 @@ class StreamlitVideoProcessor:
                     N_layer_num=getattr(self.conf, "N_layer", 1),
                     enc_layer_num=getattr(self.conf, "enc_layer_num", 1),
                     dec_layer_num=getattr(self.conf, "dec_layer_num", 1),
-                    pred_contact_threshold=getattr(self.conf, "pred_contact_threshold", 0.5),
+                    pred_contact_threshold=getattr(
+                        self.conf, "pred_contact_threshold", 0.5
+                    ),
                     window_size=getattr(self.conf, "window_size", 4),
                     trainPrior=trainPrior,
                     use_spatial_prior=getattr(self.conf, "use_spatial_prior", False),
                     use_temporal_prior=getattr(self.conf, "use_temporal_prior", False),
                 ).to(device=self.device)
-                
+
             elif model_type == "tempura":
                 from m3sgg.core.models.tempura.tempura import TEMPURA
+
                 return TEMPURA(
                     mode=self.conf.mode,
                     attention_class_num=len(self.dataset.attention_relationships),
@@ -331,21 +355,24 @@ class StreamlitVideoProcessor:
                     rel_head=getattr(self.conf, "rel_head", "gmm"),
                     K=getattr(self.conf, "K", None),
                 ).to(device=self.device)
-                
+
             elif model_type == "scenellm":
                 from m3sgg.core.models.scenellm.scenellm import SceneLLM
+
                 return SceneLLM(self.conf, self.dataset).to(device=self.device)
-                
+
             elif model_type == "oed":
                 # Default to multi-frame OED, could be enhanced to detect single vs multi
                 from m3sgg.core.models.oed.oed_multi import OEDMulti
+
                 return OEDMulti(self.conf, self.dataset).to(device=self.device)
-                
+
             else:
                 raise ValueError(f"Unsupported model type: {model_type}")
-                
+
         except Exception as e:
             import traceback
+
             error_traceback = traceback.format_exc()
             print(f"Error creating model: {e}")
             print(f"Full traceback: {error_traceback}")
@@ -353,7 +380,7 @@ class StreamlitVideoProcessor:
 
     def preprocess_frame(self, frame):
         """Preprocess frame for model input.
-        
+
         :param frame: Input video frame as numpy array
         :type frame: np.ndarray
         :return: Preprocessed frame tensor ready for model input
@@ -372,7 +399,7 @@ class StreamlitVideoProcessor:
 
     def process_frame(self, frame, progress_callback=None):
         """Process a single frame and extract scene graph.
-        
+
         :param frame: Input video frame as numpy array
         :type frame: np.ndarray
         :param progress_callback: Optional callback function for progress updates
@@ -384,7 +411,7 @@ class StreamlitVideoProcessor:
             # Progress callback: Frame preprocessing started
             if progress_callback:
                 progress_callback("preprocessing", 0.1)
-                
+
             im_data = self.preprocess_frame(frame)
             im_info = torch.tensor([[600, 600, 1.0]], dtype=torch.float32).to(
                 self.device
@@ -395,7 +422,6 @@ class StreamlitVideoProcessor:
                 progress_callback("detection", 0.3)
 
             with torch.no_grad():
-
                 if self.conf.dataset == "EASG":
                     gt_grounding = []  # Empty grounding for inference
                     entry = self.object_detector(
@@ -410,7 +436,12 @@ class StreamlitVideoProcessor:
                     num_boxes = torch.zeros([1], dtype=torch.int64).to(self.device)
                     empty_annotation = []
                     entry = self.object_detector(
-                        im_data, im_info, gt_boxes, num_boxes, empty_annotation, im_all=None
+                        im_data,
+                        im_info,
+                        gt_boxes,
+                        num_boxes,
+                        empty_annotation,
+                        im_all=None,
                     )
 
                 if self.conf.mode == "sgdet" and self.conf.dataset != "EASG":
@@ -428,13 +459,12 @@ class StreamlitVideoProcessor:
                         ]  # Remove first column (batch index)
 
                     from m3sgg.utils.track import get_sequence
+
                     get_sequence(
                         entry,
                         [],  # empty annotation for sgdet mode
                         self.matcher,
-                        torch.tensor([600, 600]).to(
-                            self.device
-                        ),
+                        torch.tensor([600, 600]).to(self.device),
                         "sgdet",
                     )
 
@@ -446,7 +476,7 @@ class StreamlitVideoProcessor:
                 # Progress callback: Scene graph generation starting
                 if progress_callback:
                     progress_callback("scene_graph", 0.7)
-                    
+
                 # Scene graph generation
                 pred = self.model(entry)
 
@@ -462,7 +492,7 @@ class StreamlitVideoProcessor:
 
     def simple_draw_bounding_boxes(self, frame, entry):
         """Simple bounding box drawing method using PIL.
-        
+
         :param frame: Input video frame
         :type frame: np.ndarray
         :param entry: Model entry containing detection data
@@ -472,15 +502,17 @@ class StreamlitVideoProcessor:
         """
         try:
             from .drawing_methods import simple_draw_bounding_boxes
+
             return simple_draw_bounding_boxes(frame, entry)
         except ImportError:
             # Fallback to alternative method
             from .drawing_methods import simple_draw_bounding_boxes_cv2_alternative
+
             return simple_draw_bounding_boxes_cv2_alternative(frame, entry)
 
     def simple_create_scene_graph_frame(self, frame, entry, pred):
         """Simple scene graph drawing method using matplotlib.
-        
+
         :param frame: Input video frame
         :type frame: np.ndarray
         :param entry: Model entry containing detection data
@@ -492,6 +524,7 @@ class StreamlitVideoProcessor:
         """
         try:
             from .drawing_methods import simple_create_scene_graph_frame
+
             return simple_create_scene_graph_frame(frame, entry, pred)
         except ImportError:
             # Fallback to basic method
@@ -499,7 +532,7 @@ class StreamlitVideoProcessor:
 
     def draw_bounding_boxes(self, frame, entry, confidence_threshold=0.1):
         """Draw bounding boxes on frame.
-        
+
         :param frame: Input video frame
         :type frame: np.ndarray
         :param entry: Model entry containing detection data
@@ -591,11 +624,17 @@ class StreamlitVideoProcessor:
 
                     if i < len(labels):
                         object_classes = None
-                        if hasattr(self, "AG_dataset") and hasattr(self.AG_dataset, "object_classes"):
+                        if hasattr(self, "AG_dataset") and hasattr(
+                            self.AG_dataset, "object_classes"
+                        ):
                             object_classes = self.AG_dataset.object_classes
-                        elif hasattr(self, "dataset") and hasattr(self.dataset, "object_classes"):
+                        elif hasattr(self, "dataset") and hasattr(
+                            self.dataset, "object_classes"
+                        ):
                             object_classes = self.dataset.object_classes
-                        elif hasattr(self, "dataset") and hasattr(self.dataset, "obj_classes"):
+                        elif hasattr(self, "dataset") and hasattr(
+                            self.dataset, "obj_classes"
+                        ):
                             object_classes = self.dataset.obj_classes
                         elif hasattr(self, "object_classes") and self.object_classes:
                             object_classes = self.object_classes
@@ -629,12 +668,12 @@ class StreamlitVideoProcessor:
                     pass
             else:
                 pass
-        #    
+        #
         return frame_with_boxes
 
     def extract_results(self, entry, pred):
         """Extract meaningful results from model outputs.
-        
+
         :param entry: Model entry containing detection data
         :type entry: dict
         :param pred: Model predictions containing relationship data
@@ -698,7 +737,9 @@ class StreamlitVideoProcessor:
 
         return centers
 
-    def extract_bbox_info(self, entry, confidence_threshold=0.1) -> List[Dict[str, Any]]:
+    def extract_bbox_info(
+        self, entry, confidence_threshold=0.1
+    ) -> List[Dict[str, Any]]:
         """Extract bounding box information for table display
 
         :param entry: Model entry containing detection data
@@ -772,15 +813,21 @@ class StreamlitVideoProcessor:
                 if labels is not None and i < len(labels):
                     # Check for dataset object classes (both AG_dataset and dataset attributes)
                     object_classes = None
-                    if hasattr(self, "AG_dataset") and hasattr(self.AG_dataset, "object_classes"):
+                    if hasattr(self, "AG_dataset") and hasattr(
+                        self.AG_dataset, "object_classes"
+                    ):
                         object_classes = self.AG_dataset.object_classes
-                    elif hasattr(self, "dataset") and hasattr(self.dataset, "object_classes"):
+                    elif hasattr(self, "dataset") and hasattr(
+                        self.dataset, "object_classes"
+                    ):
                         object_classes = self.dataset.object_classes
-                    elif hasattr(self, "dataset") and hasattr(self.dataset, "obj_classes"):
+                    elif hasattr(self, "dataset") and hasattr(
+                        self.dataset, "obj_classes"
+                    ):
                         object_classes = self.dataset.obj_classes
                     elif hasattr(self, "object_classes") and self.object_classes:
                         object_classes = self.object_classes
-                    
+
                     if object_classes and labels[i] < len(object_classes):
                         object_name = object_classes[labels[i]]
                     else:
@@ -892,11 +939,11 @@ class StreamlitVideoProcessor:
 
     def get_object_name(self, class_idx: int) -> str:
         """Get human-readable object name from class index.
-        
+
         This method retrieves the human-readable name for an object class
         by looking up the class index in the dataset's object classes list.
         It handles multiple fallback sources for object class names.
-        
+
         :param class_idx: Object class index
         :type class_idx: int
         :return: Human-readable object name
@@ -904,20 +951,23 @@ class StreamlitVideoProcessor:
         """
         try:
             # Try to get object names from dataset
-            if hasattr(self, "AG_dataset") and hasattr(self.AG_dataset, "object_classes"):
+            if hasattr(self, "AG_dataset") and hasattr(
+                self.AG_dataset, "object_classes"
+            ):
                 object_classes = self.AG_dataset.object_classes
             elif hasattr(self, "dataset") and hasattr(self.dataset, "object_classes"):
                 object_classes = self.dataset.object_classes
             else:
                 # Fallback object names - use Action Genome classes
                 from m3sgg.core.constants import get_object_classes
+
                 object_classes = get_object_classes("data/action_genome")
-            
+
             if class_idx < len(object_classes):
                 return object_classes[class_idx]
             else:
                 return f"object_{class_idx}"
-                
+
         except Exception as e:
             print(f"Error getting object name: {e}")
             return f"object_{class_idx}"
@@ -939,11 +989,19 @@ class StreamlitVideoProcessor:
         try:
             # Try to get relationship names from dataset
             relationships = None
-            if hasattr(self, "AG_dataset") and hasattr(self.AG_dataset, f"{rel_category}_relationships"):
-                relationships = getattr(self.AG_dataset, f"{rel_category}_relationships")
-            elif hasattr(self, "dataset") and hasattr(self.dataset, f"{rel_category}_relationships"):
+            if hasattr(self, "AG_dataset") and hasattr(
+                self.AG_dataset, f"{rel_category}_relationships"
+            ):
+                relationships = getattr(
+                    self.AG_dataset, f"{rel_category}_relationships"
+                )
+            elif hasattr(self, "dataset") and hasattr(
+                self.dataset, f"{rel_category}_relationships"
+            ):
                 relationships = getattr(self.dataset, f"{rel_category}_relationships")
-            elif hasattr(self, "dataset") and hasattr(self.dataset, "relationship_classes"):
+            elif hasattr(self, "dataset") and hasattr(
+                self.dataset, "relationship_classes"
+            ):
                 # Fallback: use the full relationship_classes list
                 relationships = self.dataset.relationship_classes
                 if rel_category == "attention":
@@ -964,8 +1022,11 @@ class StreamlitVideoProcessor:
             else:
                 # Ultimate fallback: use relationship classes by category
                 from m3sgg.core.constants import get_relationship_classes_by_category
-                relationships = get_relationship_classes_by_category(rel_category, "data/action_genome")
-            
+
+                relationships = get_relationship_classes_by_category(
+                    rel_category, "data/action_genome"
+                )
+
             if relationships and rel_type < len(relationships):
                 return relationships[rel_type]
             else:
@@ -1114,15 +1175,19 @@ class StreamlitVideoProcessor:
             if labels is not None and i < len(labels):
                 # Try to get object class names from the dataset
                 object_classes = None
-                if hasattr(self, "AG_dataset") and hasattr(self.AG_dataset, "object_classes"):
+                if hasattr(self, "AG_dataset") and hasattr(
+                    self.AG_dataset, "object_classes"
+                ):
                     object_classes = self.AG_dataset.object_classes
-                elif hasattr(self, "dataset") and hasattr(self.dataset, "object_classes"):
+                elif hasattr(self, "dataset") and hasattr(
+                    self.dataset, "object_classes"
+                ):
                     object_classes = self.dataset.object_classes
                 elif hasattr(self, "dataset") and hasattr(self.dataset, "obj_classes"):
                     object_classes = self.dataset.obj_classes
                 elif hasattr(self, "object_classes") and self.object_classes:
                     object_classes = self.object_classes
-                
+
                 if object_classes and labels[i] < len(object_classes):
                     class_name = object_classes[labels[i]]
                     # Shortened class name for display

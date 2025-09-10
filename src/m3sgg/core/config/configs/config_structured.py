@@ -34,7 +34,7 @@ from ..structured.vlm import VLMConfig
 # Make all configurations available
 __all__ = [
     "BaseConfig",
-    "TrainingConfig", 
+    "TrainingConfig",
     "DataConfig",
     "LoggingConfig",
     "CheckpointConfig",

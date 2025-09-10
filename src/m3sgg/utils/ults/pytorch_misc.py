@@ -519,4 +519,3 @@ def update_lr(optimizer, lr=1e-4):
     print("------ Learning rate -> {}".format(lr))
     for param_group in optimizer.param_groups:
         param_group["lr"] = lr
-

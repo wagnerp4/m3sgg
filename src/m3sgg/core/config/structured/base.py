@@ -78,17 +78,17 @@ class BaseConfig:
     nepoch: float = 10
     niter: Optional[int] = None
     eval_frequency: int = 50
-    
+
     # Model architecture parameters
     enc_layer: int = 1
     dec_layer: int = 3
     bce_loss: bool = False
-    
+
     # System parameters
     device: str = "cuda:0"
     seed: int = 42
     num_workers: int = 0
-    
+
     # Model identification
     model_type: str = "sttran"
     use_matcher: bool = False
@@ -233,7 +233,9 @@ class EvaluationConfig:
     constraint: str = "with"
     save_predictions: bool = True
     predictions_dir: str = "predictions"
-    eval_metrics: List[str] = field(default_factory=lambda: ["recall@20", "mean_recall@20"])
+    eval_metrics: List[str] = field(
+        default_factory=lambda: ["recall@20", "mean_recall@20"]
+    )
     eval_frequency: int = 1
 
 
@@ -283,12 +285,14 @@ class LossConfig:
     :type class_weights: Optional[Dict[str, float]]
     """
 
-    loss_weights: Dict[str, float] = field(default_factory=lambda: {
-        "obj_loss": 1.0,
-        "rel_loss": 1.0,
-        "bbox_loss": 1.0,
-        "giou_loss": 1.0,
-    })
+    loss_weights: Dict[str, float] = field(
+        default_factory=lambda: {
+            "obj_loss": 1.0,
+            "rel_loss": 1.0,
+            "bbox_loss": 1.0,
+            "giou_loss": 1.0,
+        }
+    )
     label_smoothing: float = 0.0
     focal_alpha: float = 0.25
     focal_gamma: float = 2.0
@@ -298,7 +302,7 @@ class LossConfig:
 # Model configuration registry
 MODEL_CONFIGS = {
     "sttran": "STTRANConfig",
-    "stket": "STKETConfig", 
+    "stket": "STKETConfig",
     "tempura": "TempuraConfig",
     "EASG": "EASGConfig",
     "scenellm": "SceneLLMConfig",
@@ -321,26 +325,33 @@ def get_config_class(model_type: str):
             f"Unsupported model type: {model_type}. "
             f"Supported types: {list(MODEL_CONFIGS.keys())}"
         )
-    
+
     # Import the specific config class
     if model_type == "sttran":
         from .sttran import STTRANConfig
+
         return STTRANConfig
     elif model_type == "stket":
         from .stket import STKETConfig
+
         return STKETConfig
     elif model_type == "tempura":
         from .tempura import TempuraConfig
+
         return TempuraConfig
     elif model_type == "EASG":
         from .easg import EASGConfig
+
         return EASGConfig
     elif model_type == "scenellm":
         from .scenellm import SceneLLMConfig
+
         return SceneLLMConfig
     elif model_type == "oed":
         from .oed import OEDConfig
+
         return OEDConfig
     elif model_type == "vlm":
         from .vlm import VLMConfig
+
         return VLMConfig

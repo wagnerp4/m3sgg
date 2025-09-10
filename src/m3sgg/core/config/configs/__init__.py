@@ -12,6 +12,6 @@ from . import config_utils
 # Make modules available
 __all__ = [
     "config_omegaconf",
-    "config_structured", 
+    "config_structured",
     "config_utils",
 ]

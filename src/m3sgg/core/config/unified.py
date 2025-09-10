@@ -62,11 +62,11 @@ class UnifiedConfig:
         self.use_modern = use_modern
         self.cli_args = cli_args or sys.argv[1:]
         self.overrides = overrides or {}
-        
+
         # Determine which configuration system to use
         # For now, use legacy by default to ensure compatibility
         self._use_modern = False
-        
+
         if self._use_modern:
             self._config = ConfigManager(
                 config_path=config_path,
@@ -89,19 +89,19 @@ class UnifiedConfig:
         # Force modern if explicitly requested
         if self.use_modern:
             return True
-            
+
         # Use modern if config_path points to a YAML file
-        if self.config_path and self.config_path.endswith(('.yaml', '.yml')):
+        if self.config_path and self.config_path.endswith((".yaml", ".yml")):
             return True
-            
+
         # Use modern if model_type is specified (structured configs)
         if self.model_type:
             return True
-            
+
         # Use modern if overrides are provided (better for programmatic use)
         if self.overrides:
             return True
-            
+
         # Default to modern for new code
         return True
 
@@ -137,7 +137,7 @@ class UnifiedConfig:
         :param merge: Whether to merge dictionaries/lists (modern only)
         :type merge: bool
         """
-        if hasattr(self._config, 'update'):
+        if hasattr(self._config, "update"):
             self._config.update(key, value, merge=merge)
         else:
             self._config.set(key, value)
@@ -148,12 +148,13 @@ class UnifiedConfig:
         :param path: Path to save the configuration
         :type path: str
         """
-        if hasattr(self._config, 'save'):
+        if hasattr(self._config, "save"):
             self._config.save(path)
         else:
             # For legacy config, save as YAML
             import yaml
-            with open(path, 'w') as f:
+
+            with open(path, "w") as f:
                 yaml.dump(self.to_dict(), f, default_flow_style=False)
 
     def to_dict(self, resolve: bool = True) -> Dict[str, Any]:
@@ -164,7 +165,7 @@ class UnifiedConfig:
         :return: Configuration as dictionary
         :rtype: Dict[str, Any]
         """
-        if hasattr(self._config, 'to_dict'):
+        if hasattr(self._config, "to_dict"):
             return self._config.to_dict(resolve=resolve)
         else:
             return self._config.to_dict()
@@ -223,7 +224,7 @@ class UnifiedConfig:
         :return: String representation
         :rtype: str
         """
-        if hasattr(self._config, '__str__'):
+        if hasattr(self._config, "__str__"):
             return str(self._config)
         else:
             return repr(self._config)
@@ -249,9 +250,7 @@ class UnifiedConfig:
 
 # Convenience functions for backward compatibility
 def create_config(
-    model_type: str, 
-    config_path: Optional[str] = None, 
-    **overrides
+    model_type: str, config_path: Optional[str] = None, **overrides
 ) -> UnifiedConfig:
     """Create a configuration for a specific model type.
 

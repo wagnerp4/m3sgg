@@ -25,10 +25,10 @@ from .loss_computation import LossComputation
 
 class Trainer:
     """Main trainer class for scene graph generation models.
-    
+
     This class encapsulates the training loop, epoch management, and step execution
     for various scene graph generation models.
-    
+
     :param model: The model to train
     :type model: torch.nn.Module
     :param config: Configuration object containing training parameters
@@ -63,7 +63,7 @@ class Trainer:
         dataset_test: Optional[Any] = None,
     ):
         """Initialize the Trainer with all necessary components.
-        
+
         :param model: The model to train
         :param config: Configuration object
         :param dataloader_train: Training data loader
@@ -93,13 +93,13 @@ class Trainer:
         self.evaluator2 = evaluator2
         self.dataset_train = dataset_train
         self.dataset_test = dataset_test
-        
+
         # Training state
         self.best_score = 0.0
         self.best_Mrecall = 0.0
         self.best_epoch = -1
         self.tr = []  # Training loss history
-        
+
         # Loss functions (will be set by specific model types)
         self.ce_loss = None
         self.bce_loss = None
@@ -107,13 +107,13 @@ class Trainer:
         self.ce_loss_obj = None
         self.ce_loss_rel = None
         self.con_loss = None
-        
+
         # Loss computation helper
         self.loss_computer = None
 
     def _initialize_loss_functions(self) -> None:
         """Initialize loss functions based on configuration.
-        
+
         This method sets up the appropriate loss functions based on the model type
         and configuration settings.
         """
@@ -131,31 +131,33 @@ class Trainer:
             weights[0] = self.config.eos_coef
             if self.config.obj_head != "gmm":
                 self.ce_loss_obj = nn.CrossEntropyLoss(
-                    weight=weights.to(device=torch.device(self.config.device)), 
-                    reduction="none"
+                    weight=weights.to(device=torch.device(self.config.device)),
+                    reduction="none",
                 )
             else:
                 self.ce_loss_obj = nn.NLLLoss(
-                    weight=weights.to(device=torch.device(self.config.device)), 
-                    reduction="none"
+                    weight=weights.to(device=torch.device(self.config.device)),
+                    reduction="none",
                 )
-            
+
             if self.config.rel_head != "gmm":
                 self.ce_loss_rel = nn.CrossEntropyLoss(reduction="none")
             else:
                 self.ce_loss_rel = nn.NLLLoss(reduction="none")
-            
+
             if self.config.mlm:
                 self.mlm_loss = nn.MultiLabelMarginLoss(reduction="none")
             else:
                 self.bce_loss = nn.BCELoss(reduction="none")
-            
+
             if self.config.obj_con_loss == "euc_con":
                 from m3sgg.utils.infoNCE import EucNormLoss
+
                 self.con_loss = EucNormLoss()
                 self.con_loss.train()
             elif self.config.obj_con_loss == "info_nce":
                 from m3sgg.utils.infoNCE import SupConLoss
+
                 self.con_loss = SupConLoss(temperature=0.1)
                 self.con_loss.train()
 
@@ -173,13 +175,13 @@ class Trainer:
 
     def train_loop(self) -> None:
         """Main training loop that orchestrates the entire training process.
-        
+
         This method runs the complete training process including all epochs,
         evaluation, and checkpoint saving.
         """
         # Initialize loss functions
         self._initialize_loss_functions()
-        
+
         self.logger.info(
             "Starting training | optimizer=%s, lr=%e | train_batches=%d, test_batches=%d",
             self.config.optimizer,
@@ -190,7 +192,7 @@ class Trainer:
 
         # Initialize predictions data collection
         all_predictions_data = []
-        
+
         # Epoch loop
         for epoch in range(int(self.config.nepoch)):
             self.logger.info("=" * 40)
@@ -199,28 +201,28 @@ class Trainer:
 
             # Train one epoch
             self.train_epoch(epoch)
-            
+
             # Evaluate the model
             score, mrecall, predictions_data = self.evaluate_epoch(epoch)
-            
+
             # Collect predictions data for CSV saving
             all_predictions_data.extend(predictions_data)
-            
+
             # Update learning rate
             self.scheduler.step(score)
-            
+
             # Save checkpoints if this is the best model
             self.save_checkpoints(epoch, score, mrecall)
 
         # Save final predictions as CSV (only for the best epoch)
         self.save_predictions_csv(all_predictions_data)
-        
+
         self.logger.info("Training completed!")
         if not self.config.disable_checkpoint_saving:
             self.logger.info(
-                "Best model saved at epoch %d with R@20 score: %.4f", 
-                self.best_epoch, 
-                self.best_score
+                "Best model saved at epoch %d with R@20 score: %.4f",
+                self.best_epoch,
+                self.best_score,
             )
         else:
             self.logger.info(
@@ -231,13 +233,14 @@ class Trainer:
 
     def train_epoch(self, epoch: int) -> None:
         """Train the model for one epoch.
-        
+
         :param epoch: Current epoch number
         :type epoch: int
         """
         # Initialize uncertainty values for Tempura model
         if self.config.model_type == "tempura":
             from m3sgg.utils.uncertainty import uncertainty_values
+
             unc_vals = uncertainty_values(
                 obj_classes=len(self.model.obj_classes),
                 attention_class_num=self.model.attention_class_num,
@@ -265,12 +268,12 @@ class Trainer:
 
         # Batch loop
         for b in tqdm(
-            range(len(self.dataloader_train)), 
-            desc=f"Epoch {epoch}/{self.config.nepoch} [Train]"
+            range(len(self.dataloader_train)),
+            desc=f"Epoch {epoch}/{self.config.nepoch} [Train]",
         ):
             # Train one step
             losses = self.train_step(b, train_iter, unc_vals)
-            
+
             # Track losses
             self.tr.append(pd.Series({x: y.item() for x, y in losses.items()}))
             epoch_train_losses.append(sum(losses.values()).item())
@@ -307,13 +310,10 @@ class Trainer:
         )
 
     def train_step(
-        self, 
-        batch_idx: int, 
-        train_iter: iter, 
-        unc_vals: Optional[Any] = None
+        self, batch_idx: int, train_iter: iter, unc_vals: Optional[Any] = None
     ) -> Dict[str, torch.Tensor]:
         """Execute one training step.
-        
+
         :param batch_idx: Current batch index
         :type batch_idx: int
         :param train_iter: Training data iterator
@@ -334,6 +334,7 @@ class Trainer:
         # Apply matcher if needed
         if self.config.use_matcher and self.config.dataset != "EASG":
             from m3sgg.utils.track import get_sequence
+
             gt_annotation = self.dataset_train.gt_annotations[data[4]]
             get_sequence(
                 entry,
@@ -364,12 +365,14 @@ class Trainer:
 
         return losses
 
-    def train_iter(self, max_iterations: Optional[int] = None) -> Iterator[Dict[str, Any]]:
+    def train_iter(
+        self, max_iterations: Optional[int] = None
+    ) -> Iterator[Dict[str, Any]]:
         """Iterative training function that yields training progress.
-        
+
         This function provides an iterator interface for training, allowing for
         more granular control over the training process and real-time monitoring.
-        
+
         :param max_iterations: Maximum number of iterations to run, defaults to None (run until epoch complete)
         :type max_iterations: Optional[int]
         :yield: Dictionary containing training progress information
@@ -378,10 +381,11 @@ class Trainer:
         # Initialize loss functions if not already done
         if self.loss_computer is None:
             self._initialize_loss_functions()
-        
+
         # Initialize uncertainty values for Tempura model
         if self.config.model_type == "tempura":
             from m3sgg.utils.uncertainty import uncertainty_values
+
             unc_vals = uncertainty_values(
                 obj_classes=len(self.model.obj_classes),
                 attention_class_num=self.model.attention_class_num,
@@ -406,22 +410,28 @@ class Trainer:
         iteration = 0
         epoch_losses = []
         epoch_loss_components = []
-        
+
         # Determine total iterations
-        total_iterations = min(len(self.dataloader_train), max_iterations) if max_iterations else len(self.dataloader_train)
-        
-        self.logger.info(f"Starting iterative training for {total_iterations} iterations")
-        
+        total_iterations = (
+            min(len(self.dataloader_train), max_iterations)
+            if max_iterations
+            else len(self.dataloader_train)
+        )
+
+        self.logger.info(
+            f"Starting iterative training for {total_iterations} iterations"
+        )
+
         while iteration < total_iterations:
             try:
                 # Execute one training step
                 losses = self.train_step(iteration, train_iter, unc_vals)
-                
+
                 # Track losses
                 self.tr.append(pd.Series({x: y.item() for x, y in losses.items()}))
                 epoch_losses.append(sum(losses.values()).item())
                 epoch_loss_components.append({x: y.item() for x, y in losses.items()})
-                
+
                 # Prepare progress information
                 progress_info = {
                     "iteration": iteration,
@@ -430,28 +440,27 @@ class Trainer:
                     "total_loss": sum(losses.values()).item(),
                     "progress": (iteration + 1) / total_iterations,
                 }
-                
+
                 # Add recent loss statistics if available
                 if len(self.tr) >= 100:
                     recent_losses = pd.concat(self.tr[-100:], axis=1).mean(1)
                     progress_info["recent_loss_stats"] = recent_losses.to_dict()
-                
+
                 yield progress_info
                 iteration += 1
-                
+
             except StopIteration:
                 # End of epoch reached
                 break
-        
+
         # Calculate epoch summary
         avg_epoch_loss = np.mean(epoch_losses) if epoch_losses else 0.0
         avg_epoch_loss_components = {
-            k: round(
-                float(np.mean([d.get(k, 0.0) for d in epoch_loss_components])), 4
-            )
-            for k in epoch_loss_components[0].keys() if epoch_loss_components
+            k: round(float(np.mean([d.get(k, 0.0) for d in epoch_loss_components])), 4)
+            for k in epoch_loss_components[0].keys()
+            if epoch_loss_components
         }
-        
+
         # Yield final epoch summary
         yield {
             "iteration": iteration,
@@ -462,9 +471,11 @@ class Trainer:
             "progress": 1.0,
         }
 
-    def _process_batch_data(self, data: tuple, im_data: torch.Tensor, im_info: torch.Tensor) -> Dict[str, Any]:
+    def _process_batch_data(
+        self, data: tuple, im_data: torch.Tensor, im_info: torch.Tensor
+    ) -> Dict[str, Any]:
         """Process batch data through the appropriate object detector.
-        
+
         :param data: Raw batch data
         :type data: tuple
         :param im_data: Image data tensor
@@ -499,14 +510,10 @@ class Trainer:
         return entry
 
     def _post_process_predictions(
-        self, 
-        pred: Dict[str, Any], 
-        batch_idx: int, 
-        data: tuple, 
-        unc_vals: Optional[Any]
+        self, pred: Dict[str, Any], batch_idx: int, data: tuple, unc_vals: Optional[Any]
     ) -> None:
         """Apply model-specific post-processing to predictions.
-        
+
         :param pred: Model predictions
         :type pred: Dict[str, Any]
         :param batch_idx: Current batch index
@@ -518,7 +525,11 @@ class Trainer:
         """
         # SceneLLM: Periodic codebook update
         if self.config.model_type == "scenellm":
-            if batch_idx > 0 and batch_idx % 1000 == 0 and self.config.scenellm_training_stage != "vqvae":
+            if (
+                batch_idx > 0
+                and batch_idx % 1000 == 0
+                and self.config.scenellm_training_stage != "vqvae"
+            ):
                 self.model.update_codebook_with_ot()
 
         # Tempura: Uncertainty computation
@@ -529,6 +540,7 @@ class Trainer:
             or self.config.rel_mem_compute
         ):
             from m3sgg.utils.uncertainty import uncertainty_computation
+
             uncertainty_computation(
                 data,
                 self.dataset_train,
@@ -543,9 +555,11 @@ class Trainer:
                 rel_unc=self.config.rel_unc,
             )
 
-    def _compute_losses(self, pred: Dict[str, Any], data: tuple, unc_vals: Optional[Any] = None) -> Dict[str, torch.Tensor]:
+    def _compute_losses(
+        self, pred: Dict[str, Any], data: tuple, unc_vals: Optional[Any] = None
+    ) -> Dict[str, torch.Tensor]:
         """Compute losses based on model type and dataset.
-        
+
         :param pred: Model predictions
         :type pred: Dict[str, Any]
         :param data: Raw batch data
@@ -556,7 +570,7 @@ class Trainer:
         # This is a simplified version - the full implementation would include
         # all the complex loss computation logic from the original train.py
         # For now, we'll delegate to a separate method for each model type
-        
+
         if self.config.dataset == "EASG":
             return self._compute_easg_losses(pred)
         elif self.config.dataset == "action_genome":
@@ -566,7 +580,7 @@ class Trainer:
 
     def _compute_easg_losses(self, pred: Dict[str, Any]) -> Dict[str, torch.Tensor]:
         """Compute losses for EASG dataset.
-        
+
         :param pred: Model predictions
         :type pred: Dict[str, Any]
         :return: Dictionary of loss components
@@ -574,31 +588,31 @@ class Trainer:
         """
         edge_distribution = pred["edge_distribution"]
         losses = {}
-        
+
         if self.config.mode != "edgecls":
             losses["obj_loss"] = self.ce_loss(pred["distribution"], pred["labels"])
-        
+
         if self.config.mode == "easgcls":
             losses["verb_loss"] = self.ce_loss(
                 pred["distribution_verb"], pred["labels_verb"]
             )
-        
+
         edge_label = -torch.ones(
             [len(pred["edge"]), len(self.dataset_train.edge_classes)],
             dtype=torch.long,
         ).to(device=edge_distribution.device)
-        
+
         for i in range(len(pred["edge"])):
-            edge_label[i, : len(pred["edge"][i])] = torch.tensor(
-                pred["edge"][i]
-            )
-        
+            edge_label[i, : len(pred["edge"][i])] = torch.tensor(pred["edge"][i])
+
         losses["edge_loss"] = self.mlm_loss(edge_distribution, edge_label)
         return losses
 
-    def _compute_action_genome_losses(self, pred: Dict[str, Any], unc_vals: Optional[Any] = None) -> Dict[str, torch.Tensor]:
+    def _compute_action_genome_losses(
+        self, pred: Dict[str, Any], unc_vals: Optional[Any] = None
+    ) -> Dict[str, torch.Tensor]:
         """Compute losses for Action Genome dataset.
-        
+
         :param pred: Model predictions
         :type pred: Dict[str, Any]
         :return: Dictionary of loss components
@@ -619,7 +633,7 @@ class Trainer:
 
     def _compute_sttran_losses(self, pred: Dict[str, Any]) -> Dict[str, torch.Tensor]:
         """Compute losses for STTran, DSG-DETR, and VLM models.
-        
+
         :param pred: Model predictions
         :type pred: Dict[str, Any]
         :return: Dictionary of loss components
@@ -628,17 +642,17 @@ class Trainer:
         attention_distribution = pred["attention_distribution"]
         spatial_distribution = pred["spatial_distribution"]
         contact_distribution = pred["contact_distribution"]
-        
+
         attention_label = (
             torch.tensor(pred["attention_gt"], dtype=torch.long)
             .to(device=attention_distribution.device)
             .squeeze()
         )
-        
+
         # Ensure attention_label is 1D for CrossEntropyLoss
         if attention_label.dim() > 1:
             attention_label = attention_label.flatten()
-        
+
         if not self.config.bce_loss:
             # multi-label margin loss or adaptive loss
             spatial_label = -torch.ones(
@@ -647,13 +661,13 @@ class Trainer:
             contact_label = -torch.ones(
                 [len(pred["contact_gt"]), 17], dtype=torch.long
             ).to(device=attention_distribution.device)
-            
+
             for i in range(len(pred["spatial_gt"])):
-                spatial_label[i, : len(pred["spatial_gt"][i])] = (
-                    torch.tensor(pred["spatial_gt"][i])
+                spatial_label[i, : len(pred["spatial_gt"][i])] = torch.tensor(
+                    pred["spatial_gt"][i]
                 )
-                contact_label[i, : len(pred["contact_gt"][i])] = (
-                    torch.tensor(pred["contact_gt"][i])
+                contact_label[i, : len(pred["contact_gt"][i])] = torch.tensor(
+                    pred["contact_gt"][i]
                 )
         else:
             # bce loss
@@ -663,21 +677,19 @@ class Trainer:
             contact_label = torch.zeros(
                 [len(pred["contact_gt"]), 17], dtype=torch.float32
             ).to(device=attention_distribution.device)
-            
+
             for i in range(len(pred["spatial_gt"])):
                 spatial_label[i, pred["spatial_gt"][i]] = 1
                 contact_label[i, pred["contact_gt"][i]] = 1
 
         losses = {}
         if self.config.mode == "sgcls" or self.config.mode == "sgdet":
-            losses["object_loss"] = self.ce_loss(
-                pred["distribution"], pred["labels"]
-            )
+            losses["object_loss"] = self.ce_loss(pred["distribution"], pred["labels"])
 
         losses["attention_relation_loss"] = self.ce_loss(
             attention_distribution, attention_label
         )
-        
+
         if not self.config.bce_loss:
             losses["spatial_relation_loss"] = self.mlm_loss(
                 spatial_distribution, spatial_label
@@ -692,12 +704,12 @@ class Trainer:
             losses["contact_relation_loss"] = self.bce_loss(
                 contact_distribution, contact_label
             )
-        
+
         return losses
 
     def evaluate_epoch(self, epoch: int) -> Tuple[float, float]:
         """Evaluate the model for one epoch.
-        
+
         :param epoch: Current epoch number
         :type epoch: int
         :return: Tuple of (score, mrecall)
@@ -725,8 +737,8 @@ class Trainer:
         with torch.no_grad():
             test_iter = iter(self.dataloader_test)
             for b in tqdm(
-                range(len(self.dataloader_test)), 
-                desc=f"Epoch {epoch}/{self.config.nepoch} [Eval]"
+                range(len(self.dataloader_test)),
+                desc=f"Epoch {epoch}/{self.config.nepoch} [Eval]",
             ):
                 data = next(test_iter)
                 im_data = copy.deepcopy(data[0].cuda(0))
@@ -736,14 +748,26 @@ class Trainer:
                 if self.config.dataset == "EASG":
                     # EASG evaluation logic
                     score, mrecall = self._evaluate_easg_batch(
-                        data, im_data, im_info, recall_with, recall_no, 
-                        predictions_data, epoch, val_losses, val_loss_components
+                        data,
+                        im_data,
+                        im_info,
+                        recall_with,
+                        recall_no,
+                        predictions_data,
+                        epoch,
+                        val_losses,
+                        val_loss_components,
                     )
                 elif self.config.dataset == "action_genome":
                     # Action Genome evaluation logic
                     score, mrecall = self._evaluate_action_genome_batch(
-                        data, im_data, im_info, predictions_data, epoch, 
-                        val_losses, val_loss_components
+                        data,
+                        im_data,
+                        im_info,
+                        predictions_data,
+                        epoch,
+                        val_losses,
+                        val_loss_components,
                     )
                 else:
                     raise ValueError(f"Dataset '{self.config.dataset}' not supported")
@@ -777,9 +801,13 @@ class Trainer:
             if len(self.evaluator.result_dict[self.config.mode + "_recall"][20]) == 0:
                 score = 0.0
                 mrecall = 0.0
-                self.logger.warning("No evaluation results found - using default scores")
+                self.logger.warning(
+                    "No evaluation results found - using default scores"
+                )
             else:
-                score = np.mean(self.evaluator.result_dict[self.config.mode + "_recall"][20])
+                score = np.mean(
+                    self.evaluator.result_dict[self.config.mode + "_recall"][20]
+                )
                 mrecall = self.evaluator.calc_mrecall()[20]
             self.evaluator.print_stats()
             self.evaluator.reset_result()
@@ -787,19 +815,19 @@ class Trainer:
         return score, mrecall, predictions_data
 
     def _evaluate_easg_batch(
-        self, 
-        data: tuple, 
-        im_data: torch.Tensor, 
+        self,
+        data: tuple,
+        im_data: torch.Tensor,
         im_info: torch.Tensor,
-        recall_with: Dict[int, List[float]], 
+        recall_with: Dict[int, List[float]],
         recall_no: Dict[int, List[float]],
-        predictions_data: List[Dict], 
+        predictions_data: List[Dict],
         epoch: int,
-        val_losses: List[float], 
-        val_loss_components: List[Dict]
+        val_losses: List[float],
+        val_loss_components: List[Dict],
     ) -> Tuple[float, float]:
         """Evaluate one EASG batch.
-        
+
         :param data: Batch data
         :param im_data: Image data
         :param im_info: Image info
@@ -817,17 +845,17 @@ class Trainer:
         return 0.0, 0.0
 
     def _evaluate_action_genome_batch(
-        self, 
-        data: tuple, 
-        im_data: torch.Tensor, 
+        self,
+        data: tuple,
+        im_data: torch.Tensor,
         im_info: torch.Tensor,
-        predictions_data: List[Dict], 
+        predictions_data: List[Dict],
         epoch: int,
-        val_losses: List[float], 
-        val_loss_components: List[Dict]
+        val_losses: List[float],
+        val_loss_components: List[Dict],
     ) -> Tuple[float, float]:
         """Evaluate one Action Genome batch.
-        
+
         :param data: Batch data
         :param im_data: Image data
         :param im_info: Image info
@@ -853,6 +881,7 @@ class Trainer:
 
         if self.config.use_matcher:
             from m3sgg.utils.track import get_sequence
+
             get_sequence(
                 entry,
                 gt_annotation,
@@ -860,7 +889,7 @@ class Trainer:
                 (im_info[0][:2] / im_info[0, 2]).cpu().data,
                 self.config.mode,
             )
-        
+
         # Pass image data to VLM model if it's a VLM model
         if self.config.model_type == "vlm":
             pred = self.model(entry, im_data)
@@ -868,11 +897,7 @@ class Trainer:
             pred = self.model(entry)
 
         # Only compute validation loss if ground truth annotations are available
-        if (
-            "attention_gt" in pred
-            and "spatial_gt" in pred
-            and "contact_gt" in pred
-        ):
+        if "attention_gt" in pred and "spatial_gt" in pred and "contact_gt" in pred:
             # Compute validation loss using the same logic as training
             losses = self._compute_losses(pred, data)
             val_loss = sum(losses.values())
@@ -888,13 +913,11 @@ class Trainer:
             if "distribution" in pred:
                 # Use the same logic as original TEMPURA: max over distribution[:, 1:]
                 if pred["distribution"].shape[1] > 1:
-                    pred["pred_scores"] = torch.max(
-                        pred["distribution"][:, 1:], dim=1
-                    )[0]
+                    pred["pred_scores"] = torch.max(pred["distribution"][:, 1:], dim=1)[
+                        0
+                    ]
                 else:
-                    pred["pred_scores"] = torch.max(
-                        pred["distribution"], dim=1
-                    )[0]
+                    pred["pred_scores"] = torch.max(pred["distribution"], dim=1)[0]
             elif "labels" in pred:
                 pred["pred_scores"] = torch.ones(
                     pred["labels"].shape[0], device=pred["labels"].device
@@ -928,9 +951,7 @@ class Trainer:
                             pred["distribution"][:, 1:], dim=1
                         )[0]
                     else:
-                        pred["pred_scores"] = torch.max(
-                            pred["distribution"], dim=1
-                        )[0]
+                        pred["pred_scores"] = torch.max(pred["distribution"], dim=1)[0]
                 elif "labels" in pred:
                     pred["pred_scores"] = torch.ones(
                         pred["labels"].shape[0],
@@ -987,13 +1008,15 @@ class Trainer:
 
     def save_predictions_csv(self, predictions_data: List[Dict]) -> None:
         """Save final predictions as CSV file.
-        
+
         :param predictions_data: List of prediction dictionaries
         :type predictions_data: List[Dict]
         """
         if predictions_data:
             predictions_df = pd.DataFrame(predictions_data)
-            predictions_csv_path = os.path.join(self.config.save_path, "predictions.csv")
+            predictions_csv_path = os.path.join(
+                self.config.save_path, "predictions.csv"
+            )
             predictions_df.to_csv(predictions_csv_path, index=False)
             self.logger.info(f"Predictions saved to: {predictions_csv_path}")
         else:
@@ -1001,7 +1024,7 @@ class Trainer:
 
     def save_checkpoints(self, epoch: int, score: float, mrecall: float) -> None:
         """Save model checkpoints if this is the best model.
-        
+
         :param epoch: Current epoch number
         :type epoch: int
         :param score: Current score
@@ -1013,7 +1036,7 @@ class Trainer:
         if score > self.best_score:
             self.best_score = score
             self.best_epoch = epoch
-            
+
             # Handle Tempura memory saving
             if self.config.model_type == "tempura":
                 if epoch > 0 and self.config.rel_mem_compute is not None:
@@ -1029,7 +1052,7 @@ class Trainer:
                 else:
                     pass  # object_memory = []
                     rel_memory = []
-            
+
             if not self.config.disable_checkpoint_saving:
                 checkpoint_saved = safe_save_checkpoint(
                     self.model,
@@ -1043,15 +1066,21 @@ class Trainer:
                         "enc_layer": self.config.enc_layer,
                         "dec_layer": self.config.dec_layer,
                     },
-                    logger=self.logger
+                    logger=self.logger,
                 )
                 if checkpoint_saved:
-                    self.logger.info("NEW BEST! Saved best checkpoint after %d epochs", epoch)
+                    self.logger.info(
+                        "NEW BEST! Saved best checkpoint after %d epochs", epoch
+                    )
                 else:
-                    self.logger.error("Failed to save best checkpoint - disabling future saves")
+                    self.logger.error(
+                        "Failed to save best checkpoint - disabling future saves"
+                    )
                     self.config.disable_checkpoint_saving = True
             else:
-                self.logger.info("NEW BEST! Checkpoint saving disabled (epoch %d)", epoch)
+                self.logger.info(
+                    "NEW BEST! Checkpoint saving disabled (epoch %d)", epoch
+                )
 
         # Save best mrecall checkpoint
         if mrecall > self.best_Mrecall:
@@ -1068,16 +1097,18 @@ class Trainer:
                         "mode": self.config.mode,
                         "enc_layer": self.config.enc_layer,
                         "dec_layer": self.config.dec_layer,
-                        "checkpoint_type": "best_mrecall"
+                        "checkpoint_type": "best_mrecall",
                     },
-                    logger=self.logger
+                    logger=self.logger,
                 )
                 if checkpoint_saved:
                     self.logger.info(
                         "NEW BEST MRECALL! Saved best checkpoint after %d epochs", epoch
                     )
                 else:
-                    self.logger.error("Failed to save best mrecall checkpoint - disabling future saves")
+                    self.logger.error(
+                        "Failed to save best mrecall checkpoint - disabling future saves"
+                    )
                     self.config.disable_checkpoint_saving = True
             else:
                 self.logger.info(

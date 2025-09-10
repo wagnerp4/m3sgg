@@ -13,7 +13,7 @@ from . import legacy
 # Make modules available
 __all__ = [
     "config",
-    "unified", 
+    "unified",
     "modern",
     "legacy",
 ]

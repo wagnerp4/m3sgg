@@ -15,10 +15,10 @@ from m3sgg.core.evaluation.metrics import BasicSceneGraphEvaluator
 
 class Evaluator:
     """Evaluation class for scene graph generation models.
-    
+
     This class encapsulates the evaluation loop and metrics computation
     for various scene graph generation models.
-    
+
     :param evaluator: Primary scene graph evaluator
     :type evaluator: BasicSceneGraphEvaluator
     :param evaluator2: Secondary evaluator without constraints
@@ -34,7 +34,7 @@ class Evaluator:
         logger: Optional[logging.Logger] = None,
     ):
         """Initialize the Evaluator with necessary components.
-        
+
         :param evaluator: Primary scene graph evaluator
         :param evaluator2: Secondary evaluator without constraints
         :param logger: Logger instance
@@ -54,7 +54,7 @@ class Evaluator:
         dataset_test: Optional[Any] = None,
     ) -> Tuple[float, float]:
         """Run the complete evaluation loop.
-        
+
         :param model: Model to evaluate
         :type model: torch.nn.Module
         :param dataloader_test: Test data loader
@@ -87,13 +87,26 @@ class Evaluator:
         # Dataset-specific evaluation setup
         if config.dataset == "EASG":
             return self._evaluate_easg(
-                model, dataloader_test, config, object_detector_EASG, 
-                dataset_test, val_losses, val_loss_components, predictions_data
+                model,
+                dataloader_test,
+                config,
+                object_detector_EASG,
+                dataset_test,
+                val_losses,
+                val_loss_components,
+                predictions_data,
             )
         elif config.dataset == "action_genome":
             return self._evaluate_action_genome(
-                model, dataloader_test, config, object_detector, 
-                matcher, dataset_test, val_losses, val_loss_components, predictions_data
+                model,
+                dataloader_test,
+                config,
+                object_detector,
+                matcher,
+                dataset_test,
+                val_losses,
+                val_loss_components,
+                predictions_data,
             )
         else:
             raise ValueError(f"Dataset '{config.dataset}' not supported")
@@ -110,7 +123,7 @@ class Evaluator:
         predictions_data: List[Dict],
     ) -> Tuple[float, float]:
         """Evaluate on EASG dataset.
-        
+
         :param model: Model to evaluate
         :param dataloader_test: Test data loader
         :param config: Configuration object
@@ -139,7 +152,7 @@ class Evaluator:
         predictions_data: List[Dict],
     ) -> Tuple[float, float]:
         """Evaluate on Action Genome dataset.
-        
+
         :param model: Model to evaluate
         :param dataloader_test: Test data loader
         :param config: Configuration object

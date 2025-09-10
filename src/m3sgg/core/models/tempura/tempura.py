@@ -10,7 +10,9 @@ import torch.nn.functional as F
 from torch.nn.utils.rnn import pad_sequence
 
 # Add project root to path for fasterRCNN imports
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
+project_root = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..", "..")
+)
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
@@ -801,79 +803,107 @@ class TEMPURA(nn.Module):
 
     def forward(self, entry, phase="train", unc=False):
         entry = self.object_classifier(entry, phase=phase, unc=unc)
-        
+
         # Create pair_idx if not provided by detector (needed for sgdet mode during evaluation)
         if "pair_idx" not in entry:
             box_idx = entry["boxes"][:, 0].long()
             b = int(box_idx[-1] + 1) if len(box_idx) > 0 else 1
-            
+
             # Find human indices (class 1)
             if "pred_labels" in entry and len(entry["pred_labels"]) > 0:
-                HUMAN_IDX = torch.zeros([b, 1], dtype=torch.int64).to(entry["boxes"].device)
-                global_idx = torch.arange(0, entry["boxes"].shape[0]).to(entry["boxes"].device)
-                
+                HUMAN_IDX = torch.zeros([b, 1], dtype=torch.int64).to(
+                    entry["boxes"].device
+                )
+                global_idx = torch.arange(0, entry["boxes"].shape[0]).to(
+                    entry["boxes"].device
+                )
+
                 for i in range(b):
                     mask = box_idx == i
                     if mask.any():
                         human_mask = entry["pred_labels"][mask] == 1
                         if human_mask.any():
-                            local_human_idx = torch.where(mask)[0][torch.where(human_mask)[0][0]]
+                            local_human_idx = torch.where(mask)[0][
+                                torch.where(human_mask)[0][0]
+                            ]
                             HUMAN_IDX[i] = local_human_idx
                         else:
                             # If no human found, use first object in frame
                             HUMAN_IDX[i] = torch.where(mask)[0][0]
-                
+
                 # Create pairs between humans and other objects
                 im_idx = []
                 pair = []
                 for j, i in enumerate(HUMAN_IDX):
                     frame_mask = box_idx == j
                     frame_objects = global_idx[frame_mask]
-                    non_human_objects = frame_objects[entry["pred_labels"][frame_mask] != 1]
-                    
+                    non_human_objects = frame_objects[
+                        entry["pred_labels"][frame_mask] != 1
+                    ]
+
                     for m in non_human_objects:
                         im_idx.append(j)
                         pair.append([int(i), int(m)])
-                
+
                 if len(pair) > 0:
                     entry["pair_idx"] = torch.tensor(pair).to(entry["boxes"].device)
-                    entry["im_idx"] = torch.tensor(im_idx, dtype=torch.float).to(entry["boxes"].device)
-                    
+                    entry["im_idx"] = torch.tensor(im_idx, dtype=torch.float).to(
+                        entry["boxes"].device
+                    )
+
                     # Create union features and spatial masks
                     entry["boxes"][:, 1:] = entry["boxes"][:, 1:] * entry["im_info"]
-                    union_boxes = torch.cat((
-                        entry["im_idx"][:, None],
-                        torch.min(
-                            entry["boxes"][:, 1:3][entry["pair_idx"][:, 0]],
-                            entry["boxes"][:, 1:3][entry["pair_idx"][:, 1]],
+                    union_boxes = torch.cat(
+                        (
+                            entry["im_idx"][:, None],
+                            torch.min(
+                                entry["boxes"][:, 1:3][entry["pair_idx"][:, 0]],
+                                entry["boxes"][:, 1:3][entry["pair_idx"][:, 1]],
+                            ),
+                            torch.max(
+                                entry["boxes"][:, 3:5][entry["pair_idx"][:, 0]],
+                                entry["boxes"][:, 3:5][entry["pair_idx"][:, 1]],
+                            ),
                         ),
-                        torch.max(
-                            entry["boxes"][:, 3:5][entry["pair_idx"][:, 0]],
-                            entry["boxes"][:, 3:5][entry["pair_idx"][:, 1]],
-                        ),
-                    ), 1)
-                    
-                    union_feat = self.object_classifier.RCNN_roi_align(entry["fmaps"], union_boxes)
+                        1,
+                    )
+
+                    union_feat = self.object_classifier.RCNN_roi_align(
+                        entry["fmaps"], union_boxes
+                    )
                     entry["boxes"][:, 1:] = entry["boxes"][:, 1:] / entry["im_info"]
-                    
-                    pair_rois = torch.cat((
-                        entry["boxes"][entry["pair_idx"][:, 0], 1:],
-                        entry["boxes"][entry["pair_idx"][:, 1], 1:],
-                    ), 1).data.cpu().numpy()
-                    
-                    spatial_masks = torch.tensor(draw_union_boxes(pair_rois, 27) - 0.5).to(entry["boxes"].device)
+
+                    pair_rois = (
+                        torch.cat(
+                            (
+                                entry["boxes"][entry["pair_idx"][:, 0], 1:],
+                                entry["boxes"][entry["pair_idx"][:, 1], 1:],
+                            ),
+                            1,
+                        )
+                        .data.cpu()
+                        .numpy()
+                    )
+
+                    spatial_masks = torch.tensor(
+                        draw_union_boxes(pair_rois, 27) - 0.5
+                    ).to(entry["boxes"].device)
                     entry["union_feat"] = union_feat
                     entry["union_box"] = union_boxes
                     entry["spatial_masks"] = spatial_masks
                 else:
                     # No pairs found, create empty tensors
                     device = entry["boxes"].device
-                    entry["pair_idx"] = torch.empty((0, 2), dtype=torch.long, device=device)
-                    entry["im_idx"] = torch.empty((0,), dtype=torch.float, device=device)
+                    entry["pair_idx"] = torch.empty(
+                        (0, 2), dtype=torch.long, device=device
+                    )
+                    entry["im_idx"] = torch.empty(
+                        (0,), dtype=torch.float, device=device
+                    )
                     entry["union_feat"] = torch.empty((0, 1024, 7, 7), device=device)
                     entry["union_box"] = torch.empty((0, 5), device=device)
                     entry["spatial_masks"] = torch.empty((0, 27, 27), device=device)
-        
+
         # visual part
         if not self.take_obj_mem_feat:
             subj_rep = entry["features"][entry["pair_idx"][:, 0]]

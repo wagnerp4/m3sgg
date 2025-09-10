@@ -16,11 +16,12 @@ import torch
 
 # Import project modules
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 from m3sgg.language.summarization.wrappers import (
-    T5SummarizationWrapper, 
-    PegasusSummarizationWrapper
+    T5SummarizationWrapper,
+    PegasusSummarizationWrapper,
 )
 from m3sgg.language.evaluation.dataset_loader import MSRVTTLoader
 from m3sgg.language.evaluation.metrics import SummarizationMetrics
@@ -30,10 +31,10 @@ logger = logging.getLogger(__name__)
 
 class SummarizationBenchmark:
     """Main benchmark class for summarization evaluation.
-    
+
     Provides functionality to run comprehensive benchmarks on summarization models
     using scene graph generation and text summarization pipelines.
-    
+
     :param checkpoint_path: Path to STTran checkpoint
     :type checkpoint_path: str
     :param device: Device to run inference on
@@ -41,18 +42,22 @@ class SummarizationBenchmark:
     :param cache_dir: Directory to cache datasets
     :type cache_dir: str, optional
     """
-    
-    def __init__(self, checkpoint_path: str, device: str = "cuda:0", 
-                 cache_dir: str = "data/msr_vtt",
-                 video_root: str = "data/msr_vtt/videos",
-                 sg_cache_dir: str = "data/summarization/cache",
-                 frames_per_clip: int = 8,
-                 linearizer: str = "flat",
-                 variant: str = "sg",
-                 linearizers: Optional[List[str]] = None,
-                 variants: Optional[List[str]] = None):
+
+    def __init__(
+        self,
+        checkpoint_path: str,
+        device: str = "cuda:0",
+        cache_dir: str = "data/msr_vtt",
+        video_root: str = "data/msr_vtt/videos",
+        sg_cache_dir: str = "data/summarization/cache",
+        frames_per_clip: int = 8,
+        linearizer: str = "flat",
+        variant: str = "sg",
+        linearizers: Optional[List[str]] = None,
+        variants: Optional[List[str]] = None,
+    ):
         """Initialize summarization benchmark.
-        
+
         :param checkpoint_path: Path to STTran checkpoint
         :type checkpoint_path: str
         :param device: Device to run inference on
@@ -71,44 +76,50 @@ class SummarizationBenchmark:
         self.linearizers = linearizers
         self.variants = variants
         self.sg_cache_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Initialize components
         self.config = None
         self.object_detector = None
         self.sgg_model = None
         self.summarization_models = {}
         self.metrics = SummarizationMetrics()
-        
+
         logger.info(f"Initialized benchmark with device: {self.device}")
-    
+
     def load_models(self, config_path: Optional[str] = None):
         """Load all required models for evaluation.
-        
+
         :param config_path: Path to config file, if None uses default
         :type config_path: Optional[str]
         """
         logger.info("Loading models...")
-        
+
         # TODO: Load configuration if/when scene graph generation is implemented
         # Skipping object detector and SGG model loading to avoid CLI side-effects from training modules
         self.config = None
         self.object_detector = None
         self.sgg_model = None
-        
+
         # Initialize summarization models
         logger.info("Initializing summarization models...")
         self.summarization_models = {
             "t5_base": T5SummarizationWrapper("google-t5/t5-base", device=self.device),
-            "t5_large": T5SummarizationWrapper("google-t5/t5-large", device=self.device),
-            "pegasus_xsum": PegasusSummarizationWrapper("google/pegasus-xsum", device=self.device),
-            "pegasus_cnn": PegasusSummarizationWrapper("google/pegasus-cnn_dailymail", device=self.device),
+            "t5_large": T5SummarizationWrapper(
+                "google-t5/t5-large", device=self.device
+            ),
+            "pegasus_xsum": PegasusSummarizationWrapper(
+                "google/pegasus-xsum", device=self.device
+            ),
+            "pegasus_cnn": PegasusSummarizationWrapper(
+                "google/pegasus-cnn_dailymail", device=self.device
+            ),
         }
-        
+
         logger.info("All models loaded successfully")
-    
+
     def generate_scene_graph(self, video_path: str) -> Dict[str, Any]:
         """Generate scene graph for a video.
-        
+
         :param video_path: Path to video file
         :type video_path: str
         :return: Scene graph data
@@ -118,50 +129,50 @@ class SummarizationBenchmark:
         # This is a placeholder - you'll need to implement the actual pipeline
         # that processes videos, extracts frames, runs object detection,
         # and generates scene graphs
-        
+
         # Cache by video stem
         cache_key = Path(video_path).stem + ".json"
         cache_path = self.sg_cache_dir / cache_key
         if cache_path.exists():
             try:
-                with open(cache_path, 'r') as f:
+                with open(cache_path, "r") as f:
                     return json.load(f)
             except Exception:
                 pass
         logger.warning("Scene graph generation not implemented yet")
-        graph = {'objects': [], 'relationships': [], 'triples': []}
+        graph = {"objects": [], "relationships": [], "triples": []}
         try:
-            with open(cache_path, 'w') as f:
+            with open(cache_path, "w") as f:
                 json.dump(graph, f)
         except Exception:
             pass
         return graph
-    
+
     def scene_graph_to_text(self, scene_graph: Dict[str, Any]) -> str:
         """Convert scene graph to text description.
-        
+
         :param scene_graph: Scene graph data
         :type scene_graph: Dict[str, Any]
         :return: Text description
         :rtype: str
         """
         from m3sgg.language.summarization.summarize import linearize_triples
-        
+
         # Extract triples from scene graph
-        triples = scene_graph.get('triples', [])
-        
+        triples = scene_graph.get("triples", [])
+
         if not triples:
             return "No objects or relationships detected in the scene."
-        
+
         # Convert triples to sentences
         sentences = linearize_triples(triples, mode=self.linearizer)
-        
+
         # Join sentences
         return " ".join(sentences)
-    
-    def generate_summary(self, text: str, model_name: str = 't5_base') -> str:
+
+    def generate_summary(self, text: str, model_name: str = "t5_base") -> str:
         """Generate summary using specified model.
-        
+
         :param text: Input text to summarize
         :type text: str
         :param model_name: Name of summarization model
@@ -171,14 +182,15 @@ class SummarizationBenchmark:
         """
         if model_name not in self.summarization_models:
             raise ValueError(f"Model {model_name} not available")
-        
+
         model = self.summarization_models[model_name]
         return model.summarize(text)
-    
-    def run_scenario1_benchmark(self, subset_size: int = 100, 
-                               models: List[str] = None) -> Dict[str, Any]:
+
+    def run_scenario1_benchmark(
+        self, subset_size: int = 100, models: List[str] = None
+    ) -> Dict[str, Any]:
         """Run Scenario 1: Video Caption Generation benchmark.
-        
+
         :param subset_size: Number of test samples to use
         :type subset_size: int
         :param models: List of model names to evaluate
@@ -188,21 +200,28 @@ class SummarizationBenchmark:
         """
         if models is None:
             models = list(self.summarization_models.keys())
-        
+
         logger.info(f"Running Scenario 1 benchmark with {subset_size} samples")
-        
+
         # Load dataset with fallback to mock data if HF dataset is unavailable
         try:
             loader = MSRVTTLoader(cache_dir=self.cache_dir)
             subset = loader.create_subset(train_size=400, test_size=subset_size)
         except Exception as dataset_error:
-            logger.warning(f"Falling back to mock dataset due to error: {dataset_error}")
-            from m3sgg.language.evaluation.dataset_loader_simple import SimpleDatasetLoader
+            logger.warning(
+                f"Falling back to mock dataset due to error: {dataset_error}"
+            )
+            from m3sgg.language.evaluation.dataset_loader_simple import (
+                SimpleDatasetLoader,
+            )
+
             simple_loader = SimpleDatasetLoader(cache_dir="data/mock_dataset")
-            subset = simple_loader.create_mock_dataset(train_size=400, test_size=subset_size)
-        
+            subset = simple_loader.create_mock_dataset(
+                train_size=400, test_size=subset_size
+            )
+
         results = {}
-        
+
         # Determine sweeps
         variants = self.variants or [self.variant]
         linearizers = self.linearizers or [self.linearizer]
@@ -217,13 +236,15 @@ class SummarizationBenchmark:
                     logger.info(f"Evaluating model: {model_name}")
                     predictions = []
                     references = []
-                    for i in range(min(subset_size, len(subset['test']))):
-                        sample = subset['test'][i]
-                        reference = sample.get('caption', '')
+                    for i in range(min(subset_size, len(subset["test"]))):
+                        sample = subset["test"][i]
+                        reference = sample.get("caption", "")
                         references.append(reference)
                         if self.variant == "sg":
-                            video_id = sample.get('video_id', '')
-                            video_path = os.path.join(self.video_root, f"{video_id}.mp4")
+                            video_id = sample.get("video_id", "")
+                            video_path = os.path.join(
+                                self.video_root, f"{video_id}.mp4"
+                            )
                             scene_graph = self.generate_scene_graph(video_path)
                             text_description = self.scene_graph_to_text(scene_graph)
                         elif self.variant == "no_sg":
@@ -239,13 +260,15 @@ class SummarizationBenchmark:
                     metrics = self.metrics.compute_all_metrics(predictions, references)
                     results[variant].setdefault(linearizer, {})
                     results[variant][linearizer][model_name] = metrics
-                    logger.info(f"Completed evaluation for {model_name} (variant={variant}, linearizer={linearizer})")
-        
+                    logger.info(
+                        f"Completed evaluation for {model_name} (variant={variant}, linearizer={linearizer})"
+                    )
+
         return results
-    
+
     def save_results(self, results: Dict[str, Any], output_path: str):
         """Save benchmark results to file.
-        
+
         :param results: Benchmark results
         :type results: Dict[str, Any]
         :param output_path: Path to save results
@@ -253,18 +276,18 @@ class SummarizationBenchmark:
         """
         output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         # Add metadata
         results_with_metadata = {
-            'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
-            'device': self.device,
-            'checkpoint_path': self.checkpoint_path,
-            'results': results
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "device": self.device,
+            "checkpoint_path": self.checkpoint_path,
+            "results": results,
         }
-        
+
         def _to_serializable(value: Any) -> Any:
             """Convert values to JSON-serializable types.
-            
+
             :param value: Value to convert
             :type value: Any
             :return: JSON-serializable value
@@ -281,23 +304,23 @@ class SummarizationBenchmark:
             if np is not None and isinstance(value, (np.generic,)):
                 return value.item()
             return value
-        
+
         serializable = _to_serializable(results_with_metadata)
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(serializable, f, indent=2)
-        
+
         logger.info(f"Results saved to {output_path}")
-    
+
     def print_results(self, results: Dict[str, Any]):
         """Print formatted benchmark results.
-        
+
         :param results: Benchmark results
         :type results: Dict[str, Any]
         """
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("SUMMARIZATION BENCHMARK RESULTS")
-        print("="*60)
-        
+        print("=" * 60)
+
         # Support both flat (model->metrics) and nested (variant->linearizer->model->metrics)
         nested = False
         if results and isinstance(next(iter(results.values())), dict):
@@ -305,7 +328,7 @@ class SummarizationBenchmark:
             first_val = next(iter(results.values()))
             if first_val and isinstance(next(iter(first_val.values())), dict):
                 nested = True
-        
+
         if not nested:
             for model_name, metrics in results.items():
                 print(f"\n{model_name.upper()}:")
@@ -321,9 +344,13 @@ class SummarizationBenchmark:
                         print(f"    {model_name.upper()}:")
                         formatted = self.metrics.format_results(metrics)
                         # Indent lines for readability
-                        print("\n".join(["      "+line for line in formatted.splitlines()]))
-        
-        print("\n" + "="*60)
+                        print(
+                            "\n".join(
+                                ["      " + line for line in formatted.splitlines()]
+                            )
+                        )
+
+        print("\n" + "=" * 60)
 
 
 def main():
@@ -331,16 +358,16 @@ def main():
     # Initialize benchmark
     checkpoint_path = "data/checkpoints/sgdet_test/model_best.tar"
     benchmark = SummarizationBenchmark(checkpoint_path)
-    
+
     # Load models
     benchmark.load_models()
-    
+
     # Run benchmark
     results = benchmark.run_scenario1_benchmark(subset_size=10)
-    
+
     # Print results
     benchmark.print_results(results)
-    
+
     # Save results
     benchmark.save_results(results, "output/summarization_benchmark_results.json")
 

@@ -10,7 +10,16 @@ for the SceneLLM model, which combines VQ-VAE with language models.
 from dataclasses import dataclass
 from typing import Optional
 
-from .base import BaseConfig, TrainingConfig, DataConfig, LoggingConfig, CheckpointConfig, EvaluationConfig, ModelConfig, LossConfig
+from .base import (
+    BaseConfig,
+    TrainingConfig,
+    DataConfig,
+    LoggingConfig,
+    CheckpointConfig,
+    EvaluationConfig,
+    ModelConfig,
+    LossConfig,
+)
 
 
 @dataclass
@@ -98,7 +107,7 @@ class SceneLLMConfig(BaseConfig):
 
     # Model identification
     model_type: str = "scenellm"
-    
+
     # VQ-VAE parameters
     embed_dim: int = 1024
     codebook_size: int = 8192
@@ -109,7 +118,7 @@ class SceneLLMConfig(BaseConfig):
     vqvae_dropout: float = 0.1
     vqvae_use_attention: bool = True
     vqvae_attention_heads: int = 8
-    
+
     # LLM parameters
     llm_name: str = "google/gemma-2-2b"
     llm_max_length: int = 512
@@ -121,12 +130,12 @@ class SceneLLMConfig(BaseConfig):
     llm_pad_token_id: int = 0
     llm_eos_token_id: int = 1
     llm_bos_token_id: int = 2
-    
+
     # LoRA parameters
     lora_r: int = 16
     lora_alpha: int = 32
     lora_dropout: float = 0.05
-    
+
     # Training parameters
     ot_step: int = 512
     vqvae_epochs: int = 5
@@ -136,7 +145,7 @@ class SceneLLMConfig(BaseConfig):
     alpha_rel: float = 1.0
     scenellm_training_stage: str = "vqvae"
     disable_checkpoint_saving: bool = False
-    
+
     # Optimization parameters
     use_peft: bool = True
     peft_config: Optional[dict] = None

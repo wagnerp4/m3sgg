@@ -33,10 +33,10 @@ def train_command(
     output: Optional[str],
     checkpoint: Optional[str],
     verbose: bool,
-    args: List[str]
+    args: List[str],
 ):
     """Execute the training command.
-    
+
     :param config: Path to configuration file
     :type config: Optional[str]
     :param model: Model type to train
@@ -64,7 +64,7 @@ def train_command(
     """
     # Prepare configuration overrides
     overrides = {}
-    
+
     if model:
         overrides["model_type"] = model
     if dataset:
@@ -83,14 +83,14 @@ def train_command(
         overrides["save_path"] = output
     if checkpoint:
         overrides["ckpt"] = checkpoint
-    
+
     # Set up logging level
     if verbose:
         overrides["log_level"] = "DEBUG"
-    
+
     # Create configuration (will be handled by the training script)
     conf = None  # The training script will create its own config
-    
+
     # Display configuration summary
     click.echo("Training Configuration:")
     click.echo(f"  Model: {model or 'sttran'}")
@@ -100,15 +100,15 @@ def train_command(
     click.echo(f"  Learning Rate: {lr or '2e-05'}")
     click.echo(f"  Device: {device or 'cuda:0'}")
     click.echo(f"  Output: {output or 'output'}")
-    
+
     if checkpoint:
         click.echo(f"  Checkpoint: {checkpoint}")
-    
+
     # Import and run training
     try:
         # Import the training script
         from scripts.training.training import main as training_main
-        
+
         # Set up the configuration for the training script
         # Convert CLI arguments to the format expected by the original config
         config_args = []
@@ -130,15 +130,17 @@ def train_command(
             config_args.extend(["-save_path", output])
         if checkpoint:
             config_args.extend(["-ckpt", checkpoint])
-        
+
         sys.argv = ["training.py"] + config_args
-        
+
         # Run training
         training_main()
-        
+
     except ImportError as e:
         click.echo(f"Error importing training script: {e}", err=True)
-        click.echo("Make sure you're running from the project root directory.", err=True)
+        click.echo(
+            "Make sure you're running from the project root directory.", err=True
+        )
         sys.exit(1)
     except Exception as e:
         click.echo(f"Error during training: {e}", err=True)

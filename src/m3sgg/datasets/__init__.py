@@ -12,6 +12,6 @@ from . import factory
 # Make modules available
 __all__ = [
     "action_genome",
-    "easg", 
+    "easg",
     "factory",
 ]

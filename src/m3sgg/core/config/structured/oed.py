@@ -10,7 +10,16 @@ for the OED (Object-Event Detection) model.
 from dataclasses import dataclass
 from typing import Optional
 
-from .base import BaseConfig, TrainingConfig, DataConfig, LoggingConfig, CheckpointConfig, EvaluationConfig, ModelConfig, LossConfig
+from .base import (
+    BaseConfig,
+    TrainingConfig,
+    DataConfig,
+    LoggingConfig,
+    CheckpointConfig,
+    EvaluationConfig,
+    ModelConfig,
+    LossConfig,
+)
 
 
 @dataclass
@@ -119,19 +128,19 @@ class OEDConfig(BaseConfig):
 
     # Model identification
     model_type: str = "oed"
-    
+
     # Query parameters
     num_queries: int = 100
-    
+
     # Decoder parameters
     dec_layers_hopd: int = 6
     dec_layers_interaction: int = 6
-    
+
     # Class parameters
     num_attn_classes: int = 3
     num_spatial_classes: int = 6
     num_contacting_classes: int = 17
-    
+
     # Loss coefficients
     alpha: float = 0.5
     oed_use_matching: bool = False
@@ -140,23 +149,23 @@ class OEDConfig(BaseConfig):
     obj_loss_coef: float = 1.0
     rel_loss_coef: float = 2.0
     oed_eos_coef: float = 0.1
-    
+
     # Frame parameters
     interval1: int = 4
     interval2: int = 4
     num_ref_frames: int = 2
     oed_variant: str = "multi"
-    
+
     # Encoding parameters
     fuse_semantic_pos: bool = False
     query_temporal_interaction: bool = False
-    
+
     # Architecture parameters
     hidden_dim: int = 256
     num_heads: int = 8
     num_layers: int = 6
     dropout: float = 0.1
-    
+
     # Encoding parameters
     use_bbox_encoding: bool = True
     bbox_encoding_dim: int = 128
@@ -164,21 +173,21 @@ class OEDConfig(BaseConfig):
     positional_encoding_dim: int = 128
     use_temporal_encoding: bool = True
     temporal_encoding_dim: int = 128
-    
+
     # Attention parameters
     use_attention_weights: bool = False
     attention_dropout: float = 0.1
-    
+
     # Feed-forward network
     ffn_dim: int = 1024
     activation: str = "relu"
     norm_type: str = "layer_norm"
     use_bias: bool = True
-    
+
     # Optimization parameters
     gradient_checkpointing: bool = False
     use_memory_efficient_attention: bool = False
-    
+
     # Additional loss parameters
     use_auxiliary_loss: bool = False
     aux_loss_weight: float = 0.1
@@ -321,16 +330,16 @@ class OEDLossConfig(LossConfig):
     rel_loss_weight: float = 2.0
     bbox_loss_weight: float = 2.5
     giou_loss_weight: float = 1.0
-    
+
     use_focal_loss: bool = True
     focal_alpha: float = 0.25
     focal_gamma: float = 2.0
     label_smoothing: float = 0.0
-    
+
     use_class_weights: bool = False
     obj_class_weights: Optional[dict] = None
     rel_class_weights: Optional[dict] = None
-    
+
     use_auxiliary_loss: bool = False
     aux_loss_weight: float = 0.1
     use_contrastive_loss: bool = False

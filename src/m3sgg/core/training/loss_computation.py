@@ -11,11 +11,20 @@ from typing import Dict, Any
 
 class LossComputation:
     """Helper class for computing losses for different model types."""
-    
-    def __init__(self, config, dataset_train, ce_loss, bce_loss, mlm_loss, 
-                 ce_loss_obj=None, ce_loss_rel=None, con_loss=None):
+
+    def __init__(
+        self,
+        config,
+        dataset_train,
+        ce_loss,
+        bce_loss,
+        mlm_loss,
+        ce_loss_obj=None,
+        ce_loss_rel=None,
+        con_loss=None,
+    ):
         """Initialize loss computation with necessary components.
-        
+
         :param config: Configuration object
         :param dataset_train: Training dataset
         :param ce_loss: Cross entropy loss function
@@ -36,7 +45,7 @@ class LossComputation:
 
     def compute_stket_losses(self, pred: Dict[str, Any]) -> Dict[str, torch.Tensor]:
         """Compute losses for STKET model.
-        
+
         :param pred: Model predictions
         :type pred: Dict[str, Any]
         :return: Dictionary of loss components
@@ -47,11 +56,11 @@ class LossComputation:
             .to(device=pred["attention_distribution"].device)
             .squeeze()
         )
-        
+
         # Ensure attention_label is 1D for CrossEntropyLoss
         if attention_label.dim() > 1:
             attention_label = attention_label.flatten()
-        
+
         if not self.config.bce_loss:
             # multi-label margin loss or adaptive loss
             spatial_label = -torch.ones(
@@ -60,13 +69,13 @@ class LossComputation:
             contact_label = -torch.ones(
                 [len(pred["contact_gt"]), 17], dtype=torch.long
             ).to(device=pred["attention_distribution"].device)
-            
+
             for i in range(len(pred["spatial_gt"])):
-                spatial_label[i, : len(pred["spatial_gt"][i])] = (
-                    torch.tensor(pred["spatial_gt"][i])
+                spatial_label[i, : len(pred["spatial_gt"][i])] = torch.tensor(
+                    pred["spatial_gt"][i]
                 )
-                contact_label[i, : len(pred["contact_gt"][i])] = (
-                    torch.tensor(pred["contact_gt"][i])
+                contact_label[i, : len(pred["contact_gt"][i])] = torch.tensor(
+                    pred["contact_gt"][i]
                 )
         else:
             # bce loss
@@ -76,16 +85,14 @@ class LossComputation:
             contact_label = torch.zeros(
                 [len(pred["contact_gt"]), 17], dtype=torch.float32
             ).to(device=pred["attention_distribution"].device)
-            
+
             for i in range(len(pred["spatial_gt"])):
                 spatial_label[i, pred["spatial_gt"][i]] = 1
                 contact_label[i, pred["contact_gt"][i]] = 1
 
         losses = {}
         if self.config.mode == "sgcls" or self.config.mode == "sgdet":
-            losses["object_loss"] = self.ce_loss(
-                pred["distribution"], pred["labels"]
-            )
+            losses["object_loss"] = self.ce_loss(pred["distribution"], pred["labels"])
 
         # Spatial encoder losses
         if self.config.enc_layer_num > 0:
@@ -198,9 +205,11 @@ class LossComputation:
 
         return losses
 
-    def compute_tempura_losses(self, pred: Dict[str, Any], unc_vals: Any = None) -> Dict[str, torch.Tensor]:
+    def compute_tempura_losses(
+        self, pred: Dict[str, Any], unc_vals: Any = None
+    ) -> Dict[str, torch.Tensor]:
         """Compute losses for Tempura model.
-        
+
         :param pred: Model predictions
         :type pred: Dict[str, Any]
         :param unc_vals: Uncertainty values for loss weighting
@@ -213,9 +222,7 @@ class LossComputation:
         contact_distribution = pred["contacting_distribution"]
 
         if self.config.rel_head == "gmm":
-            attention_distribution = torch.log(
-                attention_distribution + 1e-12
-            )
+            attention_distribution = torch.log(attention_distribution + 1e-12)
 
         if self.config.obj_head == "gmm" and self.config.mode != "predcls":
             pred["distribution"] = torch.log(pred["distribution"] + 1e-12)
@@ -225,11 +232,11 @@ class LossComputation:
             .to(device=attention_distribution.device)
             .squeeze()
         )
-        
+
         # Ensure attention_label is 1D for CrossEntropyLoss
         if attention_label.dim() > 1:
             attention_label = attention_label.flatten()
-        
+
         if self.config.mlm:
             # multi-label margin loss or adaptive loss
             spatial_label = -torch.ones(
@@ -238,13 +245,13 @@ class LossComputation:
             contact_label = -torch.ones(
                 [len(pred["contacting_gt"]), 17], dtype=torch.long
             ).to(device=attention_distribution.device)
-            
+
             for i in range(len(pred["spatial_gt"])):
-                spatial_label[i, : len(pred["spatial_gt"][i])] = (
-                    torch.tensor(pred["spatial_gt"][i])
+                spatial_label[i, : len(pred["spatial_gt"][i])] = torch.tensor(
+                    pred["spatial_gt"][i]
                 )
-                contact_label[i, : len(pred["contacting_gt"][i])] = (
-                    torch.tensor(pred["contacting_gt"][i])
+                contact_label[i, : len(pred["contacting_gt"][i])] = torch.tensor(
+                    pred["contacting_gt"][i]
                 )
         else:
             # bce loss
@@ -254,7 +261,7 @@ class LossComputation:
             contact_label = torch.zeros(
                 [len(pred["contacting_gt"]), 17], dtype=torch.float32
             ).to(device=attention_distribution.device)
-            
+
             for i in range(len(pred["spatial_gt"])):
                 spatial_label[i, pred["spatial_gt"][i]] = 1
                 contact_label[i, pred["contacting_gt"][i]] = 1
@@ -264,19 +271,17 @@ class LossComputation:
             losses["object_loss"] = self.ce_loss_obj(
                 pred["distribution"], pred["labels"]
             )
-            
+
             # Apply loss weighting if configured
             loss_weighting = self.config.obj_loss_weighting
             if loss_weighting is not None and unc_vals is not None:
-                num = torch.exp(
-                    unc_vals.obj_batch_unc[loss_weighting].sum(-1)
-                )
+                num = torch.exp(unc_vals.obj_batch_unc[loss_weighting].sum(-1))
                 den = num.sum()
                 weights = 1 + (num / den).to(device=pred["distribution"].device)
                 losses["object_loss"] = weights * losses["object_loss"]
-            
+
             losses["object_loss"] = losses["object_loss"].mean()
-            
+
             if self.config.obj_con_loss and self.con_loss is not None:
                 losses["object_contrastive_loss"] = (
                     self.config.lambda_con
@@ -286,7 +291,7 @@ class LossComputation:
         losses["attention_relation_loss"] = self.ce_loss_rel(
             attention_distribution, attention_label
         )
-        
+
         if self.config.mlm:
             losses["spatial_relation_loss"] = self.mlm_loss(
                 spatial_distribution, spatial_label
@@ -306,9 +311,7 @@ class LossComputation:
         loss_weighting = self.config.rel_loss_weighting
         if loss_weighting is not None and unc_vals is not None:
             for rel in ["attention", "spatial", "contacting"]:
-                num = torch.exp(
-                    unc_vals.rel_batch_unc[rel][loss_weighting].sum(-1)
-                )
+                num = torch.exp(unc_vals.rel_batch_unc[rel][loss_weighting].sum(-1))
                 den = num.sum() + 1e-12
                 weights = 1 + (num / den).to(device=pred["distribution"].device)
 
@@ -322,15 +325,13 @@ class LossComputation:
                 )
 
         for rel in ["attention", "spatial", "contacting"]:
-            losses[rel + "_relation_loss"] = losses[
-                rel + "_relation_loss"
-            ].mean()
+            losses[rel + "_relation_loss"] = losses[rel + "_relation_loss"].mean()
 
         return losses
 
     def compute_scenellm_losses(self, pred: Dict[str, Any]) -> Dict[str, torch.Tensor]:
         """Compute losses for SceneLLM model.
-        
+
         :param pred: Model predictions
         :type pred: Dict[str, Any]
         :return: Dictionary of loss components
@@ -339,13 +340,13 @@ class LossComputation:
         attention_distribution = pred["attention_distribution"]
         spatial_distribution = pred["spatial_distribution"]
         contact_distribution = pred["contact_distribution"]
-        
+
         attention_label = (
             torch.tensor(pred["attention_gt"], dtype=torch.long)
             .to(device=attention_distribution.device)
             .squeeze()
         )
-        
+
         # Ensure attention_label is 1D for CrossEntropyLoss
         if attention_label.dim() > 1:
             attention_label = attention_label.flatten()
@@ -359,13 +360,13 @@ class LossComputation:
             contact_label = -torch.ones(
                 [len(pred["contact_gt"]), 17], dtype=torch.long
             ).to(device=attention_distribution.device)
-            
+
             for i in range(len(pred["spatial_gt"])):
-                spatial_label[i, : len(pred["spatial_gt"][i])] = (
-                    torch.tensor(pred["spatial_gt"][i])
+                spatial_label[i, : len(pred["spatial_gt"][i])] = torch.tensor(
+                    pred["spatial_gt"][i]
                 )
-                contact_label[i, : len(pred["contact_gt"][i])] = (
-                    torch.tensor(pred["contact_gt"][i])
+                contact_label[i, : len(pred["contact_gt"][i])] = torch.tensor(
+                    pred["contact_gt"][i]
                 )
         else:
             # bce loss
@@ -375,7 +376,7 @@ class LossComputation:
             contact_label = torch.zeros(
                 [len(pred["contact_gt"]), 17], dtype=torch.float32
             ).to(device=attention_distribution.device)
-            
+
             for i in range(len(pred["spatial_gt"])):
                 spatial_label[i, pred["spatial_gt"][i]] = 1
                 contact_label[i, pred["contact_gt"][i]] = 1
@@ -416,9 +417,11 @@ class LossComputation:
 
         return losses
 
-    def compute_oed_losses(self, pred: Dict[str, Any], model: torch.nn.Module) -> Dict[str, torch.Tensor]:
+    def compute_oed_losses(
+        self, pred: Dict[str, Any], model: torch.nn.Module
+    ) -> Dict[str, torch.Tensor]:
         """Compute losses for OED model.
-        
+
         :param pred: Model predictions
         :type pred: Dict[str, Any]
         :param model: OED model instance
@@ -474,15 +477,9 @@ class LossComputation:
                     4,
                     device=pred["distribution"].device,
                 ),
-                "pred_attn_logits": pred[
-                    "attention_distribution"
-                ].unsqueeze(0),
-                "pred_spatial_logits": pred[
-                    "spatial_distribution"
-                ].unsqueeze(0),
-                "pred_contacting_logits": pred[
-                    "contact_distribution"
-                ].unsqueeze(0),
+                "pred_attn_logits": pred["attention_distribution"].unsqueeze(0),
+                "pred_spatial_logits": pred["spatial_distribution"].unsqueeze(0),
+                "pred_contacting_logits": pred["contact_distribution"].unsqueeze(0),
             }
 
             # Convert targets to OED format
@@ -542,7 +539,7 @@ class LossComputation:
                 contact_label = -torch.ones(
                     [len(pred["contact_gt"]), 17], dtype=torch.long
                 ).to(device=pred["attention_distribution"].device)
-                
+
                 for i in range(len(pred["spatial_gt"])):
                     # Handle spatial_gt and contact_gt which might be lists or tensors
                     spatial_gt_item = pred["spatial_gt"][i]
@@ -566,12 +563,8 @@ class LossComputation:
                     else:
                         contact_gt_tensor = contact_gt_item.clone().detach()
 
-                    spatial_label[i, : len(spatial_gt_tensor)] = (
-                        spatial_gt_tensor
-                    )
-                    contact_label[i, : len(contact_gt_tensor)] = (
-                        contact_gt_tensor
-                    )
+                    spatial_label[i, : len(spatial_gt_tensor)] = spatial_gt_tensor
+                    contact_label[i, : len(contact_gt_tensor)] = contact_gt_tensor
 
                 losses["spatial_relation_loss"] = self.mlm_loss(
                     pred["spatial_distribution"], spatial_label
@@ -586,7 +579,7 @@ class LossComputation:
                 contact_label = torch.zeros(
                     [len(pred["contact_gt"]), 17], dtype=torch.float32
                 ).to(device=pred["attention_distribution"].device)
-                
+
                 for i in range(len(pred["spatial_gt"])):
                     # Handle spatial_gt and contact_gt which might be lists or tensors
                     spatial_gt_item = pred["spatial_gt"][i]

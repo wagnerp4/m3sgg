@@ -10,7 +10,16 @@ for the STTRAN (Spatial-Temporal Transformer) model.
 from dataclasses import dataclass
 from typing import Optional
 
-from .base import BaseConfig, TrainingConfig, DataConfig, LoggingConfig, CheckpointConfig, EvaluationConfig, ModelConfig, LossConfig
+from .base import (
+    BaseConfig,
+    TrainingConfig,
+    DataConfig,
+    LoggingConfig,
+    CheckpointConfig,
+    EvaluationConfig,
+    ModelConfig,
+    LossConfig,
+)
 
 
 @dataclass
@@ -75,45 +84,45 @@ class STTRANConfig(BaseConfig):
 
     # Model identification
     model_type: str = "sttran"
-    
+
     # Learning rate override for STTRAN
     lr: float = 2e-5
-    
+
     # Architecture parameters
     hidden_dim: int = 256
     num_heads: int = 8
     num_layers: int = 6
     dropout: float = 0.1
-    
+
     # Encoding parameters
     use_spatial_encoding: bool = True
     use_temporal_encoding: bool = True
     max_seq_len: int = 1000
     spatial_dim: int = 64
     temporal_dim: int = 64
-    
+
     # Feature dimensions
     obj_feat_dim: int = 2048
     rel_feat_dim: int = 256
-    
+
     # Class information
     num_obj_classes: int = 35
     num_rel_classes: int = 132
-    
+
     # Bounding box encoding
     use_bbox_encoding: bool = True
     bbox_encoding_dim: int = 128
-    
+
     # Attention parameters
     use_attention_weights: bool = False
     attention_dropout: float = 0.1
-    
+
     # Feed-forward network
     ffn_dim: int = 1024
     activation: str = "relu"
     norm_type: str = "layer_norm"
     use_bias: bool = True
-    
+
     # Optimization parameters
     gradient_checkpointing: bool = False
     use_memory_efficient_attention: bool = False
@@ -183,12 +192,12 @@ class STTRANLossConfig(LossConfig):
     rel_loss_weight: float = 2.0
     bbox_loss_weight: float = 2.5
     giou_loss_weight: float = 1.0
-    
+
     use_focal_loss: bool = False
     focal_alpha: float = 0.25
     focal_gamma: float = 2.0
     label_smoothing: float = 0.0
-    
+
     use_class_weights: bool = False
     obj_class_weights: Optional[dict] = None
     rel_class_weights: Optional[dict] = None

@@ -25,8 +25,8 @@ import sys
 import time
 import warnings
 
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-src_path = os.path.join(project_root, 'src')
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+src_path = os.path.join(project_root, "src")
 if src_path not in sys.path:
     sys.path.insert(0, src_path)
 
@@ -56,9 +56,10 @@ from m3sgg.utils.checkpoint_utils import (
 np.set_printoptions(precision=3)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
+
 def iterative_training(trainer, conf, logger, niter):
     """Iterative training mode using train_iter with evaluation support.
-    
+
     :param trainer: Trainer instance
     :type trainer: Trainer
     :param conf: Configuration object
@@ -69,12 +70,14 @@ def iterative_training(trainer, conf, logger, niter):
     :type niter: int
     """
     logger.info(f"Starting iterative training for {niter} iterations...")
-    
+
     # Set evaluation frequency (default: every 50 iterations, similar to epoch-based)
     eval_frequency = conf.eval_frequency
     if niter <= eval_frequency:
-        eval_frequency = niter  # Evaluate at the end if total iterations <= eval_frequency
-    
+        eval_frequency = (
+            niter  # Evaluate at the end if total iterations <= eval_frequency
+        )
+
     for progress in trainer.train_iter(niter):
         if progress.get("epoch_complete", False):
             logger.info("Training complete!")
@@ -82,24 +85,36 @@ def iterative_training(trainer, conf, logger, niter):
             logger.info(f"Loss Components: {progress['avg_epoch_loss_components']}")
         else:
             # Show progress every 10 iterations or at the end
-            if progress["iteration"] % 10 == 0 or progress["iteration"] == progress["total_iterations"] - 1:
-                logger.info(f"Iter {progress['iteration']+1}/{progress['total_iterations']} "
-                          f"| Loss: {progress['total_loss']:.4f} "
-                          f"| Progress: {progress['progress']*100:.1f}%")
-            
+            if (
+                progress["iteration"] % 10 == 0
+                or progress["iteration"] == progress["total_iterations"] - 1
+            ):
+                logger.info(
+                    f"Iter {progress['iteration']+1}/{progress['total_iterations']} "
+                    f"| Loss: {progress['total_loss']:.4f} "
+                    f"| Progress: {progress['progress']*100:.1f}%"
+                )
+
             # Run evaluation at specified frequency
             if (progress["iteration"] + 1) % eval_frequency == 0:
-                logger.info(f"Running evaluation at iteration {progress['iteration']+1}...")
-                score, mrecall, predictions_data = trainer.evaluate_epoch(progress["iteration"])
-                logger.info(f"Evaluation at iter {progress['iteration']+1} | R@20: {score:.4f} | MR@20: {mrecall:.4f}")
-                
+                logger.info(
+                    f"Running evaluation at iteration {progress['iteration']+1}..."
+                )
+                score, mrecall, predictions_data = trainer.evaluate_epoch(
+                    progress["iteration"]
+                )
+                logger.info(
+                    f"Evaluation at iter {progress['iteration']+1} | R@20: {score:.4f} | MR@20: {mrecall:.4f}"
+                )
+
                 # Save predictions CSV after evaluation
                 if predictions_data:
                     trainer.save_predictions_csv(predictions_data)
 
+
 def epoch_training(trainer, conf, logger):
     """Standard epoch-based training mode using train_loop.
-    
+
     :param trainer: Trainer instance
     :type trainer: Trainer
     :param conf: Configuration object
@@ -109,6 +124,7 @@ def epoch_training(trainer, conf, logger):
     """
     logger.info(f"Starting epoch-based training for {int(conf.nepoch)} epochs...")
     trainer.train_loop()
+
 
 def main():
     """Main training function."""
@@ -144,11 +160,13 @@ def main():
     )
 
     # Check disk space and configure checkpointing strategy
-    checkpoint_enabled, checkpoint_strategy = check_disk_space_and_configure_checkpointing(
-        conf.save_path, logger, conf
+    checkpoint_enabled, checkpoint_strategy = (
+        check_disk_space_and_configure_checkpointing(conf.save_path, logger, conf)
     )
     if not checkpoint_enabled:
-        logger.warning("Checkpoint saving has been disabled due to insufficient disk space.")
+        logger.warning(
+            "Checkpoint saving has been disabled due to insufficient disk space."
+        )
         logger.warning("Training will continue but no checkpoints will be saved.")
     elif checkpoint_strategy == "conservative":
         logger.info("Using conservative checkpoint strategy due to low disk space.")
@@ -158,7 +176,10 @@ def main():
     dataset_train, dataset_test = get_datasets(conf)
     train_sampler, test_sampler, train_subset_size, test_subset_size = (
         create_subset_samplers(
-            len(dataset_train), len(dataset_test), fraction=conf.fraction, seed=conf.seed
+            len(dataset_train),
+            len(dataset_test),
+            fraction=conf.fraction,
+            seed=conf.seed,
         )
     )
     logger.info(f"""Using {train_subset_size}/{len(dataset_train)} 
@@ -178,7 +199,7 @@ def main():
     # Object detector
     detector_factory = DetectorFactory(conf, dataset_train, gpu_device, logger)
     object_detector = detector_factory.create_detector()
-    
+
     # Maintain backward compatibility
     if conf.dataset == "EASG":
         object_detector_EASG = object_detector
@@ -199,11 +220,13 @@ def main():
             model.load_state_dict(ckpt["state_dict"], strict=False)
             file_size_mb = os.path.getsize(conf.ckpt) / (1024 * 1024)
             logger.info("Loaded checkpoint from: %s (%.1fMB)", conf.ckpt, file_size_mb)
-            
+
         except Exception as e:
             logger.error(f"Failed to load checkpoint from {conf.ckpt}: {str(e)}")
             logger.error("This checkpoint file appears to be corrupted or invalid.")
-            logger.error("Please remove the corrupted checkpoint file and restart training without the -ckpt flag.")
+            logger.error(
+                "Please remove the corrupted checkpoint file and restart training without the -ckpt flag."
+            )
             raise RuntimeError(f"Checkpoint loading failed: {str(e)}")
 
     # Hungarian Matcher
@@ -262,7 +285,7 @@ def main():
     # Loss Function Setup
     loss_factory = LossFactory(conf, model, gpu_device, logger)
     losses = loss_factory.create_losses()
-    
+
     # Extract individual loss functions for backward compatibility
     ce_loss = losses["ce_loss"]
     bce_loss = losses.get("bce_loss")
@@ -299,13 +322,13 @@ def main():
         dataset_train=dataset_train,
         dataset_test=dataset_test,
     )
-    
+
     # Choose training mode
     if conf.niter is not None:
         iterative_training(trainer, conf, logger, conf.niter)
     else:
         epoch_training(trainer, conf, logger)
-    
+
     logger.info("Training completed!")
     logger.info(
         "Best model achieved at epoch %d with R@20 score: %.4f",
@@ -316,7 +339,7 @@ def main():
     # Memory Setup (for TEMPURA models)
     memory_setup = MemorySetup(conf, model, gpu_device, logger)
     memory_configured = memory_setup.setup_memory()
-    
+
     if memory_configured:
         memory_info = memory_setup.get_memory_info()
         logger.info(f"Memory setup completed: {memory_info}")

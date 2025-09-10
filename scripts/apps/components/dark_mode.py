@@ -8,7 +8,7 @@ import streamlit as st
 
 def apply_dark_mode_styles():
     """Apply dark mode styling to the Streamlit app.
-    
+
     This function applies comprehensive dark mode styling including:
     - Main app background and text colors
     - Sidebar styling
@@ -110,7 +110,7 @@ def apply_dark_mode_styles():
 
 def apply_light_mode_styles():
     """Apply light mode styling to the Streamlit app.
-    
+
     This function applies clean light mode styling including:
     - Main app background and text colors
     - Metric card styling
@@ -142,7 +142,7 @@ def apply_light_mode_styles():
 
 def apply_theme_styles():
     """Apply theme styles based on the current dark mode setting.
-    
+
     This function checks the session state for dark mode preference
     and applies the appropriate styling.
     """

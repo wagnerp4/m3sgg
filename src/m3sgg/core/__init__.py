@@ -1,6 +1,6 @@
 """Core functionality for M3SGG framework.
 
-This module contains the core components including models, detectors, 
+This module contains the core components including models, detectors,
 configuration management, and evaluation tools.
 """
 
@@ -14,7 +14,7 @@ from . import constants
 # Make submodules available
 __all__ = [
     "config",
-    "models", 
+    "models",
     "detectors",
     "evaluation",
     "constants",

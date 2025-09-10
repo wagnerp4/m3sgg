@@ -22,7 +22,7 @@ from . import model_detector
 # Make modules available
 __all__ = [
     "funcs",
-    "pytorch_misc", 
+    "pytorch_misc",
     "word_vectors",
     "matcher",
     "memory",

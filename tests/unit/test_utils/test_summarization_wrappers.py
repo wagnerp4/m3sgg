@@ -13,6 +13,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Check if SentencePiece is available
 try:
     import sentencepiece
+
     SENTENCEPIECE_AVAILABLE = True
 except ImportError:
     SENTENCEPIECE_AVAILABLE = False

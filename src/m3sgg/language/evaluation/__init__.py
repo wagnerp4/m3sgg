@@ -19,9 +19,9 @@ from .ag_benchmark import ActionGenomeSummarizationBenchmark
 
 __all__ = [
     "MSRVTTLoader",
-    "create_subset", 
+    "create_subset",
     "SummarizationMetrics",
     "SummarizationBenchmark",
     "ActionGenomeLoader",
-    "ActionGenomeSummarizationBenchmark"
+    "ActionGenomeSummarizationBenchmark",
 ]

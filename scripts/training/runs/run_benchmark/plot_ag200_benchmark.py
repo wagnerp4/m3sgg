@@ -79,8 +79,12 @@ def extract_metrics_from_log(log_file: str) -> Dict[str, List[float]]:
     metrics["mr100"] = mr100
 
     # Loss values: one avg_train_loss per epoch and one avg_val_loss per epoch
-    metrics["train_loss"] = [float(v) for v in re.findall(r"avg_train_loss=([\d.]+)", content)]
-    metrics["val_loss"] = [float(v) for v in re.findall(r"avg_val_loss=([\d.]+)", content)]
+    metrics["train_loss"] = [
+        float(v) for v in re.findall(r"avg_train_loss=([\d.]+)", content)
+    ]
+    metrics["val_loss"] = [
+        float(v) for v in re.findall(r"avg_val_loss=([\d.]+)", content)
+    ]
 
     # Duration and memory delta for compute plot
     duration_match = re.search(r"Duration:\s*([\d.]+) seconds", content)
@@ -111,7 +115,11 @@ def load_results_by_mode(base_dir: str) -> Dict[str, Dict[str, Dict[str, Dict]]]
     :rtype: Dict[str, Dict[str, Dict[str, Dict]]]
     """
     results: Dict[str, Dict[str, Dict[str, Dict]]] = {}
-    modes = [p.name for p in Path(base_dir).iterdir() if p.is_dir() and p.name in {"predcls", "sgcls", "sgdet"}]
+    modes = [
+        p.name
+        for p in Path(base_dir).iterdir()
+        if p.is_dir() and p.name in {"predcls", "sgcls", "sgdet"}
+    ]
     models = ["sttran", "dsg-detr", "tempura"]
 
     for mode in modes:
@@ -135,7 +143,9 @@ def ensure_output_dir(output_dir: str) -> None:
     Path(output_dir).mkdir(parents=True, exist_ok=True)
 
 
-def plot_combined_metrics(results: Dict[str, Dict[str, Dict[str, Dict]]], output_dir: str) -> None:
+def plot_combined_metrics(
+    results: Dict[str, Dict[str, Dict[str, Dict]]], output_dir: str
+) -> None:
     """Create combined plots of R@20/50/100 and mR@20/50/100 vs epoch across modes and models.
 
     Saves a high-DPI PDF file.
@@ -144,12 +154,20 @@ def plot_combined_metrics(results: Dict[str, Dict[str, Dict[str, Dict]]], output
 
     modes = ["predcls", "sgcls", "sgdet"]
     metrics_to_plot = [
-        ("r20", "R@20"), ("r50", "R@50"), ("r100", "R@100"),
-        ("mr20", "mR@20"), ("mr50", "mR@50"), ("mr100", "mR@100"),
+        ("r20", "R@20"),
+        ("r50", "R@50"),
+        ("r100", "R@100"),
+        ("mr20", "mR@20"),
+        ("mr50", "mR@50"),
+        ("mr100", "mR@100"),
     ]
 
-    fig, axes = plt.subplots(len(modes), len(metrics_to_plot), figsize=(24, 12), sharex=True)
-    fig.suptitle("AG200: Recall and Mean Recall vs Epoch across Modes and Models", fontsize=14)
+    fig, axes = plt.subplots(
+        len(modes), len(metrics_to_plot), figsize=(24, 12), sharex=True
+    )
+    fig.suptitle(
+        "AG200: Recall and Mean Recall vs Epoch across Modes and Models", fontsize=14
+    )
 
     for row, mode in enumerate(modes):
         for col, (key, title) in enumerate(metrics_to_plot):
@@ -166,7 +184,9 @@ def plot_combined_metrics(results: Dict[str, Dict[str, Dict[str, Dict]]], output
                     y = run_data.get(key, [])
                     x = list(range(len(y))) if len(y) > 0 else []
                     if len(x) > 0:
-                        ax.plot(x, y, label=f"{model} {run_name}", linewidth=1, alpha=0.8)
+                        ax.plot(
+                            x, y, label=f"{model} {run_name}", linewidth=1, alpha=0.8
+                        )
             if row == 0 and col == len(metrics_to_plot) - 1:
                 ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left", fontsize=8)
 
@@ -177,7 +197,9 @@ def plot_combined_metrics(results: Dict[str, Dict[str, Dict[str, Dict]]], output
     print(f"Saved combined metrics PDF: {pdf_path}")
 
 
-def plot_sttran_sgdet_losses(results: Dict[str, Dict[str, Dict[str, Dict]]], output_dir: str) -> None:
+def plot_sttran_sgdet_losses(
+    results: Dict[str, Dict[str, Dict[str, Dict]]], output_dir: str
+) -> None:
     """Plot train vs eval loss for STTran on sgdet over epochs.
 
     Saves a high-DPI PDF file.
@@ -215,7 +237,9 @@ def plot_sttran_sgdet_losses(results: Dict[str, Dict[str, Dict[str, Dict]]], out
     print(f"Saved STTran sgdet loss PDF: {pdf_path}")
 
 
-def plot_compute_performance_tradeoff(results: Dict[str, Dict[str, Dict[str, Dict]]], output_dir: str) -> None:
+def plot_compute_performance_tradeoff(
+    results: Dict[str, Dict[str, Dict[str, Dict]]], output_dir: str
+) -> None:
     """Plot runtime, memory, and performance trade-offs across models and modes.
 
     We visualize duration (x), memory delta (y), and color/marker by final R@20.
@@ -227,15 +251,17 @@ def plot_compute_performance_tradeoff(results: Dict[str, Dict[str, Dict[str, Dic
     for mode, models in results.items():
         for model, runs in models.items():
             for run_name, run_data in runs.items():
-                points.append({
-                    "mode": mode,
-                    "model": model,
-                    "run": run_name,
-                    "duration_sec": float(run_data.get("duration_sec", 0.0)),
-                    "memory_delta_mb": float(run_data.get("memory_delta_mb", 0.0)),
-                    "final_r20": float(run_data.get("final_r20", 0.0)),
-                    "final_mr20": float(run_data.get("final_mr20", 0.0)),
-                })
+                points.append(
+                    {
+                        "mode": mode,
+                        "model": model,
+                        "run": run_name,
+                        "duration_sec": float(run_data.get("duration_sec", 0.0)),
+                        "memory_delta_mb": float(run_data.get("memory_delta_mb", 0.0)),
+                        "final_r20": float(run_data.get("final_r20", 0.0)),
+                        "final_mr20": float(run_data.get("final_mr20", 0.0)),
+                    }
+                )
     if not points:
         print("Warning: No compute stats found in logs. Skipping trade-off plot.")
         return
@@ -251,9 +277,15 @@ def plot_compute_performance_tradeoff(results: Dict[str, Dict[str, Dict[str, Dic
     for mode in modes:
         dmode = df[df["mode"] == mode]
         sc = ax.scatter(
-            dmode["duration_sec"], dmode["memory_delta_mb"],
-            c=dmode["final_r20"], cmap="viridis", marker=markers.get(mode, "o"),
-            alpha=0.8, label=mode, edgecolors="k", linewidths=0.3
+            dmode["duration_sec"],
+            dmode["memory_delta_mb"],
+            c=dmode["final_r20"],
+            cmap="viridis",
+            marker=markers.get(mode, "o"),
+            alpha=0.8,
+            label=mode,
+            edgecolors="k",
+            linewidths=0.3,
         )
     cbar = plt.colorbar(sc, ax=ax)
     cbar.set_label("Final R@20")
@@ -276,12 +308,12 @@ def main() -> None:
     parser.add_argument(
         "--results_dir",
         default="data/benchmark/ag200",
-        help="Directory containing benchmark results"
+        help="Directory containing benchmark results",
     )
     parser.add_argument(
         "--output_dir",
         default="data/benchmark/ag200/plots",
-        help="Directory to save plots"
+        help="Directory to save plots",
     )
 
     args = parser.parse_args()

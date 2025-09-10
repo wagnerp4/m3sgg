@@ -16,7 +16,7 @@ from . import stket
 __all__ = [
     "sttran",
     "vlm",
-    "tempura", 
+    "tempura",
     "scenellm",
     "oed",
     "stket",

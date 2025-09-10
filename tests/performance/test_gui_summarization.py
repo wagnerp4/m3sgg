@@ -27,6 +27,7 @@ def test_summarization_wrappers():
     print("\n1. Testing T5 Wrapper Class Import:")
     try:
         from m3sgg.language.summarization.wrappers import T5SummarizationWrapper
+
         print(f"✓ T5SummarizationWrapper imported successfully")
         print(f"  Class: {T5SummarizationWrapper}")
     except Exception as e:
@@ -36,6 +37,7 @@ def test_summarization_wrappers():
     print("\n2. Testing Pegasus Wrapper Class Import:")
     try:
         from m3sgg.language.summarization.wrappers import PegasusSummarizationWrapper
+
         print(f"✓ PegasusSummarizationWrapper imported successfully")
         print(f"  Class: {PegasusSummarizationWrapper}")
     except Exception as e:
@@ -45,6 +47,7 @@ def test_summarization_wrappers():
     print("\n3. Testing Pegasus Separate Loader Class Import:")
     try:
         from m3sgg.language.summarization.wrappers import PegasusSeparateLoader
+
         print(f"✓ PegasusSeparateLoader imported successfully")
         print(f"  Class: {PegasusSeparateLoader}")
     except Exception as e:
@@ -54,6 +57,7 @@ def test_summarization_wrappers():
     print("\n4. Testing Pegasus Custom Config Class Import:")
     try:
         from m3sgg.language.summarization.wrappers import PegasusCustomConfig
+
         print(f"✓ PegasusCustomConfig imported successfully")
         print(f"  Class: {PegasusCustomConfig}")
     except Exception as e:
@@ -102,18 +106,36 @@ def test_gui_integration():
         try:
             if model_name.startswith("T5"):
                 if "Large" in model_name:
-                    return {"class": "T5SummarizationWrapper", "model": "google-t5/t5-large"}
+                    return {
+                        "class": "T5SummarizationWrapper",
+                        "model": "google-t5/t5-large",
+                    }
                 else:
-                    return {"class": "T5SummarizationWrapper", "model": "google-t5/t5-base"}
+                    return {
+                        "class": "T5SummarizationWrapper",
+                        "model": "google-t5/t5-base",
+                    }
             elif model_name.startswith("Pegasus"):
                 if "CNN/DailyMail" in model_name:
-                    return {"class": "PegasusSummarizationWrapper", "model": "google/pegasus-cnn_dailymail"}
+                    return {
+                        "class": "PegasusSummarizationWrapper",
+                        "model": "google/pegasus-cnn_dailymail",
+                    }
                 elif "Newsroom" in model_name:
-                    return {"class": "PegasusSummarizationWrapper", "model": "google/pegasus-newsroom"}
+                    return {
+                        "class": "PegasusSummarizationWrapper",
+                        "model": "google/pegasus-newsroom",
+                    }
                 elif "Multi-News" in model_name:
-                    return {"class": "PegasusSummarizationWrapper", "model": "google/pegasus-multi_news"}
+                    return {
+                        "class": "PegasusSummarizationWrapper",
+                        "model": "google/pegasus-multi_news",
+                    }
                 else:
-                    return {"class": "PegasusSummarizationWrapper", "model": "google/pegasus-xsum"}
+                    return {
+                        "class": "PegasusSummarizationWrapper",
+                        "model": "google/pegasus-xsum",
+                    }
             return None
         except Exception as e:
             print(f"Error processing {model_name}: {str(e)}")
